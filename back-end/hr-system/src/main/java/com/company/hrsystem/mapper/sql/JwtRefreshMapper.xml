@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.hrsystem.mapper.JwtResfreshMapper">
+	<resultMap type="com.company.hrsystem.model.JwtRefreshModel" id="getRefreshToken">
+		<result property="systemAccountId" column="system_account_id" jdbcType="INTEGER"/>
+		<result property="refreshTokenName" column="refresh_token_name" jdbcType="VARCHAR"/>
+		<result property="expiryDate" column="expiry_date" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="findRefreshTokenByEmail" resultMap="getRefreshToken" parameterType="java.lang.String">
+		SELECT
+			rf.system_account_id,
+			rf.refresh_token_name, 
+			rf.expiry_date
+		FROM refresh_token rf 
+			LEFT JOIN system_account sa
+				ON rf.system_account_id = sa.system_account_id
+		WHERE sa.system_email = #{email, jdbcType = VARCHAR}
+	</select>
+
+	<select id="findRefreshTokenByToken" resultMap="getRefreshToken" parameterType="java.lang.String">
+		SELECT
+			rf.system_account_id,
+			rf.refresh_token_name, 
+			rf.expiry_date
+		FROM 
+			refresh_token rf 
+		WHERE 
+			rf.refresh_token_name = #{token, jdbcType = VARCHAR}
+	</select>
+	
+	<update id="insertRefreshToken" parameterType="com.company.hrsystem.model.JwtRefreshModel">
+		INSERT INTO refresh_token (system_account_id, refresh_token_name, expiry_date)
+		VALUES (
+			#{systemAccountId, jdbcType=INTEGER},
+			#{refreshTokenName, jdbcType=VARCHAR},
+			#{expiryDate, jdbcType=VARCHAR},
+		)
+	</update>
+	
+	<insert id="updateRefreshToken" parameterType="com.company.hrsystem.model.JwtRefreshModel">
+		UPDATE 
+			refresh_token
+		SET 
+			refresh_token_name = #{refreshTokenName, jdbcType=INTEGER},
+			expiry_date = #{expiryDate, jdbcType=VARCHAR}
+		WHERE 
+			system_account_id = #{systemAccountId, jdbcType=INTEGER}	
+	</insert>
+</mapper>
