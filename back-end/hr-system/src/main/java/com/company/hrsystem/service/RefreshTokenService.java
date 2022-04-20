@@ -16,28 +16,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import com.company.hrsystem.Exeption.RefreshTokenException;
-import com.company.hrsystem.mapper.JwtResfreshMapper;
+import com.company.hrsystem.dto.JwtDto;
+import com.company.hrsystem.dto.RefreshTokenDto;
+import com.company.hrsystem.mapper.ResfreshTokenMapper;
 import com.company.hrsystem.mapper.SystemAccountMapper;
-import com.company.hrsystem.model.JwtRefreshModel;
-import com.company.hrsystem.request.JwtResfreshRequest;
-import com.company.hrsystem.response.JwtResponse;
+import com.company.hrsystem.request.ResfreshTokenRequest;
 import com.company.hrsystem.response.ResponseTemplate;
-import com.company.hrsystem.utils.JwtTokenUtil;
+import com.company.hrsystem.utils.TokenUtil;
 import com.company.hrsystem.utils.MessageUtil;
 
 import io.jsonwebtoken.impl.DefaultClaims;
 
 @Service
-public class JwtRefreshService {
-
-	@Autowired
-	UserDetailsServiceImp jwtUserDetailsService;
+public class RefreshTokenService {
 
 	@Autowired
 	SystemAccountMapper systemAccountMapper;
 
 	@Autowired
-	JwtResfreshMapper jwtResfreshMapper;
+	ResfreshTokenMapper refreshTokenMapper;
 
 	@Value("${jwt.refreshValid}")
 	private Long refreshTokenValid;
@@ -49,53 +46,58 @@ public class JwtRefreshService {
 	private String verion;
 
 	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+	private TokenUtil tokenUtil;
 
 	@Autowired
 	private MessageUtil messageUtil;
 
-	public JwtRefreshModel findRefreshTokenByEmail(String email) {
-		return jwtResfreshMapper.findRefreshTokenByEmail(email);
+	public RefreshTokenDto findRefreshTokenByEmail(String email) {
+		return refreshTokenMapper.findRefreshTokenByEmail(email);
 	}
 
-	public JwtRefreshModel findRefreshTokenByToken(String token) {
-		return jwtResfreshMapper.findRefreshTokenByToken(token);
+	public RefreshTokenDto findRefreshTokenByToken(String token) {
+		return refreshTokenMapper.findRefreshTokenByToken(token);
 	}
 
-	public JwtRefreshModel generateRefreshTokenByEmail(String email) {
-		JwtRefreshModel model = findRefreshTokenByEmail(email);
-		JwtRefreshModel obj = new JwtRefreshModel();
+	public RefreshTokenDto generateRefreshTokenByEmail(String email) {
+		RefreshTokenDto model = findRefreshTokenByEmail(email);
+		RefreshTokenDto obj = new RefreshTokenDto();
 		obj.setSystemAccountId(systemAccountMapper.findSystemAccountByEmail(email).getSystemAccountId());
 		obj.setExpiryDate(Instant.now().plusMillis(refreshTokenValid).toString());
 		obj.setRefreshTokenName(UUID.randomUUID().toString());
 		if (ObjectUtils.isEmpty(model)) {
 			// create new refresh token at the first time login
-			jwtResfreshMapper.insertRefreshToken(obj);
+			refreshTokenMapper.insertRefreshToken(obj);
 		} else {
 			// update new refresh token when login from second time
-			jwtResfreshMapper.updateRefreshToken(obj);
+			refreshTokenMapper.updateRefreshToken(obj);
 		}
 		return obj;
 	}
 
-	public ResponseTemplate verifyExpirationRefreshToken(JwtRefreshModel model, HttpServletRequest httpServletRequest) {
+	public ResponseTemplate verifyExpirationRefreshToken(RefreshTokenDto model, HttpServletRequest httpServletRequest) {
 		Instant expiredRefreshToken = Instant.parse(model.getExpiryDate());
 		Boolean isExpiredRefreshToken = expiredRefreshToken.compareTo(Instant.now()) < 0;
 		if (!isExpiredRefreshToken) {
 			DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) httpServletRequest.getAttribute("claims");
-			Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
-			String newAccessToken = jwtTokenUtil.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
-			return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
-					messageUtil.getMessagelangUS("refresh.success"), null,
-					new JwtResponse(newAccessToken, model.getRefreshTokenName()));
+			if (!ObjectUtils.isEmpty(claims)) {
+				Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
+				String newAccessToken = tokenUtil.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
+				return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
+						messageUtil.getMessagelangUS("refresh.success"), null,
+						new JwtDto(newAccessToken, model.getRefreshTokenName()));
+			} else {
+				return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
+						messageUtil.getMessagelangUS("valid.tokens"), null, null);
+			}
 		} else {
 			throw new RefreshTokenException(sytem, verion, messageUtil.getMessagelangUS("expired.refresh.token"));
 		}
 	}
 
-	public ResponseTemplate handleRefreshToken(JwtResfreshRequest jwtResfreshRequest,
+	public ResponseTemplate handleRefreshToken(ResfreshTokenRequest resfreshTokenRequest,
 			HttpServletRequest httpServletRequest) {
-		JwtRefreshModel model = findRefreshTokenByToken(jwtResfreshRequest.getRefreshTokenName());
+		RefreshTokenDto model = findRefreshTokenByToken(resfreshTokenRequest.getData().getRefreshTokenName());
 		if (ObjectUtils.isEmpty(model)) {
 			throw new RefreshTokenException(sytem, verion, messageUtil.getMessagelangUS("not.valid.refresh.token"));
 		} else {

@@ -5,25 +5,51 @@
 
 <generatorConfiguration>
 
-  <context id="DB2Tables" targetRuntime="MyBatis3">
-    <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-        connectionURL="jdbc:mysql://localhost:3306/hrsystem?useSSL=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"
-        userId="root"
-        password="123456789">
-    </jdbcConnection>
+	<context id="DB2Tables" targetRuntime="MyBatis3">
+		<jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/hrsystem?useSSL=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"
+			userId="root" password="123456789">
+		</jdbcConnection>
 
-    <javaTypeResolver >
-      <property name="forceBigDecimals" value="false" />
-    </javaTypeResolver>
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
 
-    <javaModelGenerator targetPackage="com.company.hrsystem.model" targetProject="hr-system"/>
+		<javaModelGenerator
+			targetPackage="com.company.hrsystem.model" targetProject="hr-system" />
 
-    <sqlMapGenerator targetPackage="com.company.hrsystem.mapper.sql"  targetProject="hr-system"/>
+		<!-- <sqlMapGenerator targetPackage="com.company.hrsystem.mapper.sql" targetProject="hr-system"/> 
+			<javaClientGenerator type="XMLMAPPER" targetPackage="com.company.hrsystem.mapper" 
+			targetProject="hr-system"/> <table tableName="system_account" domainObjectName="SystemAccountModel" 
+			> </table> -->
 
-    <javaClientGenerator type="XMLMAPPER" targetPackage="com.company.hrsystem.mapper"  targetProject="hr-system"/>
+		<table tableName="system_role"
+			domainObjectName="SystemRoleModel" />
+		<table tableName="system_account_role"
+			domainObjectName="SystemAccountRoleModel" />
+		<table tableName="refresh_token"
+			domainObjectName="RefreshTokenModel" />
+		<table tableName="document" domainObjectName="DocumentModel" />
+		<table tableName="employee_document"
+			domainObjectName="EmployeeDocumentModel" />
+		<table tableName="employee" domainObjectName="EmployeeModel" />
+		<table tableName="personal_info"
+			domainObjectName="PersonalInfoModel" />
+		<table tableName="room" domainObjectName="RoomModel" />
+		<table tableName="employee_postion"
+			domainObjectName="EmployeePostionModel" />
+		<table tableName="position" domainObjectName="PostionModel" />
+		<table tableName="reason" domainObjectName="ReasonModel" />
+		<table tableName="request_type"
+			domainObjectName="RequestTypeModel" />
+		<table tableName="request" domainObjectName="RequestModel" />
+		<table tableName="request_employee"
+			domainObjectName="RequestEmployeeModel" />
+		<table tableName="supervisor_action"
+			domainObjectName="SupervisorAcctionModel" />
+		<table tableName="approver_action"
+			domainObjectName="ApproverActionModel" />
+		<table tableName="comment" domainObjectName="CommentModel" />
 
-    <table tableName="system_account" domainObjectName="SystemAccount" >
-    </table>
-
-  </context>
+	</context>
 </generatorConfiguration>

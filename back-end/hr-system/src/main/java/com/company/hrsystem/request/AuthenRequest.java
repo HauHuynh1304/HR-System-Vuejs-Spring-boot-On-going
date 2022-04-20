@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwtAuthenRequest implements Serializable{
+public class AuthenRequest implements Serializable{
 	
 	private static final long serialVersionUID = 5926468583005150707L;
 	
@@ -23,5 +23,5 @@ public class JwtAuthenRequest implements Serializable{
 	private String password;
 	
 	@JsonProperty(JsonRequestProperty.JSON_REQUEST_PROPERTY)
-	JwtAuthenRequest data;
+	AuthenRequest data;
 }

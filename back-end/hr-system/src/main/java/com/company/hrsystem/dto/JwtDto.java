@@ -1,4 +1,4 @@
-package com.company.hrsystem.response;
+package com.company.hrsystem.dto;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class JwtResponse implements Serializable{
+public class JwtDto implements Serializable{
 	
 	private static final long serialVersionUID = -8091879091924046844L;
 	
@@ -15,7 +15,7 @@ public class JwtResponse implements Serializable{
 	
 	private final String refreshToken;
 
-	public JwtResponse(String accessToken, String refreshToken) {
+	public JwtDto(String accessToken, String refreshToken) {
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
 	}

@@ -23,16 +23,16 @@ import com.company.hrsystem.service.UserDetailsServiceImp;
 import io.jsonwebtoken.ExpiredJwtException;
 
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
-	
+public class RequestFilter extends OncePerRequestFilter {
+
 	@Value("${token.store}")
 	private String tokenStore;
-	
-	@Autowired
-	private UserDetailsServiceImp jwtUserDetailsService;
 
 	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+	private UserDetailsServiceImp userDetailsService;
+
+	@Autowired
+	private TokenUtil tokenUtil;
 
 	@Autowired
 	private CacheService cacheService;
@@ -58,12 +58,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				return;
 			} else {
 				try {
-					username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+					username = tokenUtil.getUsernameFromToken(jwtToken);
 				} catch (IllegalArgumentException e) {
 					logger.warn("Unable to get JWT Token");
 				} catch (ExpiredJwtException e) {
 					String requestURL = request.getRequestURI().toString();
-					if (requestURL.equals(ApiUrlConstant.REFRESH_TOKEN)) {
+					if (requestURL.equals(
+							StringUtil.apiBuilder(ApiUrlConstant.ROOT_API, ApiUrlConstant.AUTHEN_REFRESH_TOKEN))) {
 						allowForGenerateRefreshToken(e, request);
 					}
 				}
@@ -75,11 +76,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		// Once we get the token validate it.
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-			UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
 			// if token is valid configure Spring Security to manually set
 			// authentication
-			if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+			if (tokenUtil.validateToken(jwtToken, userDetails)) {
 
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());

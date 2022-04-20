@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +22,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
-public class JwtTokenUtil implements Serializable{
+public class TokenUtil implements Serializable{
 	
 	public static final long serialVersionUID = 1L;
 	
@@ -32,6 +34,9 @@ public class JwtTokenUtil implements Serializable{
 	
 	@Value("${token.store}")
 	private String tokenStore;
+	
+	@Value("${token.authorization}")
+	private String tokenAuthorization;
 	
 	@Autowired
 	private CacheService cacheService;
@@ -94,6 +99,10 @@ public class JwtTokenUtil implements Serializable{
 				.compact();
 		cacheService.updateCache(tokenStore, token);
 		return token;
+	}
+	
+	public String getTokenFromHeader(HttpServletRequest request) {
+		return request.getHeader(tokenAuthorization).substring(7);
 	}
 
 }
