@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.hrsystem.mapper.SytemRoleMapper">
+	<insert id="insertSystemRoleSelected"
+		parameterType="com.company.hrsystem.request.SystemRoleRequest">
+		insert into system_role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="roleName != null">
+				role_name,
+			</if>
+			<if test="roleDescription != null">
+				role_description,
+			</if>
+			<if test="applyScope != null">
+				apply_scope,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="roleName != null">
+				#{roleName, jdbcType=VARCHAR},
+			</if>
+			<if test="roleDescription != null">
+				#{roleDescription, jdbcType=VARCHAR},
+			</if>
+			<if test="applyScope != null">
+				#{applyScope, jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateSystemRoleSelected">
+		update system_role
+		<set>
+			<if test="roleName != null">
+				role_name = #{roleName, jdbcType=VARCHAR},
+			</if>
+			<if test="roleDescription != null">
+				role_description = #{roleDescription, jdbcType=VARCHAR},
+			</if>
+			<if test="deletedFlag != null">
+				deleted_flag = #{deletedFlag, jdbcType=BIT},
+			</if>
+			<if test="applyScope != null">
+				apply_scope = #{applyScope, jdbcType=VARCHAR},
+			</if>
+			<if test="updatedAt != null">
+				updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		Where system_role_id = #{systemRoleId, jdbcType=INTEGER}
+	</update>
+</mapper>

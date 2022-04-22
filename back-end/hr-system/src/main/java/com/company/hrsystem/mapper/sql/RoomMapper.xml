@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.hrsystem.mapper.RoomMapper">
+	<insert id="insertRoom"
+		parameterType="com.company.hrsystem.request.RoomRequest">
+		insert into room
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="roomName != null">
+				room_name,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="roomName != null">
+				#{roomName, jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateRoom">
+		update room
+		<set>
+			<if test="roomName != null">
+				room_name = #{roomName, jdbcType=VARCHAR},
+			</if>
+			<if test="deletedFlag != null">
+				deleted_flag = #{deletedFlag, jdbcType=BIT},
+			</if>
+			<if test="updatedAt != null">
+				updated_at = #{updatedAt, jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where room_id = #{roomId, jdbcType=INTEGER}
+	</update>
+</mapper>

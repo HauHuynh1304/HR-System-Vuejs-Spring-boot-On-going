@@ -1,7 +1,5 @@
 package com.company.hrsystem.model;
 
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,12 +19,12 @@ public abstract class SystemRoleModel {
 
 	private String applyScope;
 
-	private Date createdAt;
+	private String createdAt;
 
-	private Date updatedAt;
+	private String updatedAt;
 
 	public SystemRoleModel(String roleName) {
 		this.roleName = roleName;
 	}
-	
+
 }
