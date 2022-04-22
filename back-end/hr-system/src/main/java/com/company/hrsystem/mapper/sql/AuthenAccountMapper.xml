@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.AuthenAccountMapper">
-	<resultMap type="com.company.hrsystem.model.AuthenAccountModel" id="authenResult">
+	<resultMap type="com.company.hrsystem.dto.AuthenAccountDto" id="authenResult">
 		<result property="systemEmail" jdbcType="VARCHAR" column="system_email"/>
 		<result property="systemPassword" jdbcType="VARCHAR" column="system_password"/>
 		
 		<!-- map to list property in java class -->
-		<collection property="authenRoleModels" ofType="com.company.hrsystem.model.AuthenRoleModel">
+		<collection property="authenRoleModels" ofType="com.company.hrsystem.dto.AuthenRoleDto">
 			<result property="roleName" jdbcType="VARCHAR" column="role_name"/>
 		</collection>
 	</resultMap>

@@ -9,8 +9,10 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class JwtResfreshRequest {
+public class ResfreshTokenRequest {
 
 	private String refreshTokenName;
+	
+	private ResfreshTokenRequest data;
 
 }

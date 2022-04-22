@@ -18,7 +18,7 @@ import com.company.hrsystem.constants.ApiUrlConstant;
 import com.company.hrsystem.service.UserDetailsServiceImp;
 import com.company.hrsystem.utils.JwtAuthenticationEntryPoint;
 //import com.company.hrsystem.utils.JwtAuthenticationEntryPoint;
-import com.company.hrsystem.utils.JwtRequestFilter;
+import com.company.hrsystem.utils.RequestFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private UserDetailsServiceImp jwtUserDetailsService;
 
 	@Autowired
-	private JwtRequestFilter jwtRequestFilter;
+	private RequestFilter jwtRequestFilter;
 	
 	@Bean
 	public static PasswordEncoder passwordEncoder() {
@@ -56,14 +56,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable()
-				// don't authenticate this particular request
-				.authorizeRequests().antMatchers(
-						ApiUrlConstant.LOG_IN, 
-						"/test", 
-						ApiUrlConstant.REFRESH_TOKEN,
-						ApiUrlConstant.LOG_OUT).permitAll()
-				// all other requests need to be authenticated
-				.anyRequest().authenticated().and()
 				// make sure we use state less session; session won't be used to
 				// store user's state.
 				.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()

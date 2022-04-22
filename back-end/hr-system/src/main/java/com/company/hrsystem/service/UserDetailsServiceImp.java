@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import com.company.hrsystem.model.AuthenAccountModel;
+import com.company.hrsystem.dto.AuthenAccountDto;
 
 @Service
 public class UserDetailsServiceImp implements UserDetailsService {
@@ -21,7 +21,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		AuthenAccountModel accountModel = accountService.findAuthenAccountByEmail(email);
+		AuthenAccountDto accountModel = accountService.findAuthenAccountByEmail(email);
 		if(ObjectUtils.isEmpty(accountModel)) {
 			throw new UsernameNotFoundException("User not found");
 		}
@@ -33,7 +33,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 		
 	}
 	
-	private List<GrantedAuthority> getAuthority(AuthenAccountModel accountModel) {
+	private List<GrantedAuthority> getAuthority(AuthenAccountDto accountModel) {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		accountModel.getAuthenRoleModels().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
