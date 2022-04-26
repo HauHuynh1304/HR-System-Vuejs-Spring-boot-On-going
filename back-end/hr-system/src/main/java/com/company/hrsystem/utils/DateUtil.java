@@ -7,7 +7,7 @@ public class DateUtil {
 
 	public static final String DayHourSecond = "yyyy/MM/dd HH:mm:ss";
 
-	public static String currentDayHourSecond() {
+	public static String getCurrentDayHourSecond() {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern(DayHourSecond);
 		LocalDateTime time = LocalDateTime.now();
 		return time.format(format);

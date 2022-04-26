@@ -1,7 +1,5 @@
 package com.company.hrsystem.model;
 
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-abstract class RoomModel {
+public abstract class RoomModel {
 
 	private Integer roomId;
 
@@ -17,8 +15,8 @@ abstract class RoomModel {
 
 	private Boolean deletedFlag;
 
-	private Date createdAt;
+	private String createdAt;
 
-	private Date updatedAt;
+	private String updatedAt;
 
 }

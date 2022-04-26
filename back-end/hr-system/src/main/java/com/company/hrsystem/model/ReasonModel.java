@@ -1,15 +1,13 @@
 package com.company.hrsystem.model;
 
-import java.util.Date;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-abstract class ReasonModel {
+@NoArgsConstructor
+public abstract class ReasonModel {
 
 	private Integer reasonId;
 
@@ -17,8 +15,8 @@ abstract class ReasonModel {
 
 	private Boolean deletedFlag;
 
-	private Date createdAt;
+	private String createdAt;
 
-	private Date updatedAt;
+	private String updatedAt;
 
 }

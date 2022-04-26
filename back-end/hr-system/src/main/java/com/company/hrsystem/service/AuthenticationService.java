@@ -1,7 +1,5 @@
 package com.company.hrsystem.service;
 
-import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.JwtDto;
 import com.company.hrsystem.dto.SystemAccountDto;
@@ -99,8 +95,8 @@ public class AuthenticationService {
 		return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("user.signup.successful"), null, null);
 	}
-	
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+
+	@Transactional(propagation = Propagation.REQUIRED)
 	public ResponseTemplate handleChangePassword(HttpServletRequest servletRequest,
 			ChangePasswordRequest ChangePwRequest) {
 		String emailFromToken = tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(servletRequest));
@@ -108,7 +104,7 @@ public class AuthenticationService {
 		if (emailFromToken.equals(emailFromRequest) || CheckAuthenUtil.checkAuthen(CommonConstant.ROOT_ROLE)) {
 			String password = passwordEncoder.encode(ChangePwRequest.getData().getAccount().getSystemPassword());
 			SystemAccountDto account = new SystemAccountDto(null, emailFromRequest, password, null, null,
-					DateUtil.currentDayHourSecond());
+					DateUtil.getCurrentDayHourSecond());
 			accountMapper.updateByEmailSelective(account);
 			return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
 					messageUtil.getMessagelangUS("change.password.success"), null, null);

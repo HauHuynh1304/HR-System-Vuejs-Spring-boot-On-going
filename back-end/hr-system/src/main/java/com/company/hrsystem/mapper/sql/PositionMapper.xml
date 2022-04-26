@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.hrsystem.mapper.PositionMapper">
+	<insert id="insertPosition"
+		parameterType="com.company.hrsystem.request.PositionRequest">
+		insert into position
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="positionName != null">
+				position_name,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{positionName, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updatePosition"
+		parameterType="com.company.hrsystem.request.PositionRequest">
+		update position
+		<set>
+			<if test="positionName != null">
+				position_name = #{positionName, jdbcType=VARCHAR},
+			</if>
+			<if test="deletedFlag != null">
+				deleted_flag = #{deletedFlag, jdbcType=BIT},
+			</if>
+			<if test="updatedAt != null">
+				updated_at = #{updatedAt, jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where position_id= #{positionId, jdbcType=INTEGER}
+	</update>
+</mapper>

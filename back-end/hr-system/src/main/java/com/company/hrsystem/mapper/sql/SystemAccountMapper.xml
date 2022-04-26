@@ -205,9 +205,6 @@
       <if test="deletedFlag != null">
         deleted_flag = #{deletedFlag,jdbcType=BIT},
       </if>
-      <if test="createdAt != null">
-        created_at = #{createdAt,jdbcType=TIMESTAMP},
-      </if>
       <if test="updatedAt != null">
         updated_at = #{updatedAt,jdbcType=TIMESTAMP},
       </if>
