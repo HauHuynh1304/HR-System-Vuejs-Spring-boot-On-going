@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.springframework.util.ObjectUtils;
 
+import com.company.hrsystem.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class ResponseTemplate {
 
 	private String errorMessage;
 
-	@JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+	@JsonFormat(pattern = DateUtil.DAY_HOUR_SECOND, timezone = DateUtil.TIME_ZONE)
 	private Date timestamp;
 
 	private Object data;
