@@ -9,14 +9,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MessageUtil {
-	
+
 	@Value("${system.lang.en}")
 	Locale systemLangUS;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
-	public String getMessagelangUS (String messCode) {
+
+	public String getMessagelangUS(String messCode) {
 		return messageSource.getMessage(messCode, null, systemLangUS);
 	}
+
+	public String getFlexMessageLangUS(String flexMessCode, String filedName) {
+		return messageSource.getMessage(flexMessCode, null, systemLangUS).replace("{0}", filedName);
+	}
+
 }
