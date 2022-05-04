@@ -15,10 +15,4 @@ public class AuthenAccountDto extends SystemAccountModel {
 
 	private List<AuthenRoleDto> authenRoleModels;
 
-	public AuthenAccountDto(Integer systemAccountId, String systemEmail, String systemPassword,
-			List<AuthenRoleDto> authenRoleModels) {
-		super(systemAccountId, systemEmail, systemPassword);
-		this.authenRoleModels = authenRoleModels;
-	}
-
 }

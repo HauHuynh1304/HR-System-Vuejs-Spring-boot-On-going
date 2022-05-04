@@ -7,8 +7,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.company.hrsystem.constants.ApiUrlConstant;
+import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.service.CacheService;
 import com.company.hrsystem.service.UserDetailsServiceImp;
 
@@ -27,6 +30,15 @@ public class RequestFilter extends OncePerRequestFilter {
 
 	@Value("${token.store}")
 	private String tokenStore;
+
+	@Value("${system.name}")
+	private String system;
+
+	@Value("${system.version}")
+	private String version;
+
+	@Value("${jwt.secret}")
+	private String secret;
 
 	@Autowired
 	private UserDetailsServiceImp userDetailsService;
@@ -44,7 +56,7 @@ public class RequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-		final String requestTokenHeader = request.getHeader("Authorization");
+		final String requestTokenHeader = tokenUtil.getHeaderFromRequest(request);
 
 		String username = null;
 		String jwtToken = null;
@@ -55,12 +67,15 @@ public class RequestFilter extends OncePerRequestFilter {
 			if (!cacheService.isExistsInCache(tokenStore, jwtToken)) {
 				// cancel request
 				LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
+				HttpServletResponseUtil.ServletResponse(response,
+						new ResponseTemplate(system, version, HttpStatus.FORBIDDEN.value(), null,
+								messageUtil.getMessagelangUS("not.valid.access.token"), null));
 				return;
 			} else {
 				try {
 					username = tokenUtil.getUsernameFromToken(jwtToken);
 				} catch (IllegalArgumentException e) {
-					logger.warn("Unable to get JWT Token");
+					LogUtil.error(ExceptionUtils.getStackTrace(e));
 				} catch (ExpiredJwtException e) {
 					String requestURL = request.getRequestURI().toString();
 					if (requestURL.equals(
@@ -69,8 +84,6 @@ public class RequestFilter extends OncePerRequestFilter {
 					}
 				}
 			}
-		} else {
-			LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
 		}
 
 		// Once we get the token validate it.

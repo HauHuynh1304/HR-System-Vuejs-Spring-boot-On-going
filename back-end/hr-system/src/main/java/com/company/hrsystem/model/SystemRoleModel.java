@@ -23,8 +23,4 @@ public abstract class SystemRoleModel {
 
 	private String updatedAt;
 
-	public SystemRoleModel(String roleName) {
-		this.roleName = roleName;
-	}
-
 }

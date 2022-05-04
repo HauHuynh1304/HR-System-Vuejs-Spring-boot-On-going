@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import com.company.hrsystem.Exeption.NullPointRequestException;
-import com.company.hrsystem.Exeption.RefreshTokenException;
+import com.company.hrsystem.Exeption.TokenException;
 import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.response.ResponseTemplate;
 
 @RestControllerAdvice
 public class ControllerAdvice {
 
-	@ExceptionHandler(value = RefreshTokenException.class)
+	@ExceptionHandler(value = TokenException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
-	public ResponseTemplate handleTokenRefreshException(RefreshTokenException ex, WebRequest request) {
+	public ResponseTemplate handleTokenRefreshException(TokenException ex, WebRequest request) {
 		request.getDescription(false);
 		return new ResponseTemplate(ex.getSystem(), ex.getVersion(), HttpStatus.FORBIDDEN.value(), null,
 				ex.getMessage(), null);
@@ -34,7 +34,7 @@ public class ControllerAdvice {
 	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 	public ResponseTemplate handleSqlException(GlobalException ex, WebRequest request) {
 		request.getDescription(false);
-		return new ResponseTemplate(ex.getSystem(), ex.getVersion(), HttpStatus.BAD_REQUEST.value(), null,
+		return new ResponseTemplate(ex.getSystem(), ex.getVersion(), HttpStatus.NOT_ACCEPTABLE.value(), null,
 				ex.getMessage(), null);
 	}
 }

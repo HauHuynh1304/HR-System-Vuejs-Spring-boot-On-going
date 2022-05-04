@@ -16,11 +16,5 @@ public abstract class RefreshTokenModel {
 	private String refreshTokenName;
 
 	private String expiryDate;
-
-	public RefreshTokenModel(Integer systemAccountId, String refreshTokenName, String expiryDate) {
-		this.systemAccountId = systemAccountId;
-		this.refreshTokenName = refreshTokenName;
-		this.expiryDate = expiryDate;
-	}
-
+	
 }

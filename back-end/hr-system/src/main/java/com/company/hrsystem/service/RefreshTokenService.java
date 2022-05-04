@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import com.company.hrsystem.Exeption.RefreshTokenException;
+import com.company.hrsystem.Exeption.TokenException;
 import com.company.hrsystem.dto.JwtDto;
 import com.company.hrsystem.dto.RefreshTokenDto;
 import com.company.hrsystem.mapper.ResfreshTokenMapper;
@@ -42,14 +42,23 @@ public class RefreshTokenService {
 	@Value("${system.name}")
 	private String sytem;
 
+	@Value("${system.name}")
+	private String system;
+
 	@Value("${system.version}")
 	private String verion;
+
+	@Value("${token.store}")
+	private String tokenStore;
 
 	@Autowired
 	private TokenUtil tokenUtil;
 
 	@Autowired
 	private MessageUtil messageUtil;
+
+	@Autowired
+	CacheService cacheService;
 
 	public RefreshTokenDto findRefreshTokenByEmail(String email) {
 		return refreshTokenMapper.findRefreshTokenByEmail(email);
@@ -62,7 +71,7 @@ public class RefreshTokenService {
 	public RefreshTokenDto generateRefreshTokenByEmail(String email) {
 		RefreshTokenDto model = findRefreshTokenByEmail(email);
 		RefreshTokenDto obj = new RefreshTokenDto();
-		obj.setSystemAccountId(systemAccountMapper.findSystemAccountByEmail(email).getSystemAccountId());
+		obj.setSystemAccountId(systemAccountMapper.findSystemAccountIdByEmail(email).getSystemAccountId());
 		obj.setExpiryDate(Instant.now().plusMillis(refreshTokenValid).toString());
 		obj.setRefreshTokenName(UUID.randomUUID().toString());
 		if (ObjectUtils.isEmpty(model)) {
@@ -81,17 +90,21 @@ public class RefreshTokenService {
 		if (!isExpiredRefreshToken) {
 			DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) httpServletRequest.getAttribute("claims");
 			if (!ObjectUtils.isEmpty(claims)) {
+				// Delete old token from cache
+				cacheService.deleteCache(tokenStore, tokenUtil.getTokenFromHeader(httpServletRequest));
+
+				// Create new token
 				Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
 				String newAccessToken = tokenUtil.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
-				return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
+				return new ResponseTemplate(system, verion, HttpStatus.OK.value(),
 						messageUtil.getMessagelangUS("refresh.success"), null,
 						new JwtDto(newAccessToken, model.getRefreshTokenName()));
 			} else {
-				return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
+				return new ResponseTemplate(system, verion, HttpStatus.OK.value(),
 						messageUtil.getMessagelangUS("valid.tokens"), null, null);
 			}
 		} else {
-			throw new RefreshTokenException(sytem, verion, messageUtil.getMessagelangUS("expired.refresh.token"));
+			throw new TokenException(system, verion, messageUtil.getMessagelangUS("expired.refresh.token"));
 		}
 	}
 
@@ -99,7 +112,7 @@ public class RefreshTokenService {
 			HttpServletRequest httpServletRequest) {
 		RefreshTokenDto model = findRefreshTokenByToken(resfreshTokenRequest.getData().getRefreshTokenName());
 		if (ObjectUtils.isEmpty(model)) {
-			throw new RefreshTokenException(sytem, verion, messageUtil.getMessagelangUS("not.valid.refresh.token"));
+			throw new TokenException(system, verion, messageUtil.getMessagelangUS("not.valid.refresh.token"));
 		} else {
 			return verifyExpirationRefreshToken(model, httpServletRequest);
 		}

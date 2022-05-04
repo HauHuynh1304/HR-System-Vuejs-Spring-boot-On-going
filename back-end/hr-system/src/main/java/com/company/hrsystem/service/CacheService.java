@@ -11,16 +11,16 @@ public class CacheService {
 	@Autowired
 	CacheManager cacheManager;
 
-	public void updateCache(String cacheName, String token) {
-		cacheManager.getCache(cacheName).put(token, token);
+	public void updateCache(String cacheName, String key, String value) {
+		cacheManager.getCache(cacheName).put(key, value);
 	}
 
-	public void deleteCache(String cacheName, String token) {
-		cacheManager.getCache(cacheName).evict(token);
+	public void deleteCache(String cacheName, String key) {
+		cacheManager.getCache(cacheName).evict(key);
 	}
 
-	public boolean isExistsInCache(String cacheName, String token) {
-		if (ObjectUtils.isEmpty(cacheManager.getCache(cacheName).get(token))) {
+	public boolean isExistsInCache(String cacheName, String key) {
+		if (ObjectUtils.isEmpty(cacheManager.getCache(cacheName).get(key))) {
 			return false;
 		} else {
 			return true;

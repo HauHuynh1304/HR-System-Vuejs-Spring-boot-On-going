@@ -21,12 +21,6 @@ public abstract class SystemAccountModel {
 
 	private String updatedAt;
 
-	public SystemAccountModel(Integer systemAccountId, String systemEmail, String systemPassword) {
-		this.systemAccountId = systemAccountId;
-		this.systemEmail = systemEmail;
-		this.systemPassword = systemPassword;
-	}
-
 	public SystemAccountModel(Integer systemAccountId, String systemEmail, String systemPassword, Boolean deletedFlag,
 			String createdAt, String updatedAt) {
 		this.systemAccountId = systemAccountId;

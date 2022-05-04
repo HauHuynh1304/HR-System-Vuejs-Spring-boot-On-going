@@ -25,7 +25,7 @@ import com.company.hrsystem.request.ChangePasswordRequest;
 import com.company.hrsystem.request.SignUpRequest;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.TokenUtil;
-import com.company.hrsystem.utils.CheckAuthenUtil;
+import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.MessageUtil;
 
@@ -55,6 +55,9 @@ public class AuthenticationService {
 
 	@Autowired
 	CacheService cacheService;
+
+	@Autowired
+	AuthenUtil authenUtil;
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -90,7 +93,7 @@ public class AuthenticationService {
 		SystemAccountDto systemAccount = request.getData().getAccount();
 		Integer[] roleIds = request.getData().getRoleIds();
 		systemAccount.setSystemPassword(passwordEncoder.encode(systemAccount.getSystemPassword()));
-		this.accountMapper.insertSelective(systemAccount);
+		accountMapper.insertSelective(systemAccount);
 		accountRoleMapper.insertAccountRole(systemAccount, roleIds);
 		return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("user.signup.successful"), null, null);
@@ -101,7 +104,7 @@ public class AuthenticationService {
 			ChangePasswordRequest ChangePwRequest) {
 		String emailFromToken = tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(servletRequest));
 		String emailFromRequest = ChangePwRequest.getData().getAccount().getSystemEmail();
-		if (emailFromToken.equals(emailFromRequest) || CheckAuthenUtil.checkAuthen(CommonConstant.ROOT_ROLE)) {
+		if (emailFromToken.equals(emailFromRequest) || authenUtil.isAuthen(CommonConstant.ROOT_ROLE)) {
 			String password = passwordEncoder.encode(ChangePwRequest.getData().getAccount().getSystemPassword());
 			SystemAccountDto account = new SystemAccountDto(null, emailFromRequest, password, null, null,
 					DateUtil.getCurrentDayHourSecond());

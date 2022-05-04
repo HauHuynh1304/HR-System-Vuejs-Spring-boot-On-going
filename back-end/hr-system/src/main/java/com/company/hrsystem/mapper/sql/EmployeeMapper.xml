@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.hrsystem.mapper.EmployeeMapper">
+	<insert id="insertEmployee"
+		parameterType="com.company.hrsystem.request.EmployeeRequest"
+		useGeneratedKeys="true" keyProperty="employeeId"
+		keyColumn="employee_id">
+		insert into employee
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="employeeProfileId != null">
+				employee_profile_id,
+			</if>
+			<if test="roomId != null">
+				room_id,
+			</if>
+			<if test="personalInfo.personalInfoId != null">
+				personal_info_id,
+			</if>
+			<if test="systemAccountId != null">
+				system_account_id,
+			</if>
+			<if test="employeeStartDate != null">
+				employee_start_date,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="employeeProfileId != null">
+				#{employeeProfileId, jdbcType=VARCHAR},
+			</if>
+			<if test="roomId != null">
+				#{roomId, jdbcType=INTEGER},
+			</if>
+			<if test="personalInfo.personalInfoId != null">
+				#{personalInfo.personalInfoId,
+				jdbcType=INTEGER},
+			</if>
+			<if test="systemAccountId != null">
+				#{systemAccountId, jdbcType=INTEGER},
+			</if>
+			<if test="employeeStartDate != null">
+				STR_TO_DATE(#{employeeStartDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d"),
+			</if>
+		</trim>
+	</insert>
+</mapper>
