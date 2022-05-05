@@ -11,8 +11,4 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthenRoleDto extends SystemRoleModel {
 	
-	public AuthenRoleDto(String roleName) {
-		super(roleName);
-	}
-
 }

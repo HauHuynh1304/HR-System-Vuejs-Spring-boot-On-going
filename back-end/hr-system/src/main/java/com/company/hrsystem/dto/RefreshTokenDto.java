@@ -11,8 +11,4 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RefreshTokenDto extends RefreshTokenModel {
 
-	public RefreshTokenDto(Integer systemAccountId, String refreshTokenName, String expiryDate) {
-		super(systemAccountId, refreshTokenName, expiryDate);
-	}
-
 }

@@ -227,7 +227,7 @@
 	FROM system_account  
   </select>
   
-  <select id="findSystemAccountByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
     	sa.system_account_id
     FROM 

@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 @ResponseStatus(HttpStatus.FORBIDDEN)
 @Getter
 @Setter
-public class RefreshTokenException extends RuntimeException {
+public class TokenException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	private String system;
@@ -32,7 +32,7 @@ public class RefreshTokenException extends RuntimeException {
 
 	private Object data;
 
-	public RefreshTokenException(String system, String version, String errorMessage) {
+	public TokenException(String system, String version, String errorMessage) {
 		super(errorMessage);
 		this.system = system;
 		this.version = version;

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.company.hrsystem.mapper.PersonnalInfoMapper">
+	<insert id="insertPersonalInfo"
+		parameterType="com.company.hrsystem.dto.PersonalInfoDto"
+		useGeneratedKeys="true" keyProperty="personalInfoId"
+		keyColumn="personal_info_id">
+		insert into personal_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="personalName != null">
+				personal_name,
+			</if>
+			<if test="personalBirthday != null">
+				personal_birthday,
+			</if>
+			<if test="personalAddress != null">
+				personal_address,
+			</if>
+			<if test="personalPhoneNumber != null">
+				personal_phone_number,
+			</if>
+			<if test="personalSex != null">
+				personal_sex,
+			</if>
+			<if test="personalIdCard != null">
+				personal_id_card,
+			</if>
+			<if test="personalEmail != null">
+				personal_email,
+			</if>
+			<if test="personalImage != null">
+				personal_image,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="personalName != null">
+				#{personalName, jdbcType=VARCHAR},
+			</if>
+			<if test="personalBirthday != null">
+				STR_TO_DATE(#{personalBirthday, jdbcType=VARCHAR},
+				"%Y-%m-%d"),
+			</if>
+			<if test="personalAddress != null">
+				#{personalAddress, jdbcType=VARCHAR},
+			</if>
+			<if test="personalPhoneNumber != null">
+				#{personalPhoneNumber, jdbcType=VARCHAR},
+			</if>
+			<if test="personalSex != null">
+				#{personalSex, jdbcType=VARCHAR},
+			</if>
+			<if test="personalIdCard != null">
+				#{personalIdCard, jdbcType=VARCHAR},
+			</if>
+			<if test="personalEmail != null">
+				#{personalEmail, jdbcType=VARCHAR},
+			</if>
+			<if test="personalImage != null">
+				#{personalImage, jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+</mapper>

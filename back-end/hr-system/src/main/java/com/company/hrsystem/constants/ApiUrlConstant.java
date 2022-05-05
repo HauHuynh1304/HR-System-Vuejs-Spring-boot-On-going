@@ -23,4 +23,7 @@ public class ApiUrlConstant {
 	public static final String MASTER_INSERT_ROOM = "/master/insert-room";
 	public static final String MASTER_UPDATE_ROOM = "/master/update-room";
 
+	public static final String HUMAN_RESOURCE_INSERT_EMPLOYEE = "/human-resources/insert-employee";
+	public static final String HUMAN_RESOURCE_UPDATE_EMPLOYEE = "/human-resources/insert-employee";
+
 }

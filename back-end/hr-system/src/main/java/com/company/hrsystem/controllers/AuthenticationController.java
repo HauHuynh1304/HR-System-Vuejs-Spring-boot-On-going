@@ -23,7 +23,7 @@ import com.company.hrsystem.service.RefreshTokenService;
 @CrossOrigin
 @RequestMapping(ApiUrlConstant.ROOT_API)
 public class AuthenticationController {
-	
+
 	@Autowired
 	AuthenticationService authenService;
 
@@ -31,8 +31,8 @@ public class AuthenticationController {
 	RefreshTokenService refreshTokenService;
 
 	@PostMapping(ApiUrlConstant.AUTHEN_LOG_IN)
-	public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenRequest request) throws Exception {
-		return ResponseEntity.ok(authenService.handleJwtAuthen(request));
+	public ResponseEntity<?> login(@RequestBody AuthenRequest request) throws Exception {
+		return ResponseEntity.ok(authenService.handleLogin(request));
 	}
 
 	@PostMapping(ApiUrlConstant.AUTHEN_REFRESH_TOKEN)
@@ -48,7 +48,7 @@ public class AuthenticationController {
 	}
 
 	@PostMapping(ApiUrlConstant.AUTHEN_LOG_OUT)
-	public ResponseEntity<?> LogOut(HttpServletRequest request) {
+	public ResponseEntity<?> logOut(HttpServletRequest request) {
 		return ResponseEntity.ok(authenService.handleLogOut(request));
 	}
 

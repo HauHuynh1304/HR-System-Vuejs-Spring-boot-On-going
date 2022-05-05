@@ -46,6 +46,6 @@ public interface SystemAccountMapper {
 
 	List<SystemAccountModel> selectAll();
 
-	SystemAccountModel findSystemAccountByEmail(String email);
+	SystemAccountModel findSystemAccountIdByEmail(String email);
 
 }

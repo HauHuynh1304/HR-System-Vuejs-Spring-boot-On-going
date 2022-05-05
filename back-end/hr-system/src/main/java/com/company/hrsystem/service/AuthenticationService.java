@@ -25,7 +25,7 @@ import com.company.hrsystem.request.ChangePasswordRequest;
 import com.company.hrsystem.request.SignUpRequest;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.TokenUtil;
-import com.company.hrsystem.utils.CheckAuthenUtil;
+import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.MessageUtil;
 
@@ -33,10 +33,10 @@ import com.company.hrsystem.utils.MessageUtil;
 public class AuthenticationService {
 
 	@Value("${system.name}")
-	private String sytem;
+	private String system;
 
 	@Value("${system.version}")
-	private String verion;
+	private String version;
 
 	@Value("${token.store}")
 	private String tokenStore;
@@ -57,6 +57,9 @@ public class AuthenticationService {
 	CacheService cacheService;
 
 	@Autowired
+	AuthenUtil authenUtil;
+
+	@Autowired
 	PasswordEncoder passwordEncoder;
 
 	@Autowired
@@ -65,7 +68,7 @@ public class AuthenticationService {
 	@Autowired
 	SystemAccountRoleMapper accountRoleMapper;
 
-	public ResponseTemplate handleJwtAuthen(AuthenRequest req) throws Exception {
+	public ResponseTemplate handleLogin(AuthenRequest req) throws Exception {
 		String email = req.getData().getUsername();
 		String password = req.getData().getPassword();
 		Authentication authentication = authenticationManager
@@ -74,14 +77,14 @@ public class AuthenticationService {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		String accessToken = tokenUtil.generateJWT(userDetails);
 		String refreshToken = jwtRefreshService.generateRefreshTokenByEmail(email).getRefreshTokenName();
-		return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("user.login.successful"), null, new JwtDto(accessToken, refreshToken));
 	}
 
 	public ResponseTemplate handleLogOut(HttpServletRequest request) {
 		SecurityContextHolder.getContext().setAuthentication(null);
-		cacheService.deleteCache(tokenStore, tokenUtil.getTokenFromHeader(request));
-		return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
+		cacheService.deleteCache(tokenStore, tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(request)));
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("user.logout.successful"), null, null);
 	}
 
@@ -90,9 +93,9 @@ public class AuthenticationService {
 		SystemAccountDto systemAccount = request.getData().getAccount();
 		Integer[] roleIds = request.getData().getRoleIds();
 		systemAccount.setSystemPassword(passwordEncoder.encode(systemAccount.getSystemPassword()));
-		this.accountMapper.insertSelective(systemAccount);
+		accountMapper.insertSelective(systemAccount);
 		accountRoleMapper.insertAccountRole(systemAccount, roleIds);
-		return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("user.signup.successful"), null, null);
 	}
 
@@ -101,15 +104,15 @@ public class AuthenticationService {
 			ChangePasswordRequest ChangePwRequest) {
 		String emailFromToken = tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(servletRequest));
 		String emailFromRequest = ChangePwRequest.getData().getAccount().getSystemEmail();
-		if (emailFromToken.equals(emailFromRequest) || CheckAuthenUtil.checkAuthen(CommonConstant.ROOT_ROLE)) {
+		if (emailFromToken.equals(emailFromRequest) || authenUtil.isAuthen(CommonConstant.ROOT_ROLE)) {
 			String password = passwordEncoder.encode(ChangePwRequest.getData().getAccount().getSystemPassword());
 			SystemAccountDto account = new SystemAccountDto(null, emailFromRequest, password, null, null,
 					DateUtil.getCurrentDayHourSecond());
 			accountMapper.updateByEmailSelective(account);
-			return new ResponseTemplate(sytem, verion, HttpStatus.OK.value(),
+			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 					messageUtil.getMessagelangUS("change.password.success"), null, null);
 		} else {
-			return new ResponseTemplate(sytem, verion, HttpStatus.NOT_ACCEPTABLE.value(),
+			return new ResponseTemplate(system, version, HttpStatus.NOT_ACCEPTABLE.value(),
 					messageUtil.getMessagelangUS("not.correct.email"), null, null);
 		}
 	}

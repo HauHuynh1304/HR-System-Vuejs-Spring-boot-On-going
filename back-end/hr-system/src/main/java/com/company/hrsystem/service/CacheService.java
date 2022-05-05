@@ -3,7 +3,6 @@ package com.company.hrsystem.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 @Service
 public class CacheService {
@@ -11,19 +10,22 @@ public class CacheService {
 	@Autowired
 	CacheManager cacheManager;
 
-	public void updateCache(String cacheName, String token) {
-		cacheManager.getCache(cacheName).put(token, token);
+	public void updateCache(String cacheName, String key, String value) {
+		cacheManager.getCache(cacheName).put(key, value);
 	}
 
-	public void deleteCache(String cacheName, String token) {
-		cacheManager.getCache(cacheName).evict(token);
+	public void deleteCache(String cacheName, String key) {
+		cacheManager.getCache(cacheName).evict(key);
 	}
 
-	public boolean isExistsInCache(String cacheName, String token) {
-		if (ObjectUtils.isEmpty(cacheManager.getCache(cacheName).get(token))) {
+	public Boolean isExistsStringInCache(String cacheName, String key, String value) {
+		// cacheManager.getCache(cacheName).get(key).get() may be cause
+		// NullPointerException
+		try {
+			return value.equals(cacheManager.getCache(cacheName).get(key).get().toString()) ? true : false;
+		} catch (NullPointerException e) {
 			return false;
-		} else {
-			return true;
 		}
 	}
+
 }

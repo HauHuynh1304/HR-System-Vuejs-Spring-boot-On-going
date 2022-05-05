@@ -7,26 +7,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class EmployeeModel {
-
+public abstract class EmployeePositionModel {
+	
 	private Integer employeeId;
-
-	private String employeeProfileId;
-
-	private Integer roomId;
-
-	private Integer personalInfoId;
-
-	private Integer systemAccountId;
+	
+	private Integer positionId;
 
 	private Boolean deletedFlag;
-
-	private String employeeStartDate;
-
-	private String employeeEndDate;
+	
+	private String startDate;
+	
+	private String endDate;
 
 	private String createdAt;
 
 	private String updatedAt;
-
+	
 }
