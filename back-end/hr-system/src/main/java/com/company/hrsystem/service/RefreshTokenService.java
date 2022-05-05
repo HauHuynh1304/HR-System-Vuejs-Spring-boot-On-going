@@ -23,6 +23,7 @@ import com.company.hrsystem.mapper.SystemAccountMapper;
 import com.company.hrsystem.request.ResfreshTokenRequest;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.TokenUtil;
+import com.company.hrsystem.utils.MathUtil;
 import com.company.hrsystem.utils.MessageUtil;
 
 import io.jsonwebtoken.impl.DefaultClaims;
@@ -37,16 +38,13 @@ public class RefreshTokenService {
 	ResfreshTokenMapper refreshTokenMapper;
 
 	@Value("${jwt.refreshValid}")
-	private Long refreshTokenValid;
-
-	@Value("${system.name}")
-	private String sytem;
+	private String refreshTokenValid;
 
 	@Value("${system.name}")
 	private String system;
 
 	@Value("${system.version}")
-	private String verion;
+	private String version;
 
 	@Value("${token.store}")
 	private String tokenStore;
@@ -58,7 +56,10 @@ public class RefreshTokenService {
 	private MessageUtil messageUtil;
 
 	@Autowired
-	CacheService cacheService;
+	private CacheService cacheService;
+
+	@Autowired
+	private MathUtil mathUtil;
 
 	public RefreshTokenDto findRefreshTokenByEmail(String email) {
 		return refreshTokenMapper.findRefreshTokenByEmail(email);
@@ -72,7 +73,7 @@ public class RefreshTokenService {
 		RefreshTokenDto model = findRefreshTokenByEmail(email);
 		RefreshTokenDto obj = new RefreshTokenDto();
 		obj.setSystemAccountId(systemAccountMapper.findSystemAccountIdByEmail(email).getSystemAccountId());
-		obj.setExpiryDate(Instant.now().plusMillis(refreshTokenValid).toString());
+		obj.setExpiryDate(Instant.now().plusMillis(mathUtil.calculateFromString(refreshTokenValid)).toString());
 		obj.setRefreshTokenName(UUID.randomUUID().toString());
 		if (ObjectUtils.isEmpty(model)) {
 			// create new refresh token at the first time login
@@ -90,21 +91,23 @@ public class RefreshTokenService {
 		if (!isExpiredRefreshToken) {
 			DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) httpServletRequest.getAttribute("claims");
 			if (!ObjectUtils.isEmpty(claims)) {
-				// Delete old token from cache
-				cacheService.deleteCache(tokenStore, tokenUtil.getTokenFromHeader(httpServletRequest));
-
 				// Create new token
-				Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
-				String newAccessToken = tokenUtil.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
-				return new ResponseTemplate(system, verion, HttpStatus.OK.value(),
-						messageUtil.getMessagelangUS("refresh.success"), null,
-						new JwtDto(newAccessToken, model.getRefreshTokenName()));
+				if (cacheService.isExistsStringInCache(tokenStore, claims.getSubject(),
+						tokenUtil.getTokenFromHeader(httpServletRequest))) {
+					Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
+					String newAccessToken = tokenUtil.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
+					return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+							messageUtil.getMessagelangUS("refresh.success"), null,
+							new JwtDto(newAccessToken, model.getRefreshTokenName()));
+				} else {
+					throw new TokenException(system, version, messageUtil.getMessagelangUS("not.valid.access.token"));
+				}
 			} else {
-				return new ResponseTemplate(system, verion, HttpStatus.OK.value(),
+				return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 						messageUtil.getMessagelangUS("valid.tokens"), null, null);
 			}
 		} else {
-			throw new TokenException(system, verion, messageUtil.getMessagelangUS("expired.refresh.token"));
+			throw new TokenException(system, version, messageUtil.getMessagelangUS("expired.refresh.token"));
 		}
 	}
 
@@ -112,7 +115,7 @@ public class RefreshTokenService {
 			HttpServletRequest httpServletRequest) {
 		RefreshTokenDto model = findRefreshTokenByToken(resfreshTokenRequest.getData().getRefreshTokenName());
 		if (ObjectUtils.isEmpty(model)) {
-			throw new TokenException(system, verion, messageUtil.getMessagelangUS("not.valid.refresh.token"));
+			throw new TokenException(system, version, messageUtil.getMessagelangUS("not.valid.refresh.token"));
 		} else {
 			return verifyExpirationRefreshToken(model, httpServletRequest);
 		}

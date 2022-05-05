@@ -8,18 +8,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenUtil {
 
-	public Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	public Authentication authentication() {
+		return SecurityContextHolder.getContext().getAuthentication();
+	}
 
 	public Boolean isAuthen(String role) {
-		return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role));
+		return authentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role));
 	}
 
 	public UserDetails userDetails() {
-		return (UserDetails) authentication.getPrincipal();
+		return (UserDetails) authentication().getPrincipal();
 	}
 
 	public String getUsername() {
-		return this.userDetails().getUsername();
+		return userDetails().getUsername();
 	}
 
 }

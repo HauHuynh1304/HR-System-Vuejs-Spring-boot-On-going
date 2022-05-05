@@ -3,7 +3,6 @@ package com.company.hrsystem.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 @Service
 public class CacheService {
@@ -19,11 +18,14 @@ public class CacheService {
 		cacheManager.getCache(cacheName).evict(key);
 	}
 
-	public boolean isExistsInCache(String cacheName, String key) {
-		if (ObjectUtils.isEmpty(cacheManager.getCache(cacheName).get(key))) {
+	public Boolean isExistsStringInCache(String cacheName, String key, String value) {
+		// cacheManager.getCache(cacheName).get(key).get() may be cause
+		// NullPointerException
+		try {
+			return value.equals(cacheManager.getCache(cacheName).get(key).get().toString()) ? true : false;
+		} catch (NullPointerException e) {
 			return false;
-		} else {
-			return true;
 		}
 	}
+
 }

@@ -17,7 +17,7 @@ public class ResponseTemplate {
 
 	private String system;
 
-	private String verion;
+	private String version;
 
 	private int status;
 
@@ -33,7 +33,7 @@ public class ResponseTemplate {
 	public ResponseTemplate(String system, String version, int status, String message, String errorMessage,
 			Object data) {
 		this.system = system;
-		this.verion = version;
+		this.version = version;
 		this.status = status;
 		this.message = message;
 		this.errorMessage = errorMessage;
