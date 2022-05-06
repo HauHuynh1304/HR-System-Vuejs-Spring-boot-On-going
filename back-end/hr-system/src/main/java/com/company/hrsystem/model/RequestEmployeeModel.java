@@ -1,7 +1,5 @@
 package com.company.hrsystem.model;
 
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-abstract class RequestEmployeeModel {
+public abstract class RequestEmployeeModel {
 
 	private Integer employeeId;
 
@@ -19,20 +17,22 @@ abstract class RequestEmployeeModel {
 
 	private Integer approverActionId;
 
-	private Date startDate;
+	private String startDate;
 
-	private Date endDate;
+	private String endDate;
 
 	private String partialDate;
 
 	private String requestDescription;
 
-	private Date expectedApproveDate;
+	private String expectedApproveDate;
 
-	private Integer duration;
+	private Double duration;
 
 	private String requestStatus;
 
-	private Date createdAt;
+	private String createdAt;
+	
+	private String updatedAt;
 
 }

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-abstract class RequestModel {
+public abstract class RequestModel {
 
 	private Integer requestId;
 

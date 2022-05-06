@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.company.hrsystem.mapper.RequestEmployeeMapper">
+	<insert id="insertRequestEmployee" parameterType="map">
+		INSERT INTO request_employee
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="requestEmployeeDto.employeeId != null">
+				employee_id,
+			</if>
+			<if test="requestModel.requestId != null">
+				request_id,
+			</if>
+			<if test="supervisorActionDto.supervisorActionId != null">
+				supervisor_action_id,
+			</if>
+			<if test="approverActionDto.approverActionId != null">
+				approver_action_id,
+			</if>
+			<if test="requestEmployeeDto.startDate != null">
+				start_date,
+			</if>
+			<if test="requestEmployeeDto.endDate != null">
+				end_date,
+			</if>
+			<if test="requestEmployeeDto.partialDate != null">
+				partial_date,
+			</if>
+			<if test="requestEmployeeDto.requestDescription != null">
+				request_description,
+			</if>
+			<if test="requestEmployeeDto.expectedApproveDate != null">
+				expected_approve_date,
+			</if>
+			<if test="requestEmployeeDto.duration != null">
+				duration,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="requestEmployeeDto.employeeId != null">
+				#{requestEmployeeDto.employeeId, jdbcType=INTEGER},
+			</if>
+			<if test="requestModel.requestId != null">
+				#{requestModel.requestId, jdbcType=INTEGER},
+			</if>
+			<if test="supervisorActionDto.supervisorActionId != null">
+				#{supervisorActionDto.supervisorActionId,
+				jdbcType=INTEGER},
+			</if>
+			<if test="approverActionDto.approverActionId != null">
+				#{approverActionDto.approverActionId, jdbcType=INTEGER},
+			</if>
+			<if test="requestEmployeeDto.startDate != null">
+				STR_TO_DATE(#{requestEmployeeDto.startDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d"),
+			</if>
+			<if test="requestEmployeeDto.endDate != null">
+				STR_TO_DATE(#{requestEmployeeDto.endDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d"),
+			</if>
+			<if test="requestEmployeeDto.partialDate != null">
+				#{requestEmployeeDto.partialDate, jdbcType=VARCHAR},
+			</if>
+			<if test="requestEmployeeDto.requestDescription != null">
+				#{requestEmployeeDto.requestDescription,
+				jdbcType=VARCHAR},
+			</if>
+			<if test="requestEmployeeDto.expectedApproveDate != null">
+				STR_TO_DATE(#{requestEmployeeDto.expectedApproveDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d"),
+			</if>
+			<if test="requestEmployeeDto.duration != null">
+				#{requestEmployeeDto.duration, jdbcType=FLOAT},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateRequestEmployee"
+		parameterType="com.company.hrsystem.dto.RequestEmployeeDto">
+		UPDATE request_employee
+		<set>
+			<if test="requestStatus != null">
+				request_status = #{requestStatus, jdbcType=VARCHAR},
+			</if>
+			<if test="requestDescription != null">
+				request_description = #{requestDescription, jdbcType=VARCHAR},
+			</if>
+			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+		</set>
+		WHERE
+			request_id = #{requestId, jdbcType=INTEGER}
+				AND request_status = "WAITING"
+	</update>
+</mapper>

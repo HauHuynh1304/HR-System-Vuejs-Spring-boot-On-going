@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.company.hrsystem.service.CacheService;
+import com.company.hrsystem.service.UserDetailsImpl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -37,6 +38,12 @@ public class TokenUtil implements Serializable {
 
 	@Value("${token.authorization}")
 	private String tokenAuthorization;
+	
+	@Value("${jwt.payload.id}")
+	private String id;
+	
+	@Value("${jwt.payload.roles}")
+	private String roles;
 
 	@Autowired
 	private CacheService cacheService;
@@ -77,11 +84,12 @@ public class TokenUtil implements Serializable {
 	}
 
 	// Generate JWT
-	public String generateJWT(UserDetails userDetails) {
+	public String generateJWT(UserDetailsImpl userDetails) {
 		final String authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.joining(","));
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("roles", authorities);
+		claims.put(id, userDetails.getId());
+		claims.put(roles, authorities);
 		return doGenerateJWT(claims, userDetails.getUsername());
 	}
 

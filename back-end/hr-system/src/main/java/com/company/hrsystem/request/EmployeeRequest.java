@@ -2,6 +2,7 @@ package com.company.hrsystem.request;
 
 import java.util.List;
 
+import com.company.hrsystem.dto.DocumentDto;
 import com.company.hrsystem.dto.EmployeePositionDto;
 import com.company.hrsystem.dto.PersonalInfoDto;
 import com.company.hrsystem.model.EmployeeModel;
@@ -17,7 +18,7 @@ public class EmployeeRequest extends EmployeeModel {
 
 	private PersonalInfoDto personalInfo;
 
-	private Integer[] documentIds;
+	private List<DocumentDto> documents;
 
 	private List<EmployeePositionDto> positions;
 

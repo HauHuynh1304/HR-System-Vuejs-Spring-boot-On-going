@@ -5,9 +5,9 @@
 	<insert id="insertEmployeeDocument">
 		insert into employee_document (employee_id, document_id)
 		values
-		<foreach collection="documentIds" item="item" open="("
+		<foreach collection="documents" item="item" open="("
 			separator="),(" close=")">
-			#{employee.employeeId}, #{item}
+			#{employee.employeeId}, #{item.documentId}
 		</foreach>
 	</insert>
 </mapper>
