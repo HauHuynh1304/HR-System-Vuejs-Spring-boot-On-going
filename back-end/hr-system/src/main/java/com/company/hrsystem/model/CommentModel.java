@@ -1,7 +1,5 @@
 package com.company.hrsystem.model;
 
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-abstract class CommentModel {
+public abstract class CommentModel {
 
 	private Integer supervisorActionId;
 
@@ -17,6 +15,6 @@ abstract class CommentModel {
 
 	private String commentDetail;
 
-	private Date createdAt;
+	private String createdAt;
 
 }

@@ -50,7 +50,7 @@ public class HumanResourceService {
 			PersonalInfoDto personalInfo = request.getData().getPersonalInfo();
 			personnalInfoMapper.insertPersonalInfo(personalInfo);
 			employeeMapper.insertEmployee(request.getData());
-			employeeDocumentMapper.insertEmployeeDocument(request.getData(), request.getData().getDocumentIds());
+			employeeDocumentMapper.insertEmployeeDocument(request.getData(), request.getData().getDocuments());
 			employeePositionMapper.insertEmployeePosition(request.getData(), request.getData().getPositions());
 			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 					messageUtil.getMessagelangUS("insert.employee.success"), null, null);

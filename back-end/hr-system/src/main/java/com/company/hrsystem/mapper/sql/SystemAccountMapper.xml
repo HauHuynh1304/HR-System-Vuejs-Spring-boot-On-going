@@ -227,12 +227,38 @@
 	FROM system_account  
   </select>
   
-  <select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
-    SELECT
-    	sa.system_account_id
-    FROM 
-    	system_account sa
-    WHERE
-    	sa.system_email = #{accEmail, jdbcType = VARCHAR} 
-  </select>
+	<select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+    		sa.system_account_id
+    	FROM 
+    		system_account sa
+    	WHERE
+    		sa.system_email = #{accEmail, jdbcType = VARCHAR} 
+	</select>
+  
+ 	<resultMap type="com.company.hrsystem.dto.AuthenAccountDto" id="authenResult">
+ 		<id property="systemAccountId" jdbcType="INTEGER" column="system_account_id"/>
+		<result property="systemEmail" jdbcType="VARCHAR" column="system_email"/>
+		<result property="systemPassword" jdbcType="VARCHAR" column="system_password"/>
+		
+		<!-- map to list property in java class -->
+		<collection property="roles" ofType="com.company.hrsystem.dto.AuthenRoleDto">
+			<result property="roleName" jdbcType="VARCHAR" column="role_name"/>
+		</collection>
+	</resultMap>
+	
+	<select id="findAuthenAccountByEmail" resultMap="authenResult" parameterType="java.lang.String">
+		SELECT
+			sa.system_account_id,
+			sa.system_email,
+			sa.system_password,
+			sr.role_name
+		FROM system_account sa
+			LEFT JOIN system_account_role sar
+				ON sa.system_account_id = sar.system_account_id
+			LEFT JOIN system_role sr
+				ON sar.system_role_id = sr.system_role_id
+		WHERE 
+			sa.system_email = #{accEmail, jdbcType = VARCHAR}       
+	</select>
 </mapper>

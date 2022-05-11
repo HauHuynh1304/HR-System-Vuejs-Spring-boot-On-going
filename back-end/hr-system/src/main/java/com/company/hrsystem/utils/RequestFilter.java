@@ -41,6 +41,12 @@ public class RequestFilter extends OncePerRequestFilter {
 
 	@Value("${jwt.secret}")
 	private String secret;
+	
+	@Value("${jwt.start}")
+	private String bearer;
+
+	@Value("${jwt.attribute}")
+	private String claims;
 
 	@Autowired
 	private UserDetailsServiceImp userDetailsService;
@@ -64,35 +70,29 @@ public class RequestFilter extends OncePerRequestFilter {
 		String jwtToken = null;
 		// JWT Token is in the form "Bearer token". Remove Bearer word and get
 		// only the Token
-		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+		if (requestTokenHeader != null && requestTokenHeader.startsWith(bearer)) {
 			jwtToken = requestTokenHeader.substring(7);
 			try {
 				username = tokenUtil.getUsernameFromToken(jwtToken);
 				if (!cacheService.isExistsStringInCache(tokenStore, username, jwtToken)) {
-					LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
-					HttpServletResponseUtil.ServletResponse(response,
-							new ResponseTemplate(system, version, HttpStatus.FORBIDDEN.value(), null,
-									messageUtil.getMessagelangUS("not.valid.access.token"), null));
+					responseErrAccessToken(response);
 					return;
 				}
 			} catch (MalformedJwtException | SignatureException e) {
-				LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
-				LogUtil.error(ExceptionUtils.getStackTrace(e));
-				HttpServletResponseUtil.ServletResponse(response,
-						new ResponseTemplate(system, version, HttpStatus.FORBIDDEN.value(), null,
-								messageUtil.getMessagelangUS("not.valid.access.token"), null));
+				responseErrAccessToken(response, e);
 				return;
 			} catch (ExpiredJwtException e) {
 				String requestURL = request.getRequestURI().toString();
 				if (requestURL
 						.equals(StringUtil.apiBuilder(ApiUrlConstant.ROOT_API, ApiUrlConstant.AUTHEN_REFRESH_TOKEN))) {
-					request.setAttribute("claims", e.getClaims());
+					if (!cacheService.isExistsStringInCache(tokenStore, e.getClaims().getSubject(), jwtToken)) {
+						responseErrAccessToken(response, e);
+						return;
+					} else {
+						request.setAttribute(claims, e.getClaims());
+					}
 				} else {
-					LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
-					LogUtil.error(ExceptionUtils.getStackTrace(e));
-					HttpServletResponseUtil.ServletResponse(response,
-							new ResponseTemplate(system, version, HttpStatus.FORBIDDEN.value(), null,
-									messageUtil.getMessagelangUS("not.valid.access.token"), null));
+					responseErrAccessToken(response, e);
 					return;
 				}
 			}
@@ -119,5 +119,18 @@ public class RequestFilter extends OncePerRequestFilter {
 		}
 		filterChain.doFilter(request, response);
 	}
-	
+
+	public void responseErrAccessToken(HttpServletResponse response, Exception e) throws IOException {
+		LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
+		LogUtil.error(ExceptionUtils.getStackTrace(e));
+		HttpServletResponseUtil.ServletResponse(response, new ResponseTemplate(system, version,
+				HttpStatus.FORBIDDEN.value(), null, messageUtil.getMessagelangUS("not.valid.access.token"), null));
+	}
+
+	public void responseErrAccessToken(HttpServletResponse response) throws IOException {
+		LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
+		HttpServletResponseUtil.ServletResponse(response, new ResponseTemplate(system, version,
+				HttpStatus.FORBIDDEN.value(), null, messageUtil.getMessagelangUS("not.valid.access.token"), null));
+	}
+
 }

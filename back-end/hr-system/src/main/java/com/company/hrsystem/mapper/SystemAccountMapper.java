@@ -1,6 +1,7 @@
 package com.company.hrsystem.mapper;
 
 import com.company.hrsystem.model.SystemAccountModel;
+import com.company.hrsystem.dto.AuthenAccountDto;
 import com.company.hrsystem.dto.SystemAccountDto;
 import com.company.hrsystem.model.SystemAccountExample;
 import java.util.List;
@@ -47,5 +48,7 @@ public interface SystemAccountMapper {
 	List<SystemAccountModel> selectAll();
 
 	SystemAccountModel findSystemAccountIdByEmail(String email);
+	
+	AuthenAccountDto findAuthenAccountByEmail(String email);
 
 }

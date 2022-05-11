@@ -1,7 +1,5 @@
 package com.company.hrsystem.model;
 
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-abstract class ApproverActionModel {
+public abstract class ApproverActionModel {
 
 	private Integer approverActionId;
 
@@ -17,8 +15,8 @@ abstract class ApproverActionModel {
 
 	private String actionType;
 
-	private Date createdAt;
+	private String createdAt;
 
-	private Date updatedAt;
+	private String updatedAt;
 
 }

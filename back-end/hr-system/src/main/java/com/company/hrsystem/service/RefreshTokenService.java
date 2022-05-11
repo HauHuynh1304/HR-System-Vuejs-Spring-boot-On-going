@@ -23,6 +23,7 @@ import com.company.hrsystem.mapper.SystemAccountMapper;
 import com.company.hrsystem.request.ResfreshTokenRequest;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.TokenUtil;
+import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.MathUtil;
 import com.company.hrsystem.utils.MessageUtil;
 
@@ -49,6 +50,9 @@ public class RefreshTokenService {
 	@Value("${token.store}")
 	private String tokenStore;
 
+	@Value("${jwt.attribute}")
+	private String claims;
+
 	@Autowired
 	private TokenUtil tokenUtil;
 
@@ -56,10 +60,10 @@ public class RefreshTokenService {
 	private MessageUtil messageUtil;
 
 	@Autowired
-	private CacheService cacheService;
+	private MathUtil mathUtil;
 
 	@Autowired
-	private MathUtil mathUtil;
+	private AuthenUtil authenUtil;
 
 	public RefreshTokenDto findRefreshTokenByEmail(String email) {
 		return refreshTokenMapper.findRefreshTokenByEmail(email);
@@ -72,7 +76,7 @@ public class RefreshTokenService {
 	public RefreshTokenDto generateRefreshTokenByEmail(String email) {
 		RefreshTokenDto model = findRefreshTokenByEmail(email);
 		RefreshTokenDto obj = new RefreshTokenDto();
-		obj.setSystemAccountId(systemAccountMapper.findSystemAccountIdByEmail(email).getSystemAccountId());
+		obj.setSystemAccountId(authenUtil.getAccountId());
 		obj.setExpiryDate(Instant.now().plusMillis(mathUtil.calculateFromString(refreshTokenValid)).toString());
 		obj.setRefreshTokenName(UUID.randomUUID().toString());
 		if (ObjectUtils.isEmpty(model)) {
@@ -85,39 +89,29 @@ public class RefreshTokenService {
 		return obj;
 	}
 
-	public ResponseTemplate verifyExpirationRefreshToken(RefreshTokenDto model, HttpServletRequest httpServletRequest) {
-		Instant expiredRefreshToken = Instant.parse(model.getExpiryDate());
-		Boolean isExpiredRefreshToken = expiredRefreshToken.compareTo(Instant.now()) < 0;
-		if (!isExpiredRefreshToken) {
-			DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) httpServletRequest.getAttribute("claims");
-			if (!ObjectUtils.isEmpty(claims)) {
-				// Create new token
-				if (cacheService.isExistsStringInCache(tokenStore, claims.getSubject(),
-						tokenUtil.getTokenFromHeader(httpServletRequest))) {
-					Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
-					String newAccessToken = tokenUtil.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
-					return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-							messageUtil.getMessagelangUS("refresh.success"), null,
-							new JwtDto(newAccessToken, model.getRefreshTokenName()));
-				} else {
-					throw new TokenException(system, version, messageUtil.getMessagelangUS("not.valid.access.token"));
-				}
-			} else {
-				return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-						messageUtil.getMessagelangUS("valid.tokens"), null, null);
-			}
-		} else {
-			throw new TokenException(system, version, messageUtil.getMessagelangUS("expired.refresh.token"));
-		}
-	}
-
 	public ResponseTemplate handleRefreshToken(ResfreshTokenRequest resfreshTokenRequest,
 			HttpServletRequest httpServletRequest) {
 		RefreshTokenDto model = findRefreshTokenByToken(resfreshTokenRequest.getData().getRefreshTokenName());
 		if (ObjectUtils.isEmpty(model)) {
 			throw new TokenException(system, version, messageUtil.getMessagelangUS("not.valid.refresh.token"));
 		} else {
-			return verifyExpirationRefreshToken(model, httpServletRequest);
+			DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) httpServletRequest.getAttribute(this.claims);
+			if (ObjectUtils.isEmpty(claims)) {
+				return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+						messageUtil.getMessagelangUS("valid.tokens"), null, null);
+			} else {
+				Instant expiredRefreshToken = Instant.parse(model.getExpiryDate());
+				Boolean isExpiredRefreshToken = expiredRefreshToken.compareTo(Instant.now()) < 0;
+				if (isExpiredRefreshToken) {
+					throw new TokenException(system, version, messageUtil.getMessagelangUS("expired.refresh.token"));
+				} else {
+					Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
+					String newAccessToken = tokenUtil.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
+					return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+							messageUtil.getMessagelangUS("refresh.success"), null,
+							new JwtDto(newAccessToken, model.getRefreshTokenName()));
+				}
+			}
 		}
 	}
 

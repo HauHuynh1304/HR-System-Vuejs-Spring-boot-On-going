@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.company.hrsystem.mapper.ApproverActionMapper">
+	<insert id="insertApproverAction"
+		parameterType="com.company.hrsystem.dto.ApproverActionDto"
+		useGeneratedKeys="true" keyColumn="approver_action_id"
+		keyProperty="approverActionId">
+		INSERT INTO approver_action (approver_id)
+		VALUES 
+			(
+				#{approverId, jdbcType=INTEGER}
+			)
+	</insert>
+</mapper>

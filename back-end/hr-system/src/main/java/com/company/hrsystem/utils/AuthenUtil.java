@@ -2,8 +2,9 @@ package com.company.hrsystem.utils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.company.hrsystem.service.UserDetailsImpl;
 
 @Service
 public class AuthenUtil {
@@ -16,12 +17,16 @@ public class AuthenUtil {
 		return authentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role));
 	}
 
-	public UserDetails userDetails() {
-		return (UserDetails) authentication().getPrincipal();
+	public UserDetailsImpl userDetails() {
+		return (UserDetailsImpl) authentication().getPrincipal();
 	}
 
 	public String getUsername() {
 		return userDetails().getUsername();
+	}
+
+	public Integer getAccountId() {
+		return userDetails().getId();
 	}
 
 }

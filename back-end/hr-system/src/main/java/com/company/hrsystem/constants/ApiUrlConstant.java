@@ -26,4 +26,7 @@ public class ApiUrlConstant {
 	public static final String HUMAN_RESOURCE_INSERT_EMPLOYEE = "/human-resources/insert-employee";
 	public static final String HUMAN_RESOURCE_UPDATE_EMPLOYEE = "/human-resources/insert-employee";
 
+	public static final String BUSINESS_INSERT_REQUEST = "/business/insert-request";
+	public static final String BUSINESS_UPDATE_REQUEST = "/business/update-request";
+
 }

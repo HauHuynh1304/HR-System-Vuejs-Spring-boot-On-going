@@ -9,12 +9,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.JwtDto;
 import com.company.hrsystem.dto.SystemAccountDto;
@@ -74,8 +75,8 @@ public class AuthenticationService {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-		String accessToken = tokenUtil.generateJWT(userDetails);
+		UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
+		String accessToken = tokenUtil.generateJWT(userDetailsImpl);
 		String refreshToken = jwtRefreshService.generateRefreshTokenByEmail(email).getRefreshTokenName();
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("user.login.successful"), null, new JwtDto(accessToken, refreshToken));
@@ -112,8 +113,7 @@ public class AuthenticationService {
 			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 					messageUtil.getMessagelangUS("change.password.success"), null, null);
 		} else {
-			return new ResponseTemplate(system, version, HttpStatus.NOT_ACCEPTABLE.value(),
-					messageUtil.getMessagelangUS("not.correct.email"), null, null);
+			throw new GlobalException(system, version, messageUtil.getMessagelangUS("not.correct.email"));
 		}
 	}
 }

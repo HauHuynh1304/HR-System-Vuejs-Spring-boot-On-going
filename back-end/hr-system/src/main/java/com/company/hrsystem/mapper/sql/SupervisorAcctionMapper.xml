@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.company.hrsystem.mapper.SupervisorAcctionMapper">
+	<insert id="insertSupervisorAction"
+		parameterType="com.company.hrsystem.dto.SupervisorActionDto"
+		useGeneratedKeys="true" keyColumn="supervisor_action_id"
+		keyProperty="supervisorActionId">
+		INSERT INTO
+			supervisor_action (supervisor_id)
+		VALUES
+			(
+				#{supervisorId, jdbcType=INTEGER}
+			)
+	</insert>
+</mapper>

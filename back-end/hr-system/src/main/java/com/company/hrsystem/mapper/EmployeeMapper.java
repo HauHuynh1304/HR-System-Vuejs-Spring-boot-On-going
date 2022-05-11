@@ -8,5 +8,7 @@ import com.company.hrsystem.request.EmployeeRequest;
 public interface EmployeeMapper {
 
 	int insertEmployee(EmployeeRequest employee);
+	
+	int findEmployeeIdByAccountId(Integer accountId);
 
 }
