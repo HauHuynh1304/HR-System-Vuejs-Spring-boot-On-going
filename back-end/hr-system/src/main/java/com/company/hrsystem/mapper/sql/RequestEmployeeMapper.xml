@@ -94,4 +94,28 @@
 			request_id = #{requestId, jdbcType=INTEGER}
 				AND request_status = "WAITING"
 	</update>
+	
+	<update id="updateRequestBySupervisor"
+		parameterType="com.company.hrsystem.dto.RequestEmployeeDto">
+		UPDATE request_employee
+		<set>
+			request_status = #{requestStatus, jdbcType=VARCHAR},
+			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+		</set>
+		WHERE
+			supervisor_action_id = #{supervisorActionId, jdbcType=INTEGER}
+				AND request_status = "WAITING"
+	</update>
+	
+	<update id="updateRequestByApprover"
+		parameterType="com.company.hrsystem.dto.RequestEmployeeDto">
+		UPDATE request_employee
+		<set>
+			request_status = #{requestStatus, jdbcType=VARCHAR},
+			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+		</set>
+		WHERE
+			approver_action_id = #{approverActionId, jdbcType=INTEGER}
+				AND request_status = "WAITING"
+	</update>
 </mapper>

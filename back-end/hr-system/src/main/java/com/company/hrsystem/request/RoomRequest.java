@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class RoomRequest extends RoomModel {
 
+	private static final long serialVersionUID = 1L;
+
 	private RoomRequest data;
 
 }

@@ -22,7 +22,7 @@ public class HumanResourceController {
 	HumanResourceService humanResourceService;
 
 	@PostMapping(ApiUrlConstant.HUMAN_RESOURCE_INSERT_EMPLOYEE)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_HR')")
 	public ResponseEntity<?> insertEmployee(@RequestBody EmployeeRequest request) {
 		return ResponseEntity.ok(humanResourceService.insertEmployee(request));
 	}

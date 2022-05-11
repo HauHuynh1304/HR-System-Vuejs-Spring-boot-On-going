@@ -111,8 +111,8 @@ CREATE TABLE IF NOT EXISTS employee (
 	employee_id INT(11) auto_increment NOT NULL,
     employee_profile_id varchar(10) NOT NULL,
     room_id int(11) NOT NULL,
-    personal_info_id int(11) NOT NULL,
-    system_account_id int(11),
+    personal_info_id int(11) NOT NULL UNIQUE,
+    system_account_id int(11) UNIQUE,
     deleted_flag tinyint(1) NOT NULL DEFAULT 1,
     employee_start_date date NOT NULL,
     employee_end_date date,
@@ -176,8 +176,8 @@ CREATE TABLE IF NOT EXISTS supervisor_action (
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `comment` (
-	supervisor_action_id INT(11) NOT NULL,
-    approver_action_id int(11) NOT NULL,
+	supervisor_action_id INT(11),
+    approver_action_id int(11),
     comment_detail varchar(255),
     created_at datetime NOT NULL default current_timestamp(),
     CONSTRAINT `fk_comment_supervisor` FOREIGN KEY (supervisor_action_id)  
@@ -196,9 +196,10 @@ CREATE TABLE IF NOT EXISTS request_employee (
     partial_date varchar(10) NOT NULL DEFAULT 'ALL DAY',
     request_description varchar(255),
     expected_approve_date date NOT NULL,
-    duration int(11) NOT NULL,
+    duration DECIMAL (5,2) NOT NULL,
     request_status varchar(10) NOT NULL DEFAULT 'WAITING',
     created_at datetime NOT NULL default current_timestamp(),
+    updated_at datetime NOT NULL default current_timestamp(),
     CONSTRAINT `fk_request_employee_employee_id` FOREIGN KEY (employee_id)  
 		REFERENCES employee(employee_id),
     CONSTRAINT `fk_request_employee_request_id` FOREIGN KEY (request_id)  

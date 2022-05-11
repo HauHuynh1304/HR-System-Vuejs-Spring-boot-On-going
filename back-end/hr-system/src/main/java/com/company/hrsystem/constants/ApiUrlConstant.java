@@ -28,5 +28,7 @@ public class ApiUrlConstant {
 
 	public static final String BUSINESS_INSERT_REQUEST = "/business/insert-request";
 	public static final String BUSINESS_UPDATE_REQUEST = "/business/update-request";
-
+	public static final String BUSINESS_SUPERVISOR_ACTION = "/business/supervisor";
+	public static final String BUSINESS_APPROVER_ACTION = "/business/approver";
+	public static final String BUSINESS_INSERT_COMMENT = "/business/insert-comment";
 }

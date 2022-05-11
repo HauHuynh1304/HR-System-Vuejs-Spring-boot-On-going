@@ -7,8 +7,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class DocumentRequest extends DocumentModel{
-	
+public class DocumentRequest extends DocumentModel {
+
+	private static final long serialVersionUID = 1L;
+
 	private DocumentRequest data;
-	
+
 }

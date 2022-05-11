@@ -1,7 +1,5 @@
 package com.company.hrsystem.dto;
 
-import java.io.Serializable;
-
 import com.company.hrsystem.model.SystemAccountModel;
 
 import lombok.Getter;
@@ -9,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SystemAccountDto extends SystemAccountModel implements Serializable {
+public class SystemAccountDto extends SystemAccountModel {
 
 	private static final long serialVersionUID = 1L;
 

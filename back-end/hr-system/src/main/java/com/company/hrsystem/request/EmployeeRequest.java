@@ -15,6 +15,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class EmployeeRequest extends EmployeeModel {
+	
+	private static final long serialVersionUID = 1L;
 
 	private PersonalInfoDto personalInfo;
 

@@ -1,5 +1,7 @@
 package com.company.hrsystem.model;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,7 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class SupervisorActionModel {
+public abstract class SupervisorActionModel implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 
 	private Integer supervisorActionId;
 
@@ -19,4 +23,10 @@ public abstract class SupervisorActionModel {
 
 	private String updatedAt;
 
+	public SupervisorActionModel(Integer supervisorActionId, String actionType, String updatedAt) {
+		this.supervisorActionId = supervisorActionId;
+		this.actionType = actionType;
+		this.updatedAt = updatedAt;
+	}
+	
 }

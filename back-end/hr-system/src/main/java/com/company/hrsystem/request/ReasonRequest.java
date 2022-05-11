@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class ReasonRequest extends ReasonModel {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private ReasonRequest data;
 	
 }
