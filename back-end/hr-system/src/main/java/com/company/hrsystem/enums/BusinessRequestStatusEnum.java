@@ -20,4 +20,11 @@ public enum BusinessRequestStatusEnum {
 		return false;
 	}
 
+	public static Boolean isForbidenManager(String value) {
+		if (value.toLowerCase().equals(CANCEL.toString().toLowerCase())) {
+			return true;
+		}
+		return false;
+	}
+
 }

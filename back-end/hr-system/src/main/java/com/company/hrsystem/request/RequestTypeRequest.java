@@ -8,7 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RequestTypeRequest extends RequestTypeModel {
-
+	
+	private static final long serialVersionUID = 1L;
+	
 	private RequestTypeRequest data;
 
 }

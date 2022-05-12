@@ -14,5 +14,9 @@ public interface RequestEmployeeMapper {
 			ApproverActionDto approverActionDto, RequestEmployeeDto requestEmployeeDto);
 
 	int updateRequestEmployee(RequestEmployeeDto requestEmployeeDto);
+
+	int updateRequestBySupervisor(RequestEmployeeDto requestEmployeeDto);
 	
+	int updateRequestByApprover(RequestEmployeeDto requestEmployeeDto);
+
 }

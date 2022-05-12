@@ -1,5 +1,7 @@
 package com.company.hrsystem.model;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,7 +9,9 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public abstract class CommentModel {
+public abstract class CommentModel implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 
 	private Integer supervisorActionId;
 
@@ -16,5 +20,11 @@ public abstract class CommentModel {
 	private String commentDetail;
 
 	private String createdAt;
+
+	public CommentModel(Integer supervisorActionId, Integer approverActionId, String commentDetail) {
+		this.supervisorActionId = supervisorActionId;
+		this.approverActionId = approverActionId;
+		this.commentDetail = commentDetail;
+	}
 
 }

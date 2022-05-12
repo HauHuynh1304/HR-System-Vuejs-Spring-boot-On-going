@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class PositionRequest extends PostionModel {
 
+	private static final long serialVersionUID = 1L;
+	
 	private PositionRequest data;
 	
 }

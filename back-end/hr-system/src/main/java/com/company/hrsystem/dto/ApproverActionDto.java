@@ -1,11 +1,13 @@
 package com.company.hrsystem.dto;
 
-import java.io.Serializable;
-
 import com.company.hrsystem.model.ApproverActionModel;
 
-public class ApproverActionDto extends ApproverActionModel implements Serializable {
+public class ApproverActionDto extends ApproverActionModel {
 
 	private static final long serialVersionUID = 1L;
+
+	public ApproverActionDto(Integer approverActionId, String actionType, String updatedAt) {
+		super(approverActionId, actionType, updatedAt);
+	}
 
 }
