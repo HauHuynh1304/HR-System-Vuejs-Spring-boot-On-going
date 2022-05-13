@@ -12,4 +12,27 @@
 			#{item.startDate}
 		</foreach>
 	</insert>
+	
+	<update id="updateEmployeePosition" parameterType="map">
+		<foreach collection="positions" item="item" open=" " separator=";" close=" ">
+			UPDATE employee_position 
+			<set>
+				<if test="item.positionId != null">
+					position_id = #{item.positionId}, 
+				</if>
+				<if test="item.deletedFlag != null">
+					deleted_flag = #{item.deletedFlag}, 
+				</if>
+				<if test="item.startDate != null">
+					start_date = #{item.startDate}, 
+				</if>
+				<if test="item.endDate != null">
+					end_date = #{item.endDate}, 
+				</if>
+				updated_at = #{updatedAt}, 
+			</set>
+			WHERE 
+				employee_position_id = #{item.employeePositionId} 
+		</foreach>
+	</update>
 </mapper>

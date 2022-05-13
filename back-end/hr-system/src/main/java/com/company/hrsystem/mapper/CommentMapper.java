@@ -2,11 +2,11 @@ package com.company.hrsystem.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.company.hrsystem.request.CommentRequest;
+import com.company.hrsystem.dto.CommentDto;
 
 @Mapper
 public interface CommentMapper {
 
-	int insertComment(CommentRequest request);
+	int insertComment(CommentDto request);
 
 }

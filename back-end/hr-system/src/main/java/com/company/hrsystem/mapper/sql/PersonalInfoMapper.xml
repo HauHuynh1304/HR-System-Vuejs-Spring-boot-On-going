@@ -61,4 +61,39 @@
 			</if>
 		</trim>
 	</insert>
+	
+	<update id="updatePersonalInfo" 
+		parameterType="com.company.hrsystem.dto.PersonalInfoDto">
+		UPDATE personal_info
+		<set>
+			<if test="personalInfo.personalName != null" >
+				personal_name = #{personalName, jdbcType=VARCHAR},
+			</if>
+			<if test="personalInfo.personalBirthday != null" >
+				personal_birthday = #{personalBirthday, jdbcType=VARCHAR},
+			</if>
+			<if test="personalInfo.personalAddress != null" >
+				personal_address = #{personalAddress, jdbcType=VARCHAR},
+			</if>
+			<if test="personalInfo.personalPhoneNumber != null" >
+				personal_phone_number = #{personalPhoneNumber, jdbcType=VARCHAR},
+			</if>
+			<if test="personalInfo.personalSex != null" >
+				personal_sex = #{personalSex, jdbcType=VARCHAR},
+			</if>
+			<if test="personalInfo.personalIdCard != null" >
+				personal_id_card = #{personalIdCard, jdbcType=VARCHAR},
+			</if>
+			<if test="personalInfo.personalEmail != null" >
+				personal_email = #{personalEmail, jdbcType=VARCHAR},
+			</if>
+			<if test="personalInfo.personalImage != null" >
+				personal_image = #{personalImage, jdbcType=VARCHAR},
+			</if>
+			<if test="updatedAt != null">
+				updated_at = #{updatedAt, jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		WHERE personal_info_id = #{personalInfoId, jdbcType=INTEGER}
+	</update>
 </mapper>

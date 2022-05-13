@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class PostionModel implements Serializable {
+public abstract class PositionModel implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 

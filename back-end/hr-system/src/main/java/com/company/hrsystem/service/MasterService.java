@@ -1,5 +1,6 @@
 package com.company.hrsystem.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,12 @@ import org.springframework.util.ObjectUtils;
 import com.company.hrsystem.Exeption.NullPointRequestException;
 import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.constants.CommonConstant;
+import com.company.hrsystem.dto.DocumentDto;
+import com.company.hrsystem.dto.PositionDto;
+import com.company.hrsystem.dto.ReasonDto;
+import com.company.hrsystem.dto.RequestTypeDto;
+import com.company.hrsystem.dto.RoomDto;
+import com.company.hrsystem.dto.SystemRoleDto;
 import com.company.hrsystem.mapper.DocumentMapper;
 import com.company.hrsystem.mapper.PositionMapper;
 import com.company.hrsystem.mapper.ReasonMapper;
@@ -58,204 +65,229 @@ public class MasterService {
 	private MessageUtil messageUtil;
 
 	public ResponseTemplate insertSystemRole(SystemRoleRequest request) {
-		SystemRoleRequest obj = request.getData();
-		if (ObjectUtils.isEmpty(obj) || obj.getRoleName().isBlank()) {
+		SystemRoleDto obj = request.getData().getSystemRole();
+		int inseartRows = 0;
+		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRoleName())) {
+			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_INSERT_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_INSERT_NOT_NULL));
 		}
 		try {
-			roleMapper.insertSystemRoleSelected(obj);
+			inseartRows = roleMapper.insertSystemRoleSelected(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("insert.role.success"), null, null);
+				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(inseartRows)), null, null);
 	}
 
 	public ResponseTemplate updateSystemRole(SystemRoleRequest request) {
-		SystemRoleRequest obj = request.getData();
+		int updateRows = 0;
+		SystemRoleDto obj = request.getData().getSystemRole();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
-		if (ObjectUtils.isEmpty(obj) || obj.getRoleName().isBlank() || obj.getApplyScope().isEmpty()
-				|| obj.getDeletedFlag().toString().isBlank()) {
+		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getSystemRoleId())) {
+			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_UPDATE_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_UPDATE_NOT_NULL));
 		}
 		try {
-			roleMapper.updateSystemRoleSelected(obj);
+			updateRows = roleMapper.updateSystemRoleSelected(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("udpate.role.success"), null, null);
+				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
 	}
 
 	public ResponseTemplate insertDocument(DocumentRequest request) {
-		DocumentRequest obj = request.getData();
-		if (ObjectUtils.isEmpty(obj) || obj.getDocumentName().isBlank()) {
+		int inseartRows = 0;
+		DocumentDto obj = request.getData().getDocument();
+		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getDocumentName())) {
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_INSERT_NOT_NULL));
 		}
 		try {
-			documentMapper.insertDocument(obj);
+			inseartRows = documentMapper.insertDocument(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("insert.document.success"), null, null);
+				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(inseartRows)), null, null);
 	}
 
 	public ResponseTemplate updateDocument(DocumentRequest request) {
-		DocumentRequest obj = request.getData();
+		int updateRows = 0;
+		DocumentDto obj = request.getData().getDocument();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
-		if (ObjectUtils.isArray(obj) || obj.getDocumentName().isBlank() || obj.getDeletedFlag().toString().isBlank()) {
+		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getDocumentId())) {
+			LogUtil.warn(
+					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_UPDATE_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_UPDATE_NOT_NULL));
 		}
 		try {
-			documentMapper.updateDocument(obj);
+			updateRows = documentMapper.updateDocument(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("udpate.document.success"), null, null);
+				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
 	}
 
 	public ResponseTemplate insertPosition(PositionRequest request) {
-		PositionRequest obj = request.getData();
-		if (ObjectUtils.isEmpty(obj) || obj.getPositionName().isBlank()) {
+		int insertRows = 0;
+		PositionDto obj = request.getData().getPosition();
+		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getPositionName())) {
+			LogUtil.warn(
+					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_INSERT_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_INSERT_NOT_NULL));
 		}
 		try {
-			positionMapper.insertPosition(obj);
+			insertRows = positionMapper.insertPosition(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("insert.position.success"), null, null);
+				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
 	}
 
 	public ResponseTemplate updatePosition(PositionRequest request) {
-		PositionRequest obj = request.getData();
+		int updateRows = 0;
+		PositionDto obj = request.getData().getPosition();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
-		if (ObjectUtils.isEmpty(obj) || obj.getPositionName().isBlank() || obj.getDeletedFlag().toString().isBlank()) {
+		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getPositionId())) {
+			LogUtil.warn(
+					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_UPDATE_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_UPDATE_NOT_NULL));
 		}
 		try {
-
-			positionMapper.updatePosition(request.getData());
+			updateRows = positionMapper.updatePosition(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("udpate.position.success"), null, null);
+				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
 	}
 
 	public ResponseTemplate insertReason(ReasonRequest request) {
-		ReasonRequest obj = request.getData();
-		if (ObjectUtils.isEmpty(obj) || obj.getReasonName().isBlank()) {
+		int insertRows = 0;
+		ReasonDto obj = request.getData().getReason();
+		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getReasonName())) {
+			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_INSERT_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_INSERT_NOT_NULL));
 		}
 		try {
-			reasonMapper.insertReason(obj);
+			insertRows = reasonMapper.insertReason(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("insert.reason.success"), null, null);
+				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
 	}
 
 	public ResponseTemplate updateReason(ReasonRequest request) {
-		ReasonRequest obj = request.getData();
+		int updateRows = 0;
+		ReasonDto obj = request.getData().getReason();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
-		if (ObjectUtils.isEmpty(obj) || obj.getReasonName().isBlank() || obj.getDeletedFlag().toString().isBlank()) {
+		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getReasonId())) {
+			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_UPDATE_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_UPDATE_NOT_NULL));
 		}
 		try {
-			reasonMapper.updateReason(obj);
+			updateRows = reasonMapper.updateReason(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("udpate.reason.success"), null, null);
+				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
 	}
 
 	public ResponseTemplate insertRequestType(RequestTypeRequest request) {
-		RequestTypeRequest obj = request.getData();
+		int insertRows = 0;
+		RequestTypeDto obj = request.getData().getRequestType();
 		if (ObjectUtils.isEmpty(obj) || obj.getRequestTypeName().isBlank()) {
+			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty",
+					CommonConstant.REQUEST_TYPE_INSERT_NOT_NULL));
 			throw new NullPointRequestException(system, version, messageUtil.getFlexMessageLangUS("null.request.empty",
 					CommonConstant.REQUEST_TYPE_INSERT_NOT_NULL));
 		}
 		try {
-			requestTypeMapper.insertRequestType(obj);
+			insertRows = requestTypeMapper.insertRequestType(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("insert.request.type.success"), null, null);
+				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
 	}
 
 	public ResponseTemplate updateRequestType(RequestTypeRequest request) {
-		RequestTypeRequest obj = request.getData();
+		int updateRows = 0;
+		RequestTypeDto obj = request.getData().getRequestType();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
-		if (ObjectUtils.isEmpty(obj) || obj.getRequestTypeName().isBlank()
-				|| obj.getDeletedFlag().toString().isBlank()) {
+		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getRequestTypeId())) {
+			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty",
+					CommonConstant.REQUEST_TYPE_UPDATE_NOT_NULL));
 			throw new NullPointRequestException(system, version, messageUtil.getFlexMessageLangUS("null.request.empty",
 					CommonConstant.REQUEST_TYPE_UPDATE_NOT_NULL));
 		}
 		try {
-			requestTypeMapper.insertRequestType(obj);
+			updateRows = requestTypeMapper.insertRequestType(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("udpate.request.type.success"), null, null);
+				messageUtil.getFlexMessageLangUS("udpate.row", String.valueOf(updateRows)), null, null);
 	}
 
 	public ResponseTemplate insertRoom(RoomRequest request) {
-		RoomRequest obj = request.getData();
+		int insertRows = 0;
+		RoomDto obj = request.getData().getRoom();
 		if (ObjectUtils.isEmpty(obj) || obj.getRoomName().isBlank()) {
+			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
 		}
 		try {
-			roomMapper.insertRoom(obj);
+			insertRows = roomMapper.insertRoom(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("insert.room.success"), null, null);
+				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
 	}
 
 	public ResponseTemplate updateRoom(RoomRequest request) {
-		RoomRequest obj = request.getData();
+		int updateRows = 0;
+		RoomDto obj = request.getData().getRoom();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
-		if (ObjectUtils.isEmpty(obj) || obj.getRoomName().isBlank() || obj.getDeletedFlag().toString().isBlank()) {
+		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getRoomId())) {
+			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_UPDATE_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_UPDATE_NOT_NULL));
 		}
 		try {
-			roomMapper.insertRoom(obj);
+			updateRows = roomMapper.insertRoom(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("udpate.room.success"), null, null);
+				messageUtil.getFlexMessageLangUS("udpate.row", String.valueOf(updateRows)), null, null);
 	}
 
 }

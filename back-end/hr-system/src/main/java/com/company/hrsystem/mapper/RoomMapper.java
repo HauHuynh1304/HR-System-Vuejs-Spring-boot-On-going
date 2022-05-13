@@ -2,13 +2,13 @@ package com.company.hrsystem.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.company.hrsystem.request.RoomRequest;
+import com.company.hrsystem.dto.RoomDto;
 
 @Mapper
 public interface RoomMapper {
 
-	int insertRoom(RoomRequest request);
+	int insertRoom(RoomDto request);
 
-	int updateRoom(RoomRequest request);
-	
+	int updateRoom(RoomDto request);
+
 }

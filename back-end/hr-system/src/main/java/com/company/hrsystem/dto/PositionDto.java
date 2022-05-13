@@ -1,6 +1,6 @@
 package com.company.hrsystem.dto;
 
-import com.company.hrsystem.model.PersonalInfoModel;
+import com.company.hrsystem.model.PositionModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -12,8 +12,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class PersonalInfoDto extends PersonalInfoModel {
+public class PositionDto extends PositionModel {
 
 	private static final long serialVersionUID = 1L;
+	
+	private String startDate;
+	
+	private String endDate;
 
 }

@@ -259,6 +259,9 @@
 			LEFT JOIN system_role sr
 				ON sar.system_role_id = sr.system_role_id
 		WHERE 
-			sa.system_email = #{accEmail, jdbcType = VARCHAR}       
+			sa.system_email = #{accEmail, jdbcType = VARCHAR}
+			AND sa.deleted_flag = false
+			AND sar.deleted_flag = false
+			AND sr.deleted_flag = false
 	</select>
 </mapper>

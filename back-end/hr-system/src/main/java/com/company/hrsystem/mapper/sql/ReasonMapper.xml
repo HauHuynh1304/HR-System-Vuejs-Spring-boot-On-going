@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.ReasonMapper">
 	<insert id="insertReason"
-		parameterType="com.company.hrsystem.request.ReasonRequest">
+		parameterType="com.company.hrsystem.dto.ReasonDto">
 		insert into reason
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="reasonName != null">
@@ -16,7 +16,8 @@
 		</trim>
 	</insert>
 
-	<update id="updateReason">
+	<update id="updateReason" 
+		parameterType="com.company.hrsystem.dto.ReasonDto">
 		update reason
 		<set>
 			<if test="reasonName != null">

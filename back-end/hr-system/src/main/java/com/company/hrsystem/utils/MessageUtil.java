@@ -20,8 +20,8 @@ public class MessageUtil {
 		return messageSource.getMessage(messCode, null, systemLangUS);
 	}
 
-	public String getFlexMessageLangUS(String flexMessCode, String filedName) {
-		return messageSource.getMessage(flexMessCode, null, systemLangUS).replace("{0}", filedName);
+	public String getFlexMessageLangUS(String flexMessCode, String replaceName) {
+		return messageSource.getMessage(flexMessCode, null, systemLangUS).replace("{0}", replaceName);
 	}
 
 }

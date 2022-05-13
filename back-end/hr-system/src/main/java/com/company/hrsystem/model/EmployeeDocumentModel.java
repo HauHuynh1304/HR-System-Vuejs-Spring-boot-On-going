@@ -1,7 +1,6 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-abstract class EmployeeDocumentModel implements Serializable {
+public abstract class EmployeeDocumentModel implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
+	
+	private Integer employeeDocumentId;
 
 	private Integer employeeId;
 
@@ -20,8 +21,8 @@ abstract class EmployeeDocumentModel implements Serializable {
 
 	private Boolean deletedFlag;
 
-	private Date createdAt;
+	private String createdAt;
 
-	private Date updatedAt;
+	private String updatedAt;
 
 }

@@ -2,13 +2,13 @@ package com.company.hrsystem.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.company.hrsystem.request.SystemRoleRequest;
+import com.company.hrsystem.dto.SystemRoleDto;
 
 @Mapper
 public interface SytemRoleMapper {
 	
-	int insertSystemRoleSelected(SystemRoleRequest request);
+	int insertSystemRoleSelected(SystemRoleDto request);
 	
-	int updateSystemRoleSelected(SystemRoleRequest request);
+	int updateSystemRoleSelected(SystemRoleDto request);
 	
 }

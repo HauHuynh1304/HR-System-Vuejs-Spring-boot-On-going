@@ -2,12 +2,13 @@ package com.company.hrsystem.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.company.hrsystem.request.DocumentRequest;
+import com.company.hrsystem.dto.DocumentDto;
 
 @Mapper
 public interface DocumentMapper {
 	
-	int insertDocument(DocumentRequest request);
-	int updateDocument(DocumentRequest request);
+	int insertDocument(DocumentDto request);
+	
+	int updateDocument(DocumentDto request);
 	
 }

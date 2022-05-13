@@ -6,7 +6,7 @@ use HRSystem;
 CREATE TABLE IF NOT EXISTS position (
 	position_id INT(11) auto_increment NOT NULL,
     position_name varchar(255) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
     primary key (`position_id`)
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS position (
 CREATE TABLE IF NOT EXISTS document (
 	document_id INT(11) auto_increment NOT NULL,
     document_name varchar(255) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
     primary key (`document_id`)
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS system_role (
 	system_role_id INT(11) auto_increment NOT NULL,
     role_name varchar(50) NOT NULL UNIQUE,
     role_description varchar(255),
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     apply_scope varchar(20) NOT NULL DEFAULT "API",
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS system_account (
 	system_account_id INT(11) auto_increment NOT NULL,
     system_email varchar(50) UNIQUE NOT NULL,
     system_password varchar(255) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
     primary key (`system_account_id`)
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS system_account (
 CREATE TABLE IF NOT EXISTS system_account_role (
 	system_account_id int(11) NOT NULL,
     system_role_id int(11) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
     CONSTRAINT fk_system_account_id FOREIGN KEY (system_account_id)  
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS personal_info (
 CREATE TABLE IF NOT EXISTS room (
 	room_id INT(11) auto_increment NOT NULL,
     room_name varchar(50) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
     primary key (`room_id`)
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS room (
 CREATE TABLE IF NOT EXISTS request_type (
 	request_type_id INT(11) auto_increment NOT NULL,
     request_type_name varchar(255) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
     primary key (`request_type_id`)
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS request_type (
 CREATE TABLE IF NOT EXISTS reason (
 	reason_id INT(11) auto_increment NOT NULL,
     reason_name varchar(255) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
     primary key (`reason_id`)
@@ -109,11 +109,11 @@ CREATE TABLE IF NOT EXISTS request (
 
 CREATE TABLE IF NOT EXISTS employee (
 	employee_id INT(11) auto_increment NOT NULL,
-    employee_profile_id varchar(10) NOT NULL,
+    employee_profile_id varchar(10) NOT NULL UNIQUE,
     room_id int(11) NOT NULL,
     personal_info_id int(11) NOT NULL UNIQUE,
     system_account_id int(11) UNIQUE,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     employee_start_date date NOT NULL,
     employee_end_date date,
     created_at datetime NOT NULL default current_timestamp(),
@@ -128,9 +128,10 @@ CREATE TABLE IF NOT EXISTS employee (
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS employee_position (
+	employee_position_id INT(11) auto_increment NOT NULL,
 	employee_id int(11) NOT NULL,
     position_id int (11) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     start_date DATE NOT NULL,
     end_date DATE,
     created_at datetime NOT NULL default current_timestamp(),
@@ -142,9 +143,10 @@ CREATE TABLE IF NOT EXISTS employee_position (
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS employee_document (
+	employee_document_id INT(11) auto_increment NOT NULL,
 	employee_id int(11) NOT NULL,
     document_id int(11) NOT NULL,
-    deleted_flag tinyint(1) NOT NULL DEFAULT 1,
+    deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
     CONSTRAINT `fk_document_employee_id` FOREIGN KEY (employee_id)  

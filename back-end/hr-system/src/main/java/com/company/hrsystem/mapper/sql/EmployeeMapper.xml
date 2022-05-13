@@ -2,48 +2,77 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.EmployeeMapper">
 	<insert id="insertEmployee"
-		parameterType="com.company.hrsystem.request.EmployeeRequest"
-		useGeneratedKeys="true" keyProperty="employeeId"
+		parameterType="map"
+		useGeneratedKeys="true" keyProperty="employee.employeeId"
 		keyColumn="employee_id">
 		insert into employee
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="employeeProfileId != null">
+			<if test="employee.employeeProfileId != null">
 				employee_profile_id,
 			</if>
-			<if test="roomId != null">
+			<if test="employee.roomId != null">
 				room_id,
 			</if>
 			<if test="personalInfo.personalInfoId != null">
 				personal_info_id,
 			</if>
-			<if test="systemAccountId != null">
+			<if test="employee.systemAccountId != null">
 				system_account_id,
 			</if>
-			<if test="employeeStartDate != null">
+			<if test="employee.employeeStartDate != null">
 				employee_start_date,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="employeeProfileId != null">
-				#{employeeProfileId, jdbcType=VARCHAR},
+			<if test="employee.employeeProfileId != null">
+				#{employee.employeeProfileId, jdbcType=VARCHAR},
 			</if>
-			<if test="roomId != null">
-				#{roomId, jdbcType=INTEGER},
+			<if test="employee.roomId != null">
+				#{employee.roomId, jdbcType=INTEGER},
 			</if>
 			<if test="personalInfo.personalInfoId != null">
 				#{personalInfo.personalInfoId,
 				jdbcType=INTEGER},
 			</if>
+			<if test="employee.systemAccountId != null">
+				#{employee.systemAccountId, jdbcType=INTEGER},
+			</if>
+			<if test="employee.employeeStartDate != null">
+				STR_TO_DATE(#{employee.employeeStartDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d"),
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="updateEmployee" parameterType="com.company.hrsystem.dto.EmployeeDto">
+		UPDATE employee
+		<set>
+			<if test="roomId != null">
+				room_id = #{roomId, jdbcType=INTEGER},
+			</if>
 			<if test="systemAccountId != null">
-				#{systemAccountId, jdbcType=INTEGER},
+				system_account_id = #{roomId, jdbcType=INTEGER},
+			</if>
+			<if test="deletedFlag != null">
+				deleted_flag = #{deletedFlag, jdbcType=BIT}
 			</if>
 			<if test="employeeStartDate != null">
 				STR_TO_DATE(#{employeeStartDate,
 				jdbcType=VARCHAR},
 				"%Y-%m-%d"),
 			</if>
-		</trim>
-	</insert>
+			<if test="employeeEndDate != null">
+				STR_TO_DATE(#{employeeEndDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d"),
+			</if>
+			<if test="updatedAt != null">
+				updated_at = #{updatedAt, jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		WHERE employee_id = #{employeeId, jdbcType=INTEGER}
+	</update>
 
 	<select id="findEmployeeIdByAccountId"
 		parameterType="java.lang.Integer" resultType="java.lang.Integer">
@@ -53,5 +82,188 @@
 			employee
 		WHERE
 			system_account_id= #{systemAccountId, jdbcType=INTEGER}
+	</select>
+	
+	<resultMap type="com.company.hrsystem.response.FindListEmployeesResponse" id="findListEmployees">
+	    <result column="is_full_documents" jdbcType="BIT" property="isFullDocuments" /> 
+	   	<result column="system_email" jdbcType="VARCHAR" property="systemEmail" />
+	    <collection property="employee" ofType="com.company.hrsystem.dto.EmployeeDto">
+	    	<id column="employee_id" jdbcType="INTEGER" property="employeeId" />
+	    	<result column="employee_start_date" jdbcType="VARCHAR" property="employeeStartDate" />
+	   		<result column="employee_end_date" jdbcType="VARCHAR" property="employeeEndDate" />
+	   		<result column="deleted_flag" jdbcType="BIT" property="deletedFlag" />
+	    </collection>
+	    <collection property="personalInfo" ofType="com.company.hrsystem.dto.PersonalInfoDto">
+	    	<result column="personal_name" jdbcType="VARCHAR" property="personalName" />
+	    	<result column="personal_birthday" jdbcType="VARCHAR" property="personalBirthday" />
+	    	<result column="personal_phone_number" jdbcType="VARCHAR" property="personalPhoneNumber" />
+	    </collection>
+	    <collection property="room" ofType="com.company.hrsystem.dto.RoomDto">
+	    	<result column="room_name" jdbcType="VARCHAR" property="roomName" />
+	    </collection>
+        <collection property="position"  ofType="com.company.hrsystem.dto.PositionDto">
+        	<result property="positionName" jdbcType="VARCHAR" column="position_name"/>
+        </collection>
+	    <!--  <collection property="positions" javaType="list" ofType="string" >
+        	 <result column="position_name" />
+        </collection>  -->
+	</resultMap>
+	<select id="findListEmployees" 
+		parameterType="com.company.hrsystem.request.FindListEmployeesRequest" resultMap="findListEmployees">
+		SELECT
+			e.employee_id,
+			p.personal_name,
+			p.personal_birthday,
+			p.personal_phone_number,
+			e.deleted_flag,
+			e.employee_start_date,
+			e.employee_end_date,
+			r.room_name,
+			pos.position_name,
+			sy.system_email,
+			<include refid="isFullDocuments" /> AS is_full_documents
+		FROM personal_info p
+			LEFT JOIN employee e
+				ON p.personal_info_id = e.personal_info_id
+			LEFT JOIN system_account sy
+				ON e.system_account_id = sy.system_account_id
+			LEFT JOIN room r
+				ON e.room_id = r.room_id
+			LEFT JOIN employee_position empos
+				ON e.employee_id = empos.employee_id
+			LEFT JOIN position pos
+				ON empos.position_id = pos.position_id
+			<trim prefix="WHERE(" prefixOverrides="AND" suffix=")">
+				<if test="personalInfo.personalName != null">
+					AND p.personal_name LIKE #{personalInfo.personalName, jdbcType=VARCHAR}
+				</if>
+				<if test="personalInfo.personalPhoneNumber != null">
+					AND p.personal_phone_number = #{personalInfo.personalPhoneNumber, jdbcType=VARCHAR}
+				</if>
+				<if test="employee.employeeStartDate != null">
+					AND e.employee_start_date &gt;= STR_TO_DATE(#{employee.employeeStartDate,
+					jdbcType=VARCHAR},
+					"%Y-%m-%d")
+				</if>
+				<if test="employee.employeeEndDate != null">
+					AND e.employee_end_date &lt;= STR_TO_DATE(#{employee.employeeEndDate,
+					jdbcType=VARCHAR},
+					"%Y-%m-%d")
+				</if>
+				<if test="employee.systemAccountId != null">
+					AND e.system_account_id = #{employee.systemAccountId, jdbcType=INTEGER}
+				</if>
+				<if test="room.roomId != null">
+					AND r.room_id = #{room.roomId, jdbcType=INTEGER}
+				</if>
+				<if test="position.positionId != null">
+					AND pos.position_id = #{position.positionId, jdbcType=INTEGER}
+				</if>
+				<if test="employee.deletedFlag != null">
+					AND e.deleted_flag = #{employee.deletedFlag, jdbcType=BIT}
+				</if>
+				<if test="isFullDocuments != null">
+					AND <include refid="isFullDocuments" /> = #{isFullDocuments, jdbcType=BIT}
+				</if>
+			</trim>
+	</select>
+	<sql id="isFullDocuments" >
+		(SELECT CASE WHEN (
+			(
+				SELECT COUNT(1)
+				FROM document doc
+			       WHERE doc.deleted_flag = false
+			) 
+			= (
+			    SELECT COUNT(1)
+				FROM employee_document empdoc
+			    WHERE empdoc.deleted_flag = false
+			    AND empdoc.employee_id = e.employee_id
+			    AND empdoc.document_id
+					IN (
+						SELECT doc.document_id
+						FROM document doc
+						WHERE doc.deleted_flag = false
+						)
+					)
+				)
+		THEN CAST(1 AS UNSIGNED)
+		ELSE CAST(0 AS UNSIGNED)
+		END)
+	</sql>
+	
+	<resultMap type="com.company.hrsystem.response.FindEmployeeResponse" id="findEmployeeById">
+		<result column="system_email" jdbcType="VARCHAR" property="systemEmail" />
+		<collection property="employee" ofType="com.company.hrsystem.dto.EmployeeDto">
+	    	<id column="employee_id" jdbcType="INTEGER" property="employeeId" />
+	    	<result column="employee_start_date" jdbcType="VARCHAR" property="employeeStartDate" />
+	   		<result column="employee_end_date" jdbcType="VARCHAR" property="employeeEndDate" />
+	   		<result column="deleted_flag" jdbcType="BIT" property="deletedFlag" />
+	    </collection>
+	    <collection property="personalInfo" ofType="com.company.hrsystem.dto.PersonalInfoDto">
+	    	<id column="personal_info_id" jdbcType="INTEGER" property="personalInfoId" />
+	    	<result column="personal_name" jdbcType="VARCHAR" property="personalName" />
+	    	<result column="personal_birthday" jdbcType="VARCHAR" property="personalBirthday" />
+	    	<result column="personal_phone_number" jdbcType="VARCHAR" property="personalPhoneNumber" />
+	    </collection>
+	    <collection property="room" ofType="com.company.hrsystem.dto.RoomDto">
+	    	<id column="room_id" jdbcType="INTEGER" property="roomId" />
+	    	<result column="room_name" jdbcType="VARCHAR" property="roomName" />
+	    </collection>
+	    <collection property="positions" ofType="com.company.hrsystem.dto.EmployeePositionDto" >
+        	 <id column="employee_position_id" jdbcType="INTEGER" property="employeePositionId" />
+        	 <result column="position_id" jdbcType="INTEGER" property="positionId" />
+        	 <result column="position_name" jdbcType="VARCHAR" property="positionName" />
+        	 <result column="empos_deleted_flag" jdbcType="BIT" property="deletedFlag" />
+        	 <result column="start_date" jdbcType="VARCHAR" property="startDate" />
+        	 <result column="end_date" jdbcType="VARCHAR" property="endDate" />
+        </collection>
+	    <collection property="documents" ofType="com.company.hrsystem.dto.EmployeeDocumentDto" >
+        	 <id column="employee_document_id" jdbcType="INTEGER" property="employeeDocumentId"/>
+        	 <result column="document_id" jdbcType="INTEGER" property="documentId" />
+        	 <result column="document_name" jdbcType="VARCHAR" property="documentName" />
+        	 <result column="doc_deleted_flag" jdbcType="BIT" property="deletedFlag" />
+        </collection>
+	</resultMap>
+	<select id="findEmployeeById" resultMap="findEmployeeById" parameterType="string">
+		SELECT
+			e.employee_id,
+			p.personal_name,
+			p.personal_birthday,
+			p.personal_phone_number,
+			p.personal_info_id,
+			e.deleted_flag,
+			e.employee_start_date,
+			e.employee_end_date,
+			r.room_name,
+			r.room_id,
+			pos.position_name,
+			empos.employee_position_id,
+			empos.position_id,
+			empos.deleted_flag AS empos_deleted_flag,
+			empos.start_date,
+			empos.end_date,
+			sy.system_email,
+			empdoc.employee_document_id,
+			doc.document_name,
+			empdoc.deleted_flag AS doc_deleted_flag,
+			empdoc.document_id
+		FROM personal_info p
+			LEFT JOIN employee e
+				ON p.personal_info_id = e.personal_info_id
+			LEFT JOIN system_account sy
+				ON e.system_account_id = sy.system_account_id
+			LEFT JOIN room r
+				ON e.room_id = r.room_id
+			LEFT JOIN employee_position empos
+				ON e.employee_id = empos.employee_id
+			LEFT JOIN position pos
+				ON empos.position_id = pos.position_id
+			LEFT JOIN employee_document empdoc
+				ON e.employee_id = empdoc.employee_id
+			LEFT JOIN document doc
+				ON empdoc.document_id = doc.document_id
+		WHERE
+			e.employee_id = #{id, jdbcType=INTEGER}		
 	</select>
 </mapper>
