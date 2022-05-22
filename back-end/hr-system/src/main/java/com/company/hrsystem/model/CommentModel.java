@@ -20,11 +20,5 @@ public abstract class CommentModel implements Serializable {
 	private String commentDetail;
 
 	private String createdAt;
-
-	public CommentModel(Integer supervisorActionId, Integer approverActionId, String commentDetail) {
-		this.supervisorActionId = supervisorActionId;
-		this.approverActionId = approverActionId;
-		this.commentDetail = commentDetail;
-	}
-
+	
 }

@@ -2,13 +2,13 @@ package com.company.hrsystem.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.company.hrsystem.request.RequestTypeRequest;
+import com.company.hrsystem.dto.RequestTypeDto;
 
 @Mapper
 public interface RequestTypeMapper {
-	
-	int insertRequestType(RequestTypeRequest request);
-	
-	int updateRequestType(RequestTypeRequest request);
-	
+
+	int insertRequestType(RequestTypeDto request);
+
+	int updateRequestType(RequestTypeDto request);
+
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.RequestTypeMapper">
 	<insert id="insertRequestType"
-		parameterType="com.company.hrsystem.request.RequestTypeRequest">
+		parameterType="com.company.hrsystem.dto.RequestTypeDto">
 		insert into request_type
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="requestTypeName != null">
@@ -17,7 +17,7 @@
 	</insert>
 
 	<update id="updateRequestType"
-		parameterType="com.company.hrsystem.request.RequestTypeRequest">
+		parameterType="com.company.hrsystem.dto.RequestTypeDto">
 		update request_type
 		<set>
 			<if test="requestTypeName != null">

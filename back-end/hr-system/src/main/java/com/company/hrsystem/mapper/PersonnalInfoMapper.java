@@ -1,5 +1,4 @@
 package com.company.hrsystem.mapper;
-
 import org.apache.ibatis.annotations.Mapper;
 
 import com.company.hrsystem.dto.PersonalInfoDto;
@@ -8,5 +7,7 @@ import com.company.hrsystem.dto.PersonalInfoDto;
 public interface PersonnalInfoMapper {
 
 	int insertPersonalInfo(PersonalInfoDto personalInfo);
+	
+	int updatePersonalInfo(PersonalInfoDto personalInfo);
 
 }

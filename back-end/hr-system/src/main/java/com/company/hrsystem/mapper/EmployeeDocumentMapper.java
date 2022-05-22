@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.company.hrsystem.dto.DocumentDto;
-import com.company.hrsystem.model.EmployeeModel;
+import com.company.hrsystem.dto.EmployeeDocumentDto;
+import com.company.hrsystem.dto.EmployeeDto;
 
 @Mapper
 public interface EmployeeDocumentMapper {
 
-	int insertEmployeeDocument(EmployeeModel employee, List<DocumentDto> documents);
+	int insertEmployeeDocument(EmployeeDto employee, List<EmployeeDocumentDto> documents);
+
+	int updateEmployeeDocument(List<EmployeeDocumentDto> documents, String updatedAt);
 
 }

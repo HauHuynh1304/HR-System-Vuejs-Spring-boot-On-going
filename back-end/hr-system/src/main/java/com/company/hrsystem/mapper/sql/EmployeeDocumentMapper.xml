@@ -3,11 +3,28 @@
 <mapper
 	namespace="com.company.hrsystem.mapper.EmployeeDocumentMapper">
 	<insert id="insertEmployeeDocument">
-		insert into employee_document (employee_id, document_id)
-		values
+		INSERT INTO employee_document (employee_id, document_id)
+		VALUES 
 		<foreach collection="documents" item="item" open="("
 			separator="),(" close=")">
 			#{employee.employeeId}, #{item.documentId}
 		</foreach>
 	</insert>
+	
+	<update id="updateEmployeeDocument" parameterType="map">
+		<foreach collection="documents" item="item" open=" " separator=";" close=" ">
+			UPDATE employee_document 
+			<set>
+				<if test="item.documentId != null">
+					document_id = #{item.documentId}, 
+				</if>
+				<if test="item.deletedFlag != null">
+					deleted_flag = #{item.deletedFlag}, 
+				</if>
+				updated_at = #{updatedAt}, 
+			</set>
+			WHERE 
+				employee_document_id = #{item.employeeDocumentId} 
+		</foreach>
+	</update>
 </mapper>

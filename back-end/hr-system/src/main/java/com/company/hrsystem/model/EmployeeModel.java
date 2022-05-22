@@ -32,5 +32,5 @@ public abstract class EmployeeModel implements Serializable {
 	private String createdAt;
 
 	private String updatedAt;
-
+	
 }

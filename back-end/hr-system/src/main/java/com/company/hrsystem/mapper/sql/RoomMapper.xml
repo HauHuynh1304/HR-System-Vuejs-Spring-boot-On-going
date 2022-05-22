@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.RoomMapper">
 	<insert id="insertRoom"
-		parameterType="com.company.hrsystem.request.RoomRequest">
+		parameterType="com.company.hrsystem.dto.RoomDto">
 		insert into room
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="roomName != null">
@@ -16,7 +16,8 @@
 		</trim>
 	</insert>
 
-	<update id="updateRoom">
+	<update id="updateRoom"
+		parameterType="com.company.hrsystem.dto.RoomDto" >
 		update room
 		<set>
 			<if test="roomName != null">

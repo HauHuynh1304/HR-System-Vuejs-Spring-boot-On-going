@@ -26,7 +26,7 @@
 	</update>
 	
 	<update id="updateActionBySupervisor"
-		parameterType="com.company.hrsystem.request.SupervisorActionRequest">
+		parameterType="com.company.hrsystem.dto.SupervisorActionDto">
 		UPDATE supervisor_action
 		<set>
 			action_type = #{actionType, jdbcType=VARCHAR},

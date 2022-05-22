@@ -2,13 +2,13 @@ package com.company.hrsystem.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.company.hrsystem.request.ReasonRequest;
+import com.company.hrsystem.dto.ReasonDto;
 
 @Mapper
 public interface ReasonMapper {
 
-	int insertReason(ReasonRequest request);
-	
-	int updateReason(ReasonRequest request);
-	
+	int insertReason(ReasonDto request);
+
+	int updateReason(ReasonDto request);
+
 }

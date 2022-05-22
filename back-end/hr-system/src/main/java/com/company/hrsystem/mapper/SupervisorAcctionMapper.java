@@ -3,7 +3,6 @@ package com.company.hrsystem.mapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.company.hrsystem.dto.SupervisorActionDto;
-import com.company.hrsystem.request.SupervisorActionRequest;
 
 @Mapper
 public interface SupervisorAcctionMapper {
@@ -18,6 +17,6 @@ public interface SupervisorAcctionMapper {
 	/**
 	 * This method use to update by Supervisor
 	 */
-	int updateActionBySupervisor(SupervisorActionRequest request);
+	int updateActionBySupervisor(SupervisorActionDto supervisorActionDto);
 
 }

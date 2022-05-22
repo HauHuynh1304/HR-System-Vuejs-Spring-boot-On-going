@@ -24,8 +24,10 @@ public class ApiUrlConstant {
 	public static final String MASTER_UPDATE_ROOM = "/master/update-room";
 
 	public static final String HUMAN_RESOURCE_INSERT_EMPLOYEE = "/human-resources/insert-employee";
-	public static final String HUMAN_RESOURCE_UPDATE_EMPLOYEE = "/human-resources/insert-employee";
-
+	public static final String HUMAN_RESOURCE_UPDATE_EMPLOYEE = "/human-resources/update-employee";
+	public static final String HUMAN_RESOURCE_SEARCH_ALL_EMPLOYEES = "/human-resources/search-all-employees";
+	public static final String HUMAN_RESOURCE_SEARCH_EMPLOYEE = "/human-resources/search-employee/{id}";
+	
 	public static final String BUSINESS_INSERT_REQUEST = "/business/insert-request";
 	public static final String BUSINESS_UPDATE_REQUEST = "/business/update-request";
 	public static final String BUSINESS_SUPERVISOR_ACTION = "/business/supervisor";

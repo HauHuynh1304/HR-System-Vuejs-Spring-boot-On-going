@@ -8,7 +8,7 @@
 			<if test="requestEmployeeDto.employeeId != null">
 				employee_id,
 			</if>
-			<if test="requestModel.requestId != null">
+			<if test="requestDto.requestId != null">
 				request_id,
 			</if>
 			<if test="supervisorActionDto.supervisorActionId != null">
@@ -40,8 +40,8 @@
 			<if test="requestEmployeeDto.employeeId != null">
 				#{requestEmployeeDto.employeeId, jdbcType=INTEGER},
 			</if>
-			<if test="requestModel.requestId != null">
-				#{requestModel.requestId, jdbcType=INTEGER},
+			<if test="requestDto.requestId != null">
+				#{requestDto.requestId, jdbcType=INTEGER},
 			</if>
 			<if test="supervisorActionDto.supervisorActionId != null">
 				#{supervisorActionDto.supervisorActionId,

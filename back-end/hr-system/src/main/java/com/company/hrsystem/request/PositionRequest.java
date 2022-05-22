@@ -1,16 +1,20 @@
 package com.company.hrsystem.request;
 
-import com.company.hrsystem.model.PostionModel;
+import java.io.Serializable;
+
+import com.company.hrsystem.dto.PositionDto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class PositionRequest extends PostionModel {
+public class PositionRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	private PositionDto position;
+
 	private PositionRequest data;
-	
+
 }
