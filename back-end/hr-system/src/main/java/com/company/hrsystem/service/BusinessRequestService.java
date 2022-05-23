@@ -1,5 +1,7 @@
 package com.company.hrsystem.service;
 
+import java.util.List;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -27,7 +29,10 @@ import com.company.hrsystem.mapper.SupervisorAcctionMapper;
 import com.company.hrsystem.request.ApproverActionRequest;
 import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
+import com.company.hrsystem.request.FindListTicketRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
+import com.company.hrsystem.response.FindListTicketResponse;
+import com.company.hrsystem.response.FindTicketRequestByIdResponse;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
@@ -171,6 +176,25 @@ public class BusinessRequestService {
 		isInsertUpdateSucess(numberRecord);
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("comment.success"), null, null);
+	}
+
+	public ResponseTemplate findListTicketRequestByCurrentUser(FindListTicketRequest request) {
+		request.getData().getRequestEmployee()
+				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+		List<FindListTicketResponse> listObj = requestEmployeeMapper
+				.findListTicketRequestByCurrentUser(request.getData());
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+	}
+
+	public ResponseTemplate findTicketRequestById(String id) {
+		FindTicketRequestByIdResponse obj = requestEmployeeMapper.findTicketRequestById(id);
+		if (ObjectUtils.isEmpty(obj)) {
+			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+					messageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
+		}
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, obj);
 	}
 
 	public void isErrorRequestManager(String status) {
