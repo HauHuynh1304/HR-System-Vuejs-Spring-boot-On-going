@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public abstract class RequestEmployeeModel implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private Integer employeeId;

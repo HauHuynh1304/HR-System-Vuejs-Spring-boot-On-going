@@ -178,6 +178,7 @@ CREATE TABLE IF NOT EXISTS supervisor_action (
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `comment` (
+	comment_id INT(11) auto_increment NOT NULL,
 	supervisor_action_id INT(11),
     approver_action_id int(11),
     comment_detail varchar(255),
