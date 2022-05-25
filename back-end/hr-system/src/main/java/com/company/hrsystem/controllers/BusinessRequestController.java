@@ -57,16 +57,22 @@ public class BusinessRequestController {
 		return ResponseEntity.ok(businessRequestService.insertComment(request));
 	}
 
-	@PostMapping(ApiUrlConstant.BUSINESS_SEARCH_LIST_REQUEST_BY_CURRENT_USER)
+	@PostMapping(ApiUrlConstant.BUSINESS_SEARCH_LIST_CREATED_REQUEST)
 	@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
-	public ResponseEntity<?> findListTicketRequestByCurrentUser(@RequestBody FindListTicketRequest request) {
-		return ResponseEntity.ok(businessRequestService.findListTicketRequestByCurrentUser(request));
+	public ResponseEntity<?> findListCreatedRequestTicket(@RequestBody FindListTicketRequest request) {
+		return ResponseEntity.ok(businessRequestService.findListCreatedRequestTicket(request));
 	}
 
 	@GetMapping(ApiUrlConstant.BUSINESS_SEARCH_REQUEST_BY_ID)
 	@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
-	public ResponseEntity<?> findTicketRequestById(@PathVariable String id) {
-		return ResponseEntity.ok(businessRequestService.findTicketRequestById(id));
+	public ResponseEntity<?> findRequestTicketById(@PathVariable String id) {
+		return ResponseEntity.ok(businessRequestService.findRequestTicketById(id));
+	}
+	
+	@PostMapping(ApiUrlConstant.BUSINESS_SEARCH_LIST_RECEIVED_REQUEST)
+	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_SUPERVISOR')")
+	public ResponseEntity<?> findListReceivedRequestTicket(@RequestBody FindListTicketRequest request) {
+		return ResponseEntity.ok(businessRequestService.findListReceivedRequestTicket(request));
 	}
 
 }

@@ -178,23 +178,30 @@ public class BusinessRequestService {
 				messageUtil.getMessagelangUS("comment.success"), null, null);
 	}
 
-	public ResponseTemplate findListTicketRequestByCurrentUser(FindListTicketRequest request) {
+	public ResponseTemplate findListCreatedRequestTicket(FindListTicketRequest request) {
 		request.getData().getRequestEmployee()
 				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
-		List<FindListTicketResponse> listObj = requestEmployeeMapper
-				.findListTicketRequestByCurrentUser(request.getData());
+		List<FindListTicketResponse> listObj = requestEmployeeMapper.findListCreatedRequestTicket(request.getData());
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
 	}
 
-	public ResponseTemplate findTicketRequestById(String id) {
-		FindTicketRequestByIdResponse obj = requestEmployeeMapper.findTicketRequestById(id);
+	public ResponseTemplate findRequestTicketById(String id) {
+		FindTicketRequestByIdResponse obj = requestEmployeeMapper.findRequestTicketById(id);
 		if (ObjectUtils.isEmpty(obj)) {
 			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 					messageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, obj);
+	}
+
+	public ResponseTemplate findListReceivedRequestTicket(FindListTicketRequest request) {
+		request.getData().getRequestEmployee()
+				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+		List<FindListTicketResponse> listObj = requestEmployeeMapper.findListReceivedRequestTicket(request.getData());
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
 	}
 
 	public void isErrorRequestManager(String status) {

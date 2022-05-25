@@ -29,7 +29,8 @@ public class ApiUrlConstant {
 	public static final String HUMAN_RESOURCE_SEARCH_EMPLOYEE = "/human-resources/search-employee/{id}";
 	
 	public static final String BUSINESS_INSERT_REQUEST = "/business/insert-request";
-	public static final String BUSINESS_SEARCH_LIST_REQUEST_BY_CURRENT_USER = "/business/search-list-request-by-current-user";
+	public static final String BUSINESS_SEARCH_LIST_CREATED_REQUEST = "/business/search-list-created-request-ticket";
+	public static final String BUSINESS_SEARCH_LIST_RECEIVED_REQUEST = "/business/search-list-received-request-ticket";
 	public static final String BUSINESS_SEARCH_REQUEST_BY_ID = "/business/find-request/{id}";
 	public static final String BUSINESS_UPDATE_REQUEST = "/business/update-request";
 	public static final String BUSINESS_UPDATE_SUPERVISOR_ACTION = "/business/supervisor";

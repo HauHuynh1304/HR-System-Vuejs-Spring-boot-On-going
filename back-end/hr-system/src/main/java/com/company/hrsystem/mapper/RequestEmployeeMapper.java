@@ -24,8 +24,12 @@ public interface RequestEmployeeMapper {
 
 	int updateRequestByApprover(RequestEmployeeDto requestEmployeeDto);
 
-	List<FindListTicketResponse> findListTicketRequestByCurrentUser(FindListTicketRequest request);
+	List<FindListTicketResponse> findListCreatedRequestTicket(FindListTicketRequest request);
+	
+	List<FindListTicketResponse> findListReceivedRequestTicket(FindListTicketRequest request);
 
-	FindTicketRequestByIdResponse findTicketRequestById(String id);
+	FindTicketRequestByIdResponse findRequestTicketById(String id);
+	
+	
 
 }
