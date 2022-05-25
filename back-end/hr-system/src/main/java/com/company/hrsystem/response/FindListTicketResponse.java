@@ -22,6 +22,8 @@ public class FindListTicketResponse implements Serializable {
 	private String reason;
 
 	private String approver;
+	
+	private String supervisor;
 
 	private RequestEmployeeDto requestEmployee;
 

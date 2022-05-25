@@ -120,22 +120,25 @@
 	</update>
 	
 	<resultMap type="com.company.hrsystem.response.FindListTicketResponse" 
-		id="findListTicketRequest">
+		id="findListTicketResponse">
 		<id column="request_id" jdbcType="INTEGER" property="requestId"/>
-		<result column="system_email" jdbcType="VARCHAR" property="approver" />
+		<result column="approver" jdbcType="VARCHAR" property="approver" />
 		<result column="request_type_name" jdbcType="VARCHAR" property="requestType"/>
 		<result column="reason_name" jdbcType="VARCHAR" property="reason"/>
 		<result column="requester" jdbcType="VARCHAR" property="requester"/>
+		<result column="supervisor" jdbcType="VARCHAR" property="supervisor"/>
 		<collection property="requestEmployee" ofType="com.company.hrsystem.dto.RequestEmployeeDto">
 			<id column="request_id" jdbcType="INTEGER"/>
 			<result column="start_date" jdbcType="VARCHAR" property="startDate"/>
 			<result column="end_date" jdbcType="VARCHAR" property="endDate"/>
 			<result column="duration" jdbcType="DOUBLE" property="duration"/>
 			<result column="request_status" jdbcType="VARCHAR" property="requestStatus"/>
+			<result column="expected_approve_date" jdbcType="VARCHAR" property="expectedApproveDate"/>
+			<result column="request_description" jdbcType="VARCHAR" property="requestDescription"/>
 		</collection>
 	</resultMap>
-	<select id="findListTicketRequestByCurrentUser" 
-		parameterType="com.company.hrsystem.request.FindListTicketRequest" resultMap="findListTicketRequest">
+	<select id="findListCreatedRequestTicket" 
+		parameterType="com.company.hrsystem.request.FindListTicketRequest" resultMap="findListTicketResponse">
 		SELECT
 			 rt.request_type_name,
 			 (<include refid="getRequesterName" />) AS requester,
@@ -144,8 +147,11 @@
 			 re.end_date,
 			 re.duration,
 			 re.request_status,
+			 re.request_description,
+			 re.expected_approve_date,
 			 rs.reason_name,
-			 (<include refid="getApproverName" />) AS system_email
+			 (<include refid="getApproverName" />) AS approver,
+			 (<include refid="getSuppervisorName" />) AS supervisor
 		FROM request_employee re
 				LEFT JOIN request rq 
 					ON rq.request_id = re.request_id
@@ -155,7 +161,10 @@
 					ON rs.reason_id = rq.reason_id
 				LEFT JOIN approver_action apa
 					ON apa.approver_action_id = re.approver_action_id
+				LEFT JOIN supervisor_action sua
+					ON sua.supervisor_action_id = re.supervisor_action_id
 		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
+			re.employee_id = #{requestEmployee.employeeId, jdbcType=INTEGER}
 			 <if test="requestEmployee.startDate != null">
 				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
 				jdbcType=VARCHAR},
@@ -172,16 +181,13 @@
 			<if test="requestTypeId != null">
 				AND rq.request_type_id = #{requestTypeId, jdbcType=INTEGER}
 			</if>
-			<if test="requestEmployee.employeeId != null">
-				AND re.employee_id = #{requestEmployee.employeeId, jdbcType=INTEGER}
-			</if>
 		</trim>
 		ORDER BY
 			rq.request_id DESC
 	</select>
 	
 	<resultMap type="com.company.hrsystem.response.FindTicketRequestByIdResponse" 
-		id="findTicketRequestById">
+		id="findRequestTicketById">
 		<id column="request_id" jdbcType="INTEGER" property="requestId"/>
 		<result column="request_type_name" jdbcType="VARCHAR" property="requestType"/>
 		<result column="reason_name" jdbcType="VARCHAR" property="reason"/>
@@ -194,6 +200,8 @@
 			<result column="end_date" jdbcType="VARCHAR" property="endDate"/>
 			<result column="duration" jdbcType="DOUBLE" property="duration"/>
 			<result column="request_status" jdbcType="VARCHAR" property="requestStatus"/>
+			<result column="expected_approve_date" jdbcType="VARCHAR" property="expectedApproveDate"/>
+			<result column="request_description" jdbcType="VARCHAR" property="requestDescription"/>
 		</collection>
 		<collection property="supervisorAction" ofType="com.company.hrsystem.dto.SupervisorActionDto">
 			<id column="supervisor_action_id" jdbcType="INTEGER" property="supervisorActionId"/>
@@ -213,8 +221,8 @@
 			<result column="comment_created_at" jdbcType="TIMESTAMP" property="createdAt"/>
 		</collection>
 	</resultMap>
-	<select id="findTicketRequestById" parameterType="string" 
-		resultMap="findTicketRequestById">
+	<select id="findRequestTicketById" parameterType="string" 
+		resultMap="findRequestTicketById">
 		SELECT
 			 rt.request_type_name,
 			 (<include refid="getRequesterName" />) AS requester,
@@ -223,6 +231,8 @@
 			 re.end_date,
 			 re.duration,
 			 re.request_status,
+			 re.expected_approve_date,
+			 re.request_description,
 			 rs.reason_name,
 			 (<include refid="getApproverName" />) AS approver,
 			 (<include refid="getSuppervisorName" />) AS supervisor,
@@ -253,6 +263,65 @@
 						OR sua.supervisor_action_id = com.supervisor_action_id
 		WHERE
 			re.request_id = #{id, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findListReceivedRequestTicket" resultMap="findListTicketResponse">
+		SELECT
+			 rt.request_type_name,
+			 (<include refid="getRequesterName" />) AS requester,
+			 re.request_id,
+			 re.start_date,
+			 re.end_date,
+			 re.duration,
+			 re.request_status,
+			 re.request_description,
+			 re.expected_approve_date,
+			 rs.reason_name,
+			 (<include refid="getApproverName" />) AS approver,
+			 (<include refid="getSuppervisorName" />) AS supervisor
+		FROM request_employee re
+				LEFT JOIN request rq 
+					ON rq.request_id = re.request_id
+				LEFT JOIN request_type rt
+					ON rt.request_type_id = rq.request_type_id
+				LEFT JOIN reason rs
+					ON rs.reason_id = rq.reason_id
+				LEFT JOIN approver_action apa
+					ON apa.approver_action_id = re.approver_action_id
+				LEFT JOIN supervisor_action sua
+					ON sua.supervisor_action_id = re.supervisor_action_id
+		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
+			(
+				re.supervisor_action_id IN (
+					SELECT supervisor_action_id
+					FROM supervisor_action
+					WHERE supervisor_id = #{requestEmployee.employeeId, jdbcType=INTEGER}
+				) OR 
+				re.approver_action_id IN (
+					SELECT approver_action_id
+					FROM approver_action
+					WHERE approver_id = #{requestEmployee.employeeId, jdbcType=INTEGER}
+				)
+			)
+			 <if test="requestEmployee.startDate != null">
+				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d")
+			</if>
+			<if test="requestEmployee.endDate != null">
+				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d")
+			</if>
+			<if test="requestEmployee.requestStatus != null">
+				AND re.request_status = #{requestEmployee.requestStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="requestTypeId != null">
+				AND rq.request_type_id = #{requestTypeId, jdbcType=INTEGER}
+			</if>
+		</trim>
+		ORDER BY
+			rq.request_id DESC
 	</select>
 	
 	<sql id="getRequesterName">
