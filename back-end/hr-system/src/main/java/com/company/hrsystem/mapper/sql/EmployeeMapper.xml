@@ -55,15 +55,15 @@
 				system_account_id = #{roomId, jdbcType=INTEGER},
 			</if>
 			<if test="deletedFlag != null">
-				deleted_flag = #{deletedFlag, jdbcType=BIT}
+				deleted_flag = #{deletedFlag, jdbcType=BIT},
 			</if>
 			<if test="employeeStartDate != null">
-				STR_TO_DATE(#{employeeStartDate,
+				employee_start_date = STR_TO_DATE(#{employeeStartDate,
 				jdbcType=VARCHAR},
 				"%Y-%m-%d"),
 			</if>
 			<if test="employeeEndDate != null">
-				STR_TO_DATE(#{employeeEndDate,
+				employee_end_date = STR_TO_DATE(#{employeeEndDate,
 				jdbcType=VARCHAR},
 				"%Y-%m-%d"),
 			</if>

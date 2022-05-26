@@ -66,28 +66,29 @@
 		parameterType="com.company.hrsystem.dto.PersonalInfoDto">
 		UPDATE personal_info
 		<set>
-			<if test="personalInfo.personalName != null" >
+			<if test="personalName != null" >
 				personal_name = #{personalName, jdbcType=VARCHAR},
 			</if>
-			<if test="personalInfo.personalBirthday != null" >
-				personal_birthday = #{personalBirthday, jdbcType=VARCHAR},
+			<if test="personalBirthday != null" >
+				personal_birthday = STR_TO_DATE(#{personalBirthday, jdbcType=VARCHAR},
+				"%Y-%m-%d"),
 			</if>
-			<if test="personalInfo.personalAddress != null" >
+			<if test="personalAddress != null" >
 				personal_address = #{personalAddress, jdbcType=VARCHAR},
 			</if>
-			<if test="personalInfo.personalPhoneNumber != null" >
+			<if test="personalPhoneNumber != null" >
 				personal_phone_number = #{personalPhoneNumber, jdbcType=VARCHAR},
 			</if>
-			<if test="personalInfo.personalSex != null" >
+			<if test="personalSex != null" >
 				personal_sex = #{personalSex, jdbcType=VARCHAR},
 			</if>
-			<if test="personalInfo.personalIdCard != null" >
+			<if test="personalIdCard != null" >
 				personal_id_card = #{personalIdCard, jdbcType=VARCHAR},
 			</if>
-			<if test="personalInfo.personalEmail != null" >
+			<if test="personalEmail != null" >
 				personal_email = #{personalEmail, jdbcType=VARCHAR},
 			</if>
-			<if test="personalInfo.personalImage != null" >
+			<if test="personalImage != null" >
 				personal_image = #{personalImage, jdbcType=VARCHAR},
 			</if>
 			<if test="updatedAt != null">

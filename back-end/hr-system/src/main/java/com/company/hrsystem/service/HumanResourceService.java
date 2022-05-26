@@ -1,10 +1,11 @@
 package com.company.hrsystem.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.dto.EmployeeDocumentDto;
@@ -29,6 +31,7 @@ import com.company.hrsystem.response.FindEmployeeResponse;
 import com.company.hrsystem.response.FindListEmployeesResponse;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.DateUtil;
+import com.company.hrsystem.utils.FileUtil;
 import com.company.hrsystem.utils.LogUtil;
 import com.company.hrsystem.utils.MessageUtil;
 import com.company.hrsystem.utils.ObjectUtil;
@@ -41,6 +44,9 @@ public class HumanResourceService {
 
 	@Value("${system.version}")
 	private String version;
+
+	@Value("${upload.employee.img.dir}")
+	private String uploadEmployeeImgDir;
 
 	@Autowired
 	private EmployeeMapper employeeMapper;
@@ -56,20 +62,38 @@ public class HumanResourceService {
 
 	@Autowired
 	private MessageUtil messageUtil;
-	
+
 	@Autowired
 	private ObjectUtil objectUtil;
 
+	@Autowired
+	private FileUtil fileUtil;
+
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public ResponseTemplate insertEmployee(EmployeeRequest request) {
+	public ResponseTemplate insertEmployee(EmployeeRequest request, MultipartFile multipartFile) {
+		String fileName = null;
 		try {
+			if (multipartFile != null) {
+				fileName = fileUtil.generateFileName(multipartFile);
+			}
 			PersonalInfoDto personalInfo = request.getData().getPersonalInfo();
+			personalInfo.setPersonalImage(fileName);
 			personnalInfoMapper.insertPersonalInfo(personalInfo);
 			employeeMapper.insertEmployee(personalInfo, request.getData().getEmployee());
 			employeeDocumentMapper.insertEmployeeDocument(request.getData().getEmployee(),
 					request.getData().getDocuments());
 			employeePositionMapper.insertEmployeePosition(request.getData().getEmployee(),
 					request.getData().getPositions());
+			if (!StringUtils.isAllEmpty(fileName)) {
+				try {
+					fileUtil.saveFile(
+							fileUtil.generateUploadDir(uploadEmployeeImgDir, personalInfo.getPersonalInfoId()),
+							fileName, multipartFile);
+				} catch (IOException e) {
+					LogUtil.error(ExceptionUtils.getStackTrace(e));
+					throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+				}
+			}
 			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 					messageUtil.getMessagelangUS("insert.employee.success"), null, null);
 		} catch (Exception e) {
@@ -79,32 +103,43 @@ public class HumanResourceService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public ResponseTemplate updateEmployee(EmployeeRequest request) {
+	public ResponseTemplate updateEmployee(EmployeeRequest request, MultipartFile multipartFile) {
 		EmployeeDto employee = request.getData().getEmployee();
 		PersonalInfoDto personalInfo = request.getData().getPersonalInfo();
 		List<EmployeeDocumentDto> documents = request.getData().getDocuments();
 		List<EmployeePositionDto> positions = request.getData().getPositions();
 		String updatedAt = DateUtil.getCurrentDayHourSecond();
-		Map<String, Object> map = objectUtil.objectToMap(employee);
-		int countNotNull = 0;
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
-			if (ObjectUtils.isNotEmpty(entry.getValue())) {
-				countNotNull++;
-			}
-		}
 		try {
 			/*
 			 * In EmployeeRequest, parameter employeeId is always not null then it will call
-			 * API update employee if only use ObjectUtil.isEmpty(employee)
-			 * So, update employee's API will be executive if not null parameter greater than 1
+			 * API update employee if only use ObjectUtil.isEmpty(employee) So, update
+			 * employee's API will be executive if not null parameter greater than 1
 			 */
-			if (countNotNull > 1) {
+			if (objectUtil.countNotNullParamater(employee) > 1) {
 				employee.setUpdatedAt(updatedAt);
 				employeeMapper.updateEmployee(employee);
 			}
 
-			if (ObjectUtils.isNotEmpty(personalInfo)) {
+			/*
+			 * In personalInfo, parameter employeeId is always not null then it will call
+			 * API update updatePersonalInfo if only use ObjectUtil.isEmpty(personalInfo)
+			 * So, update updatePersonalInfo API will be executive if not null parameter
+			 * greater than 1
+			 */
+			if (objectUtil.countNotNullParamater(personalInfo) > 1 || multipartFile != null) {
 				personalInfo.setUpdatedAt(updatedAt);
+				if (multipartFile != null) {
+					String fileName = fileUtil.generateFileName(multipartFile);
+					personalInfo.setPersonalImage(fileName);
+					try {
+						fileUtil.saveFile(
+								fileUtil.generateUploadDir(uploadEmployeeImgDir, personalInfo.getPersonalInfoId()),
+								fileName, multipartFile);
+					} catch (Exception e) {
+						LogUtil.error(ExceptionUtils.getStackTrace(e));
+						throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+					}
+				}
 				personnalInfoMapper.updatePersonalInfo(personalInfo);
 			}
 
