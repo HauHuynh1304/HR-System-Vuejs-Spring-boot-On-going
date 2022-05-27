@@ -35,4 +35,29 @@
 				employee_position_id = #{item.employeePositionId} 
 		</foreach>
 	</update>
+	
+	<resultMap type="com.company.hrsystem.dto.EmployeePositionDto" 
+		id="findLastInsertListEmployeePosition">
+		<result column="employee_position_id" jdbcType="INTEGER" property="employeePositionId"/>
+		<result column="employee_id" jdbcType="INTEGER" property="employeeId"/>
+		<result column="position_id" jdbcType="INTEGER" property="positionId"/>
+		<result column="start_date" jdbcType="VARCHAR" property="startDate"/>
+	</resultMap>
+	<select id="findLastInsertListEmployeePosition" parameterType="INTEGER" 
+		resultMap="findLastInsertListEmployeePosition">
+		SELECT 
+			ep.employee_position_id,
+			ep.employee_id,
+			ep.position_id,
+			ep.start_date
+		FROM employee_position ep
+		WHERE ep.employee_id = #{employeeId}
+			AND ep.created_at = (
+				SELECT sep.created_at
+				FROM employee_position sep
+				WHERE sep.employee_id = #{employeeId}
+				ORDER BY sep.employee_position_id DESC
+				LIMIT 1
+			)
+	</select>
 </mapper>

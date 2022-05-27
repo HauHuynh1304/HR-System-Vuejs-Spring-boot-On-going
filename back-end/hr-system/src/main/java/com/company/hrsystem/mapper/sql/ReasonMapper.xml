@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.ReasonMapper">
 	<insert id="insertReason"
-		parameterType="com.company.hrsystem.dto.ReasonDto">
+		parameterType="com.company.hrsystem.dto.ReasonDto"
+		useGeneratedKeys="true" keyColumn="reason_id" keyProperty="reasonId">
 		insert into reason
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="reasonName != null">

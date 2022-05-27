@@ -23,6 +23,10 @@ public interface RequestEmployeeMapper {
 	int updateRequestBySupervisor(RequestEmployeeDto requestEmployeeDto);
 
 	int updateRequestByApprover(RequestEmployeeDto requestEmployeeDto);
+	
+	int findRequestIdBySupervisorActionId(Integer id);
+	
+	int findRequestIdByApproverActionId(Integer id);
 
 	List<FindListTicketResponse> findListCreatedRequestTicket(FindListTicketRequest request);
 	

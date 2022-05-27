@@ -324,6 +324,20 @@
 			rq.request_id DESC
 	</select>
 	
+	<select id="findRequestIdBySupervisorActionId" parameterType="Integer" 
+		resultType="Integer">
+		SELECT re.request_id
+		FROM request_employee re
+		WHERE re.supervisor_action_id = #{id, jdbcType=INTEGER}
+	</select>
+	
+	<select id="findRequestIdByApproverActionId" parameterType="Integer" 
+		resultType="Integer">
+		SELECT re.request_id
+		FROM request_employee re
+		WHERE re.approver_action_id = #{id, jdbcType=INTEGER}
+	</select>
+	
 	<sql id="getRequesterName">
 		SELECT SUBSTRING_INDEX (
 				(SELECT sa.system_email

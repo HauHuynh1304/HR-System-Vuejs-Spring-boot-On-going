@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.PositionMapper">
 	<insert id="insertPosition"
-		parameterType="com.company.hrsystem.request.PositionRequest">
+		parameterType="com.company.hrsystem.request.PositionRequest"
+		useGeneratedKeys="true" keyProperty="positionId" keyColumn="position_id">
 		insert into position
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="positionName != null">

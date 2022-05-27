@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.SytemRoleMapper">
 	<insert id="insertSystemRoleSelected"
-		parameterType="com.company.hrsystem.dto.SystemRoleDto">
+		parameterType="com.company.hrsystem.dto.SystemRoleDto"
+		useGeneratedKeys="true" keyProperty="systemRoleId"
+		keyColumn="system_role_id">
 		insert into system_role
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="roleName != null">

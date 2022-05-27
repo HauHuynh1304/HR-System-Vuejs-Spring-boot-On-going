@@ -26,4 +26,5 @@ public class ObjectUtil {
 		}
 		return countNotNullParamater;
 	}
+
 }
