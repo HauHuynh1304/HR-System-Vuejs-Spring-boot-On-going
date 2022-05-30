@@ -2,7 +2,6 @@ package com.company.hrsystem.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -25,9 +24,7 @@ import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.EmployeeDocumentDto;
 import com.company.hrsystem.dto.EmployeeDto;
 import com.company.hrsystem.dto.EmployeePositionDto;
-import com.company.hrsystem.dto.HistoryActionDto;
 import com.company.hrsystem.dto.PersonalInfoDto;
-import com.company.hrsystem.dto.PositionDto;
 import com.company.hrsystem.mapper.EmployeeDocumentMapper;
 import com.company.hrsystem.mapper.EmployeeMapper;
 import com.company.hrsystem.mapper.EmployeePositionMapper;
