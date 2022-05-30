@@ -43,11 +43,13 @@ CREATE TABLE IF NOT EXISTS system_account (
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS system_account_role (
+	system_account_role_id INT(11) auto_increment NOT NULL,
 	system_account_id int(11) NOT NULL,
     system_role_id int(11) NOT NULL,
     deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
+	primary key (`system_account_role_id`),
     CONSTRAINT fk_system_account_id FOREIGN KEY (system_account_id)  
 		REFERENCES system_account(system_account_id),
 	CONSTRAINT fk_system_role_id FOREIGN KEY (system_role_id)  
@@ -221,4 +223,19 @@ CREATE TABLE IF NOT EXISTS refresh_token (
     primary key (`refresh_token_id`),
     CONSTRAINT `fk_fresh_token_account` FOREIGN KEY (system_account_id)  
 		REFERENCES system_account(system_account_id)
-)
+) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS history_action (
+	history_action_id int(11) AUTO_INCREMENT NOT NULL,
+    employee_id int(11) NOT NULL,
+    action_type varchar(50) NOT NULL default 'N/A',
+    computer_ip varchar(255) NOT NULL default 'N/A',
+    target_table varchar(255) NOT NULL default 'N/A',
+    target_row_id int(11) NOT NULL default 0,
+    target_column varchar(255) NOT NULL default 'N/A',
+    target_value varchar(255) NOT NULL default 'N/A',
+    created_at datetime NOT NULL default current_timestamp(),
+    primary key (`history_action_id`), 
+    CONSTRAINT `fk_history_action_employee` FOREIGN KEY (employee_id)  
+		REFERENCES employee(employee_id)
+) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;

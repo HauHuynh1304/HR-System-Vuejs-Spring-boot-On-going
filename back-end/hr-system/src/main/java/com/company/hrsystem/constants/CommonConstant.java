@@ -21,11 +21,40 @@ public class CommonConstant {
 
 	public static final String ROOM_INSERT_NOT_NULL = "[roomName]";
 	public static final String ROOM_UPDATE_NOT_NULL = "[roomId]";
-	
+
 	public static final String EMPLOYEE_INSERT_NOT_NULL = "[roomId, systemAccountId, employeeStartDate]";
 	public static final String EMPLOYEE_UPDATE_NOT_NULL = "[employeeId, roomId, systemAccountId, employeeStartDate]";
 	public static final String EMPLOYEE_ID_NOT_NULL = "[employeeId]";
-	
+
 	public static final String INSERT_COMMENT = "[commentDetail]";
+
+	// ACTION TYPE SAVE TO HISTORY TABLE
+	public static final String INSERT_ACTION = "INSERT";
+	public static final String UPDATE_ACTION = "UPDATE";
+	public static final String LOGIN_ACTION = "LOG IN";
+	public static final String LOGOUT_ACTION = "LOG OUT";
+	public static final String CHANGE_PW_ACTION = "CHANGE PASSWORD";
+
+	// DEFAULT VALUE
+	public static final int ZERO_VALUE = 0;
+
+	// TABLE NAME
+	public static final String TABLE_SYSTEM_ROLE = "system_role";
+	public static final String TABLE_DOCUMENT = "document";
+	public static final String TABLE_POSITION = "position";
+	public static final String TABLE_REASON = "reason";
+	public static final String TABLE_REQUEST_TYPE = "request_type";
+	public static final String TABLE_ROOM = "room";
+	public static final String TABLE_SYSTEM_ACCOUNT = "system_account";
+	public static final String TABLE_SYSTEM_ACCOUNT_ROLE = "system_account_role";
+	public static final String TABLE_PERSONAL = "personal_info";
+	public static final String TABLE_EMPLOYEE = "employee";
+	public static final String TABLE_EMPLOYEE_DOCUMENT = "employee_document";
+	public static final String TABLE_EMPLOYEE_POSITION = "employee_position";
+	public static final String TABLE_REQUEST_TICKET = "request";
+	public static final String TABLE_SUPERVISOR_ACTION = "supervisor_action";
+	public static final String TABLE_APPROVER_ACTION = "approver_action";
+	public static final String TABLE_REQUEST_EMPLOYEE = "request_employee";
+	public static final String TABLE_COMMENT ="comment";
 
 }

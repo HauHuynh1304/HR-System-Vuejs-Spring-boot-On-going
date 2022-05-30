@@ -1,5 +1,7 @@
 package com.company.hrsystem.controllers;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,32 +31,36 @@ public class BusinessRequestController {
 
 	@PostMapping(ApiUrlConstant.BUSINESS_INSERT_REQUEST)
 	@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
-	public ResponseEntity<?> insertBusinessRequest(@RequestBody BusinessRequest request) {
-		return ResponseEntity.ok(businessRequestService.insertBusinessRequest(request));
+	public ResponseEntity<?> insertBusinessRequest(@RequestBody BusinessRequest request,
+			HttpServletRequest httpServletRequest) {
+		return ResponseEntity.ok(businessRequestService.insertBusinessRequest(request, httpServletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_UPDATE_REQUEST)
 	@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
-	public ResponseEntity<?> updateBusinessRequest(@RequestBody BusinessRequest request) {
-		return ResponseEntity.ok(businessRequestService.updateBusinessRequest(request));
+	public ResponseEntity<?> updateBusinessRequest(@RequestBody BusinessRequest request,
+			HttpServletRequest httpServletRequest) {
+		return ResponseEntity.ok(businessRequestService.updateBusinessRequest(request, httpServletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_UPDATE_SUPERVISOR_ACTION)
 	@PreAuthorize("hasRole('ROLE_SUPERVISOR')")
-	public ResponseEntity<?> updateSupervisorAction(@RequestBody SupervisorActionRequest request) {
-		return ResponseEntity.ok(businessRequestService.updateSupervisorAction(request));
+	public ResponseEntity<?> updateSupervisorAction(@RequestBody SupervisorActionRequest request,
+			HttpServletRequest httpServletRequest) {
+		return ResponseEntity.ok(businessRequestService.updateSupervisorAction(request, httpServletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_UPDATE_APPROVER_ACTION)
 	@PreAuthorize("hasRole('ROLE_MANAGER')")
-	public ResponseEntity<?> updateApproverAction(@RequestBody ApproverActionRequest request) {
-		return ResponseEntity.ok(businessRequestService.updateApproverAction(request));
+	public ResponseEntity<?> updateApproverAction(@RequestBody ApproverActionRequest request,
+			HttpServletRequest httpServletRequest) {
+		return ResponseEntity.ok(businessRequestService.updateApproverAction(request, httpServletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_INSERT_COMMENT)
 	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR')")
-	public ResponseEntity<?> insertComment(@RequestBody CommentRequest request) {
-		return ResponseEntity.ok(businessRequestService.insertComment(request));
+	public ResponseEntity<?> insertComment(@RequestBody CommentRequest request, HttpServletRequest httpServletRequest) {
+		return ResponseEntity.ok(businessRequestService.insertComment(request, httpServletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_SEARCH_LIST_CREATED_REQUEST)
@@ -68,7 +74,7 @@ public class BusinessRequestController {
 	public ResponseEntity<?> findRequestTicketById(@PathVariable String id) {
 		return ResponseEntity.ok(businessRequestService.findRequestTicketById(id));
 	}
-	
+
 	@PostMapping(ApiUrlConstant.BUSINESS_SEARCH_LIST_RECEIVED_REQUEST)
 	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_SUPERVISOR')")
 	public ResponseEntity<?> findListReceivedRequestTicket(@RequestBody FindListTicketRequest request) {

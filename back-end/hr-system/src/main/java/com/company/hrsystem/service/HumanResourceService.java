@@ -2,7 +2,11 @@ package com.company.hrsystem.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,10 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.company.hrsystem.Exeption.GlobalException;
+import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.EmployeeDocumentDto;
 import com.company.hrsystem.dto.EmployeeDto;
 import com.company.hrsystem.dto.EmployeePositionDto;
+import com.company.hrsystem.dto.HistoryActionDto;
 import com.company.hrsystem.dto.PersonalInfoDto;
+import com.company.hrsystem.dto.PositionDto;
 import com.company.hrsystem.mapper.EmployeeDocumentMapper;
 import com.company.hrsystem.mapper.EmployeeMapper;
 import com.company.hrsystem.mapper.EmployeePositionMapper;
@@ -30,6 +37,7 @@ import com.company.hrsystem.request.FindListEmployeesRequest;
 import com.company.hrsystem.response.FindEmployeeResponse;
 import com.company.hrsystem.response.FindListEmployeesResponse;
 import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.FileUtil;
 import com.company.hrsystem.utils.LogUtil;
@@ -69,21 +77,41 @@ public class HumanResourceService {
 	@Autowired
 	private FileUtil fileUtil;
 
+	@Autowired
+	private AuthenUtil authenUtil;
+
+	@Autowired
+	private HistoryActionService historyActionService;
+
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public ResponseTemplate insertEmployee(EmployeeRequest request, MultipartFile multipartFile) {
+	public ResponseTemplate insertEmployee(EmployeeRequest request, MultipartFile multipartFile,
+			HttpServletRequest servletRequest) {
 		String fileName = null;
+		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		try {
 			if (multipartFile != null) {
 				fileName = fileUtil.generateFileName(multipartFile);
 			}
+
 			PersonalInfoDto personalInfo = request.getData().getPersonalInfo();
 			personalInfo.setPersonalImage(fileName);
 			personnalInfoMapper.insertPersonalInfo(personalInfo);
-			employeeMapper.insertEmployee(personalInfo, request.getData().getEmployee());
-			employeeDocumentMapper.insertEmployeeDocument(request.getData().getEmployee(),
-					request.getData().getDocuments());
-			employeePositionMapper.insertEmployeePosition(request.getData().getEmployee(),
-					request.getData().getPositions());
+			historyActionService.saveHistoryAction(personalInfo, inserterId, CommonConstant.INSERT_ACTION,
+					personalInfo.getPersonalInfoId(), CommonConstant.TABLE_PERSONAL, servletRequest);
+
+			EmployeeDto employeeDto = request.getData().getEmployee();
+			employeeMapper.insertEmployee(personalInfo, employeeDto);
+			historyActionService.saveHistoryAction(employeeDto, inserterId, CommonConstant.INSERT_ACTION,
+					employeeDto.getEmployeeId(), CommonConstant.TABLE_EMPLOYEE, servletRequest);
+
+			List<EmployeeDocumentDto> listEmployeeDocument = request.getData().getDocuments();
+			employeeDocumentMapper.insertEmployeeDocument(employeeDto, listEmployeeDocument);
+			saveHistoryLastInsertDocuments(inserterId, employeeDto.getEmployeeId(), servletRequest);
+
+			List<EmployeePositionDto> listEmployeePosition = request.getData().getPositions();
+			employeePositionMapper.insertEmployeePosition(employeeDto, listEmployeePosition);
+			saveHistoryLastInsertPositons(inserterId, employeeDto.getEmployeeId(), servletRequest);
+
 			if (!StringUtils.isAllEmpty(fileName)) {
 				try {
 					fileUtil.saveFile(
@@ -103,12 +131,15 @@ public class HumanResourceService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public ResponseTemplate updateEmployee(EmployeeRequest request, MultipartFile multipartFile) {
+	public ResponseTemplate updateEmployee(EmployeeRequest request, MultipartFile multipartFile,
+			HttpServletRequest servletRequest) {
 		EmployeeDto employee = request.getData().getEmployee();
 		PersonalInfoDto personalInfo = request.getData().getPersonalInfo();
 		List<EmployeeDocumentDto> documents = request.getData().getDocuments();
 		List<EmployeePositionDto> positions = request.getData().getPositions();
 		String updatedAt = DateUtil.getCurrentDayHourSecond();
+		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+
 		try {
 			/*
 			 * In EmployeeRequest, parameter employeeId is always not null then it will call
@@ -118,6 +149,8 @@ public class HumanResourceService {
 			if (objectUtil.countNotNullParamater(employee) > 1) {
 				employee.setUpdatedAt(updatedAt);
 				employeeMapper.updateEmployee(employee);
+				historyActionService.saveHistoryAction(employee, inserterId, CommonConstant.UPDATE_ACTION,
+						employee.getEmployeeId(), CommonConstant.TABLE_EMPLOYEE, servletRequest);
 			}
 
 			/*
@@ -141,6 +174,8 @@ public class HumanResourceService {
 					}
 				}
 				personnalInfoMapper.updatePersonalInfo(personalInfo);
+				historyActionService.saveHistoryAction(personalInfo, inserterId, CommonConstant.UPDATE_ACTION,
+						personalInfo.getPersonalInfoId(), CommonConstant.TABLE_PERSONAL, servletRequest);
 			}
 
 			if (ObjectUtils.isNotEmpty(documents)) {
@@ -155,9 +190,14 @@ public class HumanResourceService {
 				});
 				if (ObjectUtils.isNotEmpty(oldDocuments)) {
 					employeeDocumentMapper.updateEmployeeDocument(oldDocuments, updatedAt);
+					for (EmployeeDocumentDto obj : oldDocuments) {
+						historyActionService.saveHistoryAction(obj, inserterId, CommonConstant.UPDATE_ACTION,
+								obj.getEmployeeDocumentId(), CommonConstant.TABLE_EMPLOYEE_DOCUMENT, servletRequest);
+					}
 				}
 				if (ObjectUtils.isNotEmpty(newDocuments)) {
 					employeeDocumentMapper.insertEmployeeDocument(employee, newDocuments);
+					saveHistoryLastInsertDocuments(inserterId, employee.getEmployeeId(), servletRequest);
 				}
 			}
 
@@ -173,9 +213,14 @@ public class HumanResourceService {
 				});
 				if (ObjectUtils.isNotEmpty(oldPositions)) {
 					employeePositionMapper.updateEmployeePosition(oldPositions, updatedAt);
+					for (EmployeePositionDto obj : oldPositions) {
+						historyActionService.saveHistoryAction(obj, inserterId, CommonConstant.UPDATE_ACTION,
+								obj.getEmployeePositionId(), CommonConstant.TABLE_EMPLOYEE_POSITION, servletRequest);
+					}
 				}
 				if (ObjectUtils.isNotEmpty(newPositions)) {
 					employeePositionMapper.insertEmployeePosition(employee, newPositions);
+					saveHistoryLastInsertPositons(inserterId, employee.getEmployeeId(), servletRequest);
 				}
 			}
 
@@ -202,6 +247,24 @@ public class HumanResourceService {
 		FindEmployeeResponse info = employeeMapper.findEmployeeById(id);
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, info);
+	}
+
+	public void saveHistoryLastInsertPositons(Integer inserterId, Integer employeeId,
+			HttpServletRequest servletRequest) {
+		Set<EmployeePositionDto> positionDtos = employeePositionMapper.findLastInsertListEmployeePosition(employeeId);
+		for (EmployeePositionDto obj : positionDtos) {
+			historyActionService.saveHistoryAction(obj, inserterId, CommonConstant.INSERT_ACTION,
+					obj.getEmployeePositionId(), CommonConstant.TABLE_EMPLOYEE_POSITION, servletRequest);
+		}
+	}
+
+	public void saveHistoryLastInsertDocuments(Integer inserterId, Integer employeeId,
+			HttpServletRequest servletRequest) {
+		Set<EmployeeDocumentDto> documentDtos = employeeDocumentMapper.findLastInsertListEmployeeDocument(employeeId);
+		for (EmployeeDocumentDto obj : documentDtos) {
+			historyActionService.saveHistoryAction(obj, inserterId, CommonConstant.INSERT_ACTION,
+					obj.getEmployeeDocumentId(), CommonConstant.TABLE_EMPLOYEE_DOCUMENT, servletRequest);
+		}
 	}
 
 }

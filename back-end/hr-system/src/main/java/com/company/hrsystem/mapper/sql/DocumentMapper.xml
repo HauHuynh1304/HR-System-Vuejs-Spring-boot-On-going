@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.hrsystem.mapper.DocumentMapper">
 	<insert id="insertDocument"
-		parameterType="com.company.hrsystem.dto.DocumentDto">
+		parameterType="com.company.hrsystem.dto.DocumentDto"
+		useGeneratedKeys="true" keyProperty="documentId"
+		keyColumn="document_id">
 		insert into document
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="documentName != null">

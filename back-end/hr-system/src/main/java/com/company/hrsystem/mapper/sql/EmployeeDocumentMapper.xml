@@ -27,4 +27,27 @@
 				employee_document_id = #{item.employeeDocumentId} 
 		</foreach>
 	</update>
+	
+	<resultMap type="com.company.hrsystem.dto.EmployeeDocumentDto" 
+		id="findLastInsertListEmployeeDocument">
+		<result column="employee_document_id" jdbcType="INTEGER" property="employeeDocumentId"/>
+		<result column="employee_id" jdbcType="INTEGER" property="employeeId"/>
+		<result column="document_id" jdbcType="INTEGER" property="documentId"/>
+	</resultMap>
+	<select id="findLastInsertListEmployeeDocument" resultMap="findLastInsertListEmployeeDocument"
+		parameterType="INTEGER">
+		SELECT 
+			ed.employee_document_id,
+			ed.employee_id,
+			ed.document_id
+		FROM employee_document ed
+		WHERE ed.employee_id = #{employeeId}
+			AND ed.created_at = (
+				SELECT sed.created_at
+				FROM employee_document sed
+				WHERE sed.employee_id = #{employeeId}
+				ORDER BY employee_document_id DESC
+				LIMIT 1
+			)
+	</select>
 </mapper>

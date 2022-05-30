@@ -227,13 +227,13 @@
 	FROM system_account  
   </select>
   
-	<select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT
     		sa.system_account_id
     	FROM 
     		system_account sa
     	WHERE
-    		sa.system_email = #{accEmail, jdbcType = VARCHAR} 
+    		sa.system_email = #{email, jdbcType = VARCHAR} 
 	</select>
   
  	<resultMap type="com.company.hrsystem.dto.AuthenAccountDto" id="authenResult">

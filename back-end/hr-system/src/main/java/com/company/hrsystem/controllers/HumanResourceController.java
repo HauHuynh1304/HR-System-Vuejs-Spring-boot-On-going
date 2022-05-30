@@ -2,6 +2,8 @@ package com.company.hrsystem.controllers;
 
 import org.springframework.http.MediaType;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,8 +33,9 @@ public class HumanResourceController {
 	@PostMapping(value = ApiUrlConstant.HUMAN_RESOURCE_INSERT_EMPLOYEE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasRole('ROLE_HR')")
 	public ResponseEntity<?> insertEmployee(@RequestPart("formEmployee") EmployeeRequest request,
-			@RequestPart(name = "image", required = false) MultipartFile multipartFile) {
-		return ResponseEntity.ok(humanResourceService.insertEmployee(request, multipartFile));
+			@RequestPart(name = "image", required = false) MultipartFile multipartFile,
+			HttpServletRequest servletRequest) {
+		return ResponseEntity.ok(humanResourceService.insertEmployee(request, multipartFile, servletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.HUMAN_RESOURCE_SEARCH_ALL_EMPLOYEES)
@@ -50,8 +53,9 @@ public class HumanResourceController {
 	@PostMapping(value = ApiUrlConstant.HUMAN_RESOURCE_UPDATE_EMPLOYEE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasRole('ROLE_HR')")
 	public ResponseEntity<?> updateEmployee(@RequestPart("formEmployee") EmployeeRequest request,
-			@RequestPart(name = "image", required = false) MultipartFile multipartFile) {
-		return ResponseEntity.ok(humanResourceService.updateEmployee(request, multipartFile));
+			@RequestPart(name = "image", required = false) MultipartFile multipartFile,
+			HttpServletRequest servletRequest) {
+		return ResponseEntity.ok(humanResourceService.updateEmployee(request, multipartFile, servletRequest));
 	}
 
 }

@@ -31,8 +31,9 @@ public class AuthenticationController {
 	RefreshTokenService refreshTokenService;
 
 	@PostMapping(ApiUrlConstant.AUTHEN_LOG_IN)
-	public ResponseEntity<?> login(@RequestBody AuthenRequest request) throws Exception {
-		return ResponseEntity.ok(authenService.handleLogin(request));
+	public ResponseEntity<?> login(@RequestBody AuthenRequest request, HttpServletRequest servletRequest)
+			throws Exception {
+		return ResponseEntity.ok(authenService.handleLogin(request, servletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.AUTHEN_REFRESH_TOKEN)
@@ -43,8 +44,8 @@ public class AuthenticationController {
 
 	@PostMapping(ApiUrlConstant.AUTHEN_SIGN_UP)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> signUp(@RequestBody SignUpRequest request) {
-		return ResponseEntity.ok(authenService.handleSignUp(request));
+	public ResponseEntity<?> signUp(@RequestBody SignUpRequest request, HttpServletRequest servletRequest) {
+		return ResponseEntity.ok(authenService.handleSignUp(request, servletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.AUTHEN_LOG_OUT)

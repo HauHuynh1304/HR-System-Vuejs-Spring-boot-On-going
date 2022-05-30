@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.company.hrsystem.mapper.HistoryActionMapper">
+	<insert id="insertHistoryAction"
+		parameterType="com.company.hrsystem.dto.HistoryActionDto">
+		<if test="mutableObjValues != null">
+			<foreach collection="mutableObjValues" item="item" open=" "
+				separator=";" close=" ">
+				INSERT INTO history_action
+					(
+						employee_id, action_type, computer_ip, 
+						target_table, target_row_id, target_column, target_value
+					)
+				VALUES 
+					(
+						#{employeeId}, #{actionType}, #{computerIp}, 
+						#{targetTable}, #{targetRowId}, #{item.targetColumn}, #{item.targetValue}
+					)
+			</foreach>
+		</if>
+		<if test="mutableObjValues == null or mutableObjValues.isEmpty()">
+				INSERT INTO history_action
+					(
+						employee_id, action_type, computer_ip
+					)
+				VALUES 
+					(
+						#{employeeId}, #{actionType}, #{computerIp}
+					)
+		</if>
+	</insert>
+</mapper>

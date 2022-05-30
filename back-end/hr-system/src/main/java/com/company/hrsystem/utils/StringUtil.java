@@ -10,6 +10,8 @@ public class StringUtil {
 
 	public static final String SPACE_PATTERN = "\\s+";
 
+	public static final String ADD_UNDERSCORE_SYMBOL_AT_UPPERCASES_PATTERN = "([a-z])([A-Z])";
+
 	public static Boolean validEmail(String email) {
 		return Pattern.compile(EMAIL_PATTERN).matcher(email).matches();
 	}
@@ -28,6 +30,10 @@ public class StringUtil {
 
 	public static String trimAllSpace(String string) {
 		return string.replaceAll(SPACE_PATTERN, " ").trim();
+	}
+
+	public static String addUnderscoreAtEachUppercases(String string) {
+		return string.replaceAll(ADD_UNDERSCORE_SYMBOL_AT_UPPERCASES_PATTERN, "$1_$2").toLowerCase();
 	}
 
 }
