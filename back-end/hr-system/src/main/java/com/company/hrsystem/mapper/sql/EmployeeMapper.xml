@@ -205,6 +205,11 @@
 	    	<result column="personal_name" jdbcType="VARCHAR" property="personalName" />
 	    	<result column="personal_birthday" jdbcType="VARCHAR" property="personalBirthday" />
 	    	<result column="personal_phone_number" jdbcType="VARCHAR" property="personalPhoneNumber" />
+	    	<result column="personal_address" jdbcType="VARCHAR" property="personalAddress" />
+	    	<result column="personal_sex" jdbcType="VARCHAR" property="personalSex" />
+	    	<result column="personal_id_card" jdbcType="VARCHAR" property="personalIdCard" />
+	    	<result column="personal_image" jdbcType="VARCHAR" property="personalImage" />
+	    	<result column="personal_email" jdbcType="VARCHAR" property="personalEmail" />
 	    </collection>
 	    <collection property="room" ofType="com.company.hrsystem.dto.RoomDto">
 	    	<id column="room_id" jdbcType="INTEGER" property="roomId" />
@@ -225,13 +230,18 @@
         	 <result column="doc_deleted_flag" jdbcType="BIT" property="deletedFlag" />
         </collection>
 	</resultMap>
-	<select id="findEmployeeById" resultMap="findEmployeeById" parameterType="string">
+	<select id="findEmployeeById" resultMap="findEmployeeById" parameterType="Integer">
 		SELECT
 			e.employee_id,
+			p.personal_info_id,
 			p.personal_name,
 			p.personal_birthday,
+			p.personal_address,
 			p.personal_phone_number,
-			p.personal_info_id,
+			p.personal_sex,
+			p.personal_id_card,
+			p.personal_email,
+			p.personal_image,
 			e.deleted_flag,
 			e.employee_start_date,
 			e.employee_end_date,

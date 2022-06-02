@@ -81,4 +81,10 @@ public class BusinessRequestController {
 		return ResponseEntity.ok(businessRequestService.findListReceivedRequestTicket(request));
 	}
 
+	@PostMapping(ApiUrlConstant.BUSINESS_FIND_CURRENT_USER)
+	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
+	public ResponseEntity<?> findListReceivedRequestTicket() {
+		return ResponseEntity.ok(businessRequestService.findCurrentUser());
+	}
+
 }

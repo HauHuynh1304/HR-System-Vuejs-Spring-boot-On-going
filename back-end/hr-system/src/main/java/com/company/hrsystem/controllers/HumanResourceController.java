@@ -46,7 +46,7 @@ public class HumanResourceController {
 
 	@GetMapping(ApiUrlConstant.HUMAN_RESOURCE_SEARCH_EMPLOYEE)
 	@PreAuthorize("hasRole('ROLE_HR')")
-	public ResponseEntity<?> findEmployeeById(@PathVariable(required = true) String id) {
+	public ResponseEntity<?> findEmployeeById(@PathVariable(required = true) Integer id) {
 		return ResponseEntity.ok(humanResourceService.findEmployeeById(id));
 	}
 

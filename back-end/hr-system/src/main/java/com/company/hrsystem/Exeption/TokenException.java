@@ -1,7 +1,5 @@
 package com.company.hrsystem.Exeption;
 
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.company.hrsystem.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -11,9 +9,6 @@ import lombok.Setter;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.springframework.http.HttpStatus;
-
-@ResponseStatus(HttpStatus.FORBIDDEN)
 @Getter
 @Setter
 public class TokenException extends RuntimeException {

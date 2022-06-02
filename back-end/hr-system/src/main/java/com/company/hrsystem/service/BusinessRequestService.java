@@ -1,5 +1,6 @@
 package com.company.hrsystem.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +36,13 @@ import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
 import com.company.hrsystem.request.FindListTicketRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
+import com.company.hrsystem.response.FindEmployeeResponse;
 import com.company.hrsystem.response.FindListTicketResponse;
 import com.company.hrsystem.response.FindTicketRequestByIdResponse;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
+import com.company.hrsystem.utils.FileUtil;
 import com.company.hrsystem.utils.LogUtil;
 import com.company.hrsystem.utils.MessageUtil;
 
@@ -51,6 +54,9 @@ public class BusinessRequestService {
 
 	@Value("${system.version}")
 	private String version;
+
+	@Value("${upload.employee.img.dir}")
+	private String uploadEmployeeImgDir;
 
 	@Autowired
 	private RequestMapper requestMapper;
@@ -75,6 +81,9 @@ public class BusinessRequestService {
 
 	@Autowired
 	private AuthenUtil authenUtil;
+
+	@Autowired
+	private FileUtil fileUtil;
 
 	@Autowired
 	private HistoryActionService historyActionService;
@@ -264,6 +273,20 @@ public class BusinessRequestService {
 		List<FindListTicketResponse> listObj = requestEmployeeMapper.findListReceivedRequestTicket(request.getData());
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+	}
+
+	public ResponseTemplate findCurrentUser() {
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		FindEmployeeResponse obj = employeeMapper.findEmployeeById(employeeId);
+		try {
+			String image = fileUtil.encodeImg(uploadEmployeeImgDir, obj.getPersonalInfo().getPersonalInfoId(),
+					obj.getPersonalInfo().getPersonalImage());
+			obj.getPersonalInfo().setPersonalImage(image);
+		} catch (IOException e) {
+			LogUtil.error(messageUtil.getFlexMessageLangUS("get.image.error", String.valueOf(employeeId)));
+		}
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, obj);
 	}
 
 	public void isErrorRequestManager(String status) {
