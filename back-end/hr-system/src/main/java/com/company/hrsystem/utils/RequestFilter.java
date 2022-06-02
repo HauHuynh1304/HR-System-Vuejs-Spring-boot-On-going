@@ -124,13 +124,13 @@ public class RequestFilter extends OncePerRequestFilter {
 		LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
 		LogUtil.error(ExceptionUtils.getStackTrace(e));
 		HttpServletResponseUtil.ServletResponse(response, new ResponseTemplate(system, version,
-				HttpStatus.FORBIDDEN.value(), null, messageUtil.getMessagelangUS("not.valid.access.token"), null));
+				HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value(), null, messageUtil.getMessagelangUS("not.valid.access.token"), null));
 	}
 
 	public void responseErrAccessToken(HttpServletResponse response) throws IOException {
 		LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
 		HttpServletResponseUtil.ServletResponse(response, new ResponseTemplate(system, version,
-				HttpStatus.FORBIDDEN.value(), null, messageUtil.getMessagelangUS("not.valid.access.token"), null));
+				HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value(), null, messageUtil.getMessagelangUS("not.valid.access.token"), null));
 	}
 
 }

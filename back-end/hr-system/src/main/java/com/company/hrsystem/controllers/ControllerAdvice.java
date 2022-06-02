@@ -15,10 +15,10 @@ import com.company.hrsystem.response.ResponseTemplate;
 public class ControllerAdvice {
 
 	@ExceptionHandler(value = TokenException.class)
-	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseStatus(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
 	public ResponseTemplate handleTokenRefreshException(TokenException ex, WebRequest request) {
 		request.getDescription(false);
-		return new ResponseTemplate(ex.getSystem(), ex.getVersion(), HttpStatus.FORBIDDEN.value(), null,
+		return new ResponseTemplate(ex.getSystem(), ex.getVersion(), HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value(), null,
 				ex.getMessage(), null);
 	}
 
