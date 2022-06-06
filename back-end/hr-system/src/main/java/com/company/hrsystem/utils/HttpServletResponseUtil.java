@@ -15,7 +15,7 @@ public class HttpServletResponseUtil {
 	public static void ServletResponse(HttpServletResponse response, Object obj) throws IOException {
 		String toJson = new Gson().toJson(obj);
 		PrintWriter out = response.getWriter();
-		response.setStatus(HttpStatus.FORBIDDEN.value());
+		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("UTF-8");
 		out.print(toJson);

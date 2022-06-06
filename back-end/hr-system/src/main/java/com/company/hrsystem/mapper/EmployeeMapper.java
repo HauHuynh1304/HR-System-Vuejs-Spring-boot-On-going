@@ -21,6 +21,6 @@ public interface EmployeeMapper {
 	
 	List<FindListEmployeesResponse> findListEmployees(FindListEmployeesRequest request);
 	
-	FindEmployeeResponse findEmployeeById(String id);
+	FindEmployeeResponse findEmployeeById(Integer id);
 
 }

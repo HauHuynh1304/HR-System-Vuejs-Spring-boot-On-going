@@ -1,53 +1,45 @@
-import Vue from "vue";
+/*
+ =========================================================
+ * Vue White Dashboard Laravel - v1.1.0
+ =========================================================
 
-import Cookies from "js-cookie";
+ * Product Page: https://www.creative-tim.com/product/vue-white-dashboard-laravel
+ * Copyright Creative Tim (http://www.creative-tim.com) & UPDIVISION (https://www.updivision.com)
 
-import "normalize.css/normalize.css"; // a modern alternative to CSS resets
+ 
+ * Coded by www.creative-tim.com & www.updivision.com
 
-import Element from "element-ui";
-import "./styles/element-variables.scss";
-import enLang from "element-ui/lib/locale/lang/en"; // 如果使用中文语言包请默认支持，无需额外引入，请删除该依赖
+ =========================================================
 
-import "@/styles/index.scss"; // global css
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-import App from "./App";
-import store from "./store";
-import router from "./router";
-
-import "./icons"; // icon
-import "./permission"; // permission control
-import "./utils/error-log"; // error log
-
-import * as filters from "./filters"; // global filters
-
-/**
- * If you don't want to use mock-server
- * you want to use MockJs for mock api
- * you can execute: mockXHR()
- *
- * Currently MockJs will be used in the production environment,
- * please remove it before going online ! ! !
  */
-if (process.env.NODE_ENV === "production") {
-  const { mockXHR } = require("../mock");
-  mockXHR();
-}
+import Vue from "vue";
+import VueRouter from "vue-router";
+import RouterPrefetch from "vue-router-prefetch";
+import App from "./App";
+// TIP: change to import router from "./router/starterRouter"; to start with a clean layout
+import router from "./router/index";
+import store from "./store";
 
-Vue.use(Element, {
-  size: Cookies.get("size") || "medium", // set element-ui default size
-  locale: enLang, // 如果使用中文，无需设置，请删除
-});
+import BlackDashboard from "./plugins/blackDashboard";
+import i18n from "./i18n";
+import "./registerServiceWorker";
+import VueMeta from "vue-meta";
+import IsDemo from "./plugins/isDemo";
+import { BootstrapVue } from "bootstrap-vue";
 
-// register global utility filters
-Object.keys(filters).forEach((key) => {
-  Vue.filter(key, filters[key]);
-});
+Vue.use(BlackDashboard);
+Vue.use(VueRouter);
+Vue.use(RouterPrefetch);
+Vue.use(IsDemo);
+Vue.use(VueMeta, { keyName: "head" });
+Vue.use(BootstrapVue);
 
-Vue.config.productionTip = false;
-
+/* eslint-disable no-new */
 new Vue({
-  el: "#app",
+  store: store,
   router,
-  store,
+  i18n,
   render: (h) => h(App),
-});
+}).$mount("#app");

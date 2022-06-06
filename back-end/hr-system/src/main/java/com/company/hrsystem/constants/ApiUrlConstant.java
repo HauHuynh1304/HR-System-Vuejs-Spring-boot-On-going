@@ -36,5 +36,6 @@ public class ApiUrlConstant {
 	public static final String BUSINESS_UPDATE_SUPERVISOR_ACTION = "/business/supervisor";
 	public static final String BUSINESS_UPDATE_APPROVER_ACTION = "/business/approver";
 	public static final String BUSINESS_INSERT_COMMENT = "/business/insert-comment";
+	public static final String BUSINESS_FIND_CURRENT_USER = "/business/find-current-user";
 	
 }

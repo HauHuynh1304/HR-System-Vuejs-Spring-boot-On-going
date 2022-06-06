@@ -7,9 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import java.util.UUID;
 
-import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,6 +48,15 @@ public class FileUtil {
 		InputStream inputStream = multipartFile.getInputStream();
 		Path filePath = saveToPath.resolve(fileName);
 		Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+	}
+
+	public String encodeImg(String originDir, Integer index, String fileName) throws IOException {
+		StringBuilder str = new StringBuilder();
+		str.append(generateUploadDir(originDir, index));
+		str.append("/");
+		str.append(fileName);
+		byte[] fileContent = FileUtils.readFileToByteArray(new File(str.toString()));
+		return Base64.getEncoder().encodeToString(fileContent);
 	}
 
 }

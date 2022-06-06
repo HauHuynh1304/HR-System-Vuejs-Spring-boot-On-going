@@ -98,7 +98,6 @@ public class AuthenticationService {
 	}
 
 	public ResponseTemplate handleLogOut(HttpServletRequest request) {
-		SecurityContextHolder.getContext().setAuthentication(null);
 		cacheService.deleteCache(tokenStore, tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(request)));
 		historyActionService.saveHistoryAction(null, CommonConstant.ZERO_VALUE, CommonConstant.LOGOUT_ACTION,
 				CommonConstant.ZERO_VALUE, null, request);

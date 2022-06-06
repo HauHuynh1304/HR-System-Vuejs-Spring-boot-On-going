@@ -16,8 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.company.hrsystem.service.UserDetailsServiceImp;
 import com.company.hrsystem.utils.JwtAuthenticationEntryPoint;
-//import com.company.hrsystem.utils.JwtAuthenticationEntryPoint;
-import com.company.hrsystem.utils.RequestFilter;
 
 @Configuration
 @EnableWebSecurity
