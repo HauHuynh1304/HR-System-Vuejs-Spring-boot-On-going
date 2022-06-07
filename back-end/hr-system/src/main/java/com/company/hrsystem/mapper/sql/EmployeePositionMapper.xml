@@ -3,8 +3,8 @@
 <mapper
 	namespace="com.company.hrsystem.mapper.EmployeePositionMapper">
 	<insert id="insertEmployeePosition">
-		insert into employee_position (employee_id, position_id, start_date)
-		values
+		INSERT IGNORE INTO employee_position (employee_id, position_id, start_date)
+		VALUES
 		<foreach collection="positions" item="item" open="("
 			separator="),(" close=")">
 			#{employee.employeeId},
@@ -59,5 +59,24 @@
 				ORDER BY sep.employee_position_id DESC
 				LIMIT 1
 			)
+	</select>
+	
+	<resultMap type="com.company.hrsystem.dto.EmployeePositionDto" 
+		id="findEmployeePositionsByEmployeeId">
+		<result column="employee_position_id" jdbcType="INTEGER" property="employeePositionId"/>
+		<result column="position_id" jdbcType="INTEGER" property="positionId"/>
+		<result column="start_date" jdbcType="VARCHAR" property="startDate"/>
+	</resultMap>
+	<select id="findEmployeePositionsByEmployeeId" parameterType="INTEGER" 
+		resultMap="findEmployeePositionsByEmployeeId">
+		SELECT 
+			ep.employee_position_id,
+			ep.position_id,
+			ep.start_date
+		FROM employee_position ep
+			LEFT JOIN position pos
+				ON ep.position_id = pos.position_id
+		WHERE ep.employee_id = #{employeeId}
+			AND pos.deleted_flag = false
 	</select>
 </mapper>

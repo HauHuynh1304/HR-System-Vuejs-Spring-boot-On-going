@@ -29,6 +29,6 @@ public abstract class HistoryActionModel implements Serializable {
 
 	private String targetValue;
 
-	private String updatedAt;
+	private String createdAt;
 
 }

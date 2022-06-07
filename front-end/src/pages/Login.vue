@@ -1,18 +1,5 @@
 <template>
   <div>
-    <!-- <div class="container">
-      <div class="header-body text-center">
-        <div class="row justify-content-center">
-          <div class="text-center" style="margin-bottom: 5px;">
-            <h1 class="text-login"></h1>
-            <p class="text-lead text-login"></p>
-          </div>
-          <div class="text-login">
-            <h3 class="text-login"><strong></strong></h3>
-          </div>
-        </div>
-      </div>
-    </div> -->
     <div class="container">
       <div class="col-lg-4 col-md-6 mt-auto ml-auto mr-auto">
         <form @submit.prevent="handleSubmit()">
@@ -34,7 +21,7 @@
 
               <base-input
                 required
-                v-model="formLogin.data.username"
+                v-model="formLogin.data.password"
                 placeholder="Password"
                 addon-left-icon="tim-icons icon-lock-circle"
                 type="password"
@@ -51,22 +38,6 @@
                   Get Started
                 </base-button>
               </div>
-
-              <!-- <div class="pull-left">
-                <h6>
-                  <router-link class="link footer-link" to="/register">
-                    Create Account
-                  </router-link>
-                </h6>
-              </div>
-
-              <div class="pull-right">
-                <h6>
-                  <a href="/password/reset" class="link footer-link"
-                    >Forgot Password?</a
-                  >
-                </h6>
-              </div> -->
             </div>
           </card>
         </form>
@@ -93,25 +64,24 @@ export default {
     return {
       formLogin: {
         data: {
-          username: "hauth3@hrsystem.com",
-          password: "password",
+          username: null,
+          password: null,
         },
       },
-      subscribe: true,
     };
   },
   methods: {
     handleSubmit() {
       removeAccessToken();
       removeRefreshToken();
-      login(this.formLogin).then((res) => {
+      login(this.formLogin).then(async (res) => {
         let status = res.status;
         switch (status) {
           case 200:
-            setAccessToken(res.data.accessToken);
-            setRefreshToken(res.data.refreshToken);
+            await setAccessToken(res.data.accessToken);
+            await setRefreshToken(res.data.refreshToken);
             this.$store.dispatch("isLogin", true);
-            getLoginUserInfo().then((res) => {
+            await getLoginUserInfo().then((res) => {
               localStorage.setItem(
                 LOCAL_STORAGE.NAME,
                 JSON.stringify(res.data.personalInfo)

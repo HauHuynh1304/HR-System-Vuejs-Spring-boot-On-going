@@ -215,23 +215,10 @@
 	    	<id column="room_id" jdbcType="INTEGER" property="roomId" />
 	    	<result column="room_name" jdbcType="VARCHAR" property="roomName" />
 	    </collection>
-	    <collection property="positions" ofType="com.company.hrsystem.dto.EmployeePositionDto" >
-        	 <id column="employee_position_id" jdbcType="INTEGER" property="employeePositionId" />
-        	 <result column="position_id" jdbcType="INTEGER" property="positionId" />
-        	 <result column="position_name" jdbcType="VARCHAR" property="positionName" />
-        	 <result column="empos_deleted_flag" jdbcType="BIT" property="deletedFlag" />
-        	 <result column="start_date" jdbcType="VARCHAR" property="startDate" />
-        	 <result column="end_date" jdbcType="VARCHAR" property="endDate" />
-        </collection>
-	    <collection property="documents" ofType="com.company.hrsystem.dto.EmployeeDocumentDto" >
-        	 <id column="employee_document_id" jdbcType="INTEGER" property="employeeDocumentId"/>
-        	 <result column="document_id" jdbcType="INTEGER" property="documentId" />
-        	 <result column="document_name" jdbcType="VARCHAR" property="documentName" />
-        	 <result column="doc_deleted_flag" jdbcType="BIT" property="deletedFlag" />
-        </collection>
 	</resultMap>
 	<select id="findEmployeeById" resultMap="findEmployeeById" parameterType="Integer">
 		SELECT
+			sy.system_email,
 			e.employee_id,
 			p.personal_info_id,
 			p.personal_name,
@@ -246,18 +233,7 @@
 			e.employee_start_date,
 			e.employee_end_date,
 			r.room_name,
-			r.room_id,
-			pos.position_name,
-			empos.employee_position_id,
-			empos.position_id,
-			empos.deleted_flag AS empos_deleted_flag,
-			empos.start_date,
-			empos.end_date,
-			sy.system_email,
-			empdoc.employee_document_id,
-			doc.document_name,
-			empdoc.deleted_flag AS doc_deleted_flag,
-			empdoc.document_id
+			r.room_id
 		FROM personal_info p
 			LEFT JOIN employee e
 				ON p.personal_info_id = e.personal_info_id
@@ -265,14 +241,6 @@
 				ON e.system_account_id = sy.system_account_id
 			LEFT JOIN room r
 				ON e.room_id = r.room_id
-			LEFT JOIN employee_position empos
-				ON e.employee_id = empos.employee_id
-			LEFT JOIN position pos
-				ON empos.position_id = pos.position_id
-			LEFT JOIN employee_document empdoc
-				ON e.employee_id = empdoc.employee_id
-			LEFT JOIN document doc
-				ON empdoc.document_id = doc.document_id
 		WHERE
 			e.employee_id = #{id, jdbcType=INTEGER}		
 	</select>

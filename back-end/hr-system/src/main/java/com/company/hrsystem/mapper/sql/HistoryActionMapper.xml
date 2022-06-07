@@ -30,4 +30,26 @@
 					)
 		</if>
 	</insert>
+	
+	<resultMap type="com.company.hrsystem.dto.HistoryActionDto" 
+		id="findHistoriesByEmployeeId">
+        <id column="history_action_id" jdbcType="INTEGER" property="historyActionId"/>
+		<result column="action_type" jdbcType="VARCHAR" property="actionType"/>
+		<result column="computer_ip" jdbcType="VARCHAR" property="computerIp"/>
+		<result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+	</resultMap>
+	<select id="findHistoriesByEmployeeId" 
+		resultMap="findHistoriesByEmployeeId" parameterType="Integer">
+		SELECT
+			ha.action_type,
+			ha.computer_ip,
+			ha.created_at
+		FROM 
+			history_action ha
+		WHERE 
+			ha.employee_id = #{id, jdbcType=INTEGER}
+		ORDER BY
+			ha.history_action_id DESC
+		LIMIT 10
+	</select>
 </mapper>

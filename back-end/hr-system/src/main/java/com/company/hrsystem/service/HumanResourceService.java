@@ -242,14 +242,10 @@ public class HumanResourceService {
 
 	public ResponseTemplate findEmployeeById(Integer id) {
 		FindEmployeeResponse info = employeeMapper.findEmployeeById(id);
-		try {
-			String image = fileUtil.encodeImg(uploadEmployeeImgDir, info.getPersonalInfo().getPersonalInfoId(),
-					info.getPersonalInfo().getPersonalImage());
-			info.getPersonalInfo().setPersonalImage(image);
-		} catch (IOException e) {
-			LogUtil.error(messageUtil.getFlexMessageLangUS("get.image.error",
-					String.valueOf(info.getPersonalInfo().getPersonalInfoId())));
-		}
+		info.getPersonalInfo().setPersonalImage(fileUtil.getUrlImg(uploadEmployeeImgDir,
+				info.getPersonalInfo().getPersonalInfoId(), info.getPersonalInfo().getPersonalImage()));
+		info.setDocuments(employeeDocumentMapper.findEmployeeDocumentsByEmployeeId(id));
+		info.setPositions(employeePositionMapper.findEmployeePositionsByEmployeeId(id));
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, info);
 	}

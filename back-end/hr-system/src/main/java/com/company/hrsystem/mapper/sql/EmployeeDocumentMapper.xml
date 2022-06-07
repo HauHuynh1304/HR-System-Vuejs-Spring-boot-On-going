@@ -3,7 +3,7 @@
 <mapper
 	namespace="com.company.hrsystem.mapper.EmployeeDocumentMapper">
 	<insert id="insertEmployeeDocument">
-		INSERT INTO employee_document (employee_id, document_id)
+		INSERT IGNORE INTO employee_document (employee_id, document_id)
 		VALUES 
 		<foreach collection="documents" item="item" open="("
 			separator="),(" close=")">
@@ -49,5 +49,24 @@
 				ORDER BY employee_document_id DESC
 				LIMIT 1
 			)
+	</select>
+	
+	<resultMap type="com.company.hrsystem.dto.EmployeeDocumentDto" 
+		id="findEmployeeDocumentsByEmployeeId">
+		<result column="employee_document_id" jdbcType="INTEGER" property="employeeDocumentId"/>
+		<result column="document_name" jdbcType="INTEGER" property="documentName"/>
+		<result column="document_id" jdbcType="INTEGER" property="documentId"/>
+	</resultMap>
+	<select id="findEmployeeDocumentsByEmployeeId" resultMap="findEmployeeDocumentsByEmployeeId"
+		parameterType="INTEGER">
+		SELECT
+			ed.employee_document_id,
+			ed.document_id,
+			doc.document_name
+		FROM employee_document ed
+			LEFT JOIN document doc
+				ON ed.document_id = doc.document_id
+		WHERE ed.employee_id = #{employeeId}
+			AND doc.deleted_flag = false
 	</select>
 </mapper>

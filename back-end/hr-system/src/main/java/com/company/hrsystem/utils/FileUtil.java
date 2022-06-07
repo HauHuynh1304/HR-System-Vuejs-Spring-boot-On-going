@@ -58,5 +58,13 @@ public class FileUtil {
 		byte[] fileContent = FileUtils.readFileToByteArray(new File(str.toString()));
 		return Base64.getEncoder().encodeToString(fileContent);
 	}
+	
+	public String getUrlImg(String originDir, Integer index, String fileName) {
+		StringBuilder str = new StringBuilder();
+		str.append(generateUploadDir(originDir, index));
+		str.append("/");
+		str.append(fileName);
+		return str.toString();
+	}
 
 }
