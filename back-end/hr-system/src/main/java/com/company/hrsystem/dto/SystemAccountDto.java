@@ -3,10 +3,12 @@ package com.company.hrsystem.dto;
 import com.company.hrsystem.model.SystemAccountModel;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class SystemAccountDto extends SystemAccountModel {
 
 	private static final long serialVersionUID = 1L;

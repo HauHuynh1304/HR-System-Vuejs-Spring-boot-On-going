@@ -38,7 +38,7 @@
 
       <collapse-transition>
         <div class="collapse navbar-collapse show" v-show="showMenu">
-          <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
+          <ul class="navbar-nav ml-auto">
             <div
               class="search-bar input-group"
               @click="searchModalVisible = true"
@@ -73,7 +73,7 @@
             </modal>
             <base-dropdown
               tag="li"
-              :menu-on-right="!$rtl.isRTL"
+              menu-on-right
               title-tag="a"
               class="nav-item"
             >
@@ -116,7 +116,7 @@
             </base-dropdown>
             <base-dropdown
               tag="li"
-              :menu-on-right="!$rtl.isRTL"
+              menu-on-right
               title-tag="a"
               class="nav-item"
               menu-classes="dropdown-navbar"
@@ -137,15 +137,11 @@
                 </p>
               </a>
               <li class="nav-link">
-                <a href="/examples/user-profile" class="nav-item dropdown-item"
-                  >Profile</a
-                >
+                <sidebar-link to="/examples/user-profile" name="Profile" />
               </li>
               <div class="dropdown-divider"></div>
               <li class="nav-link">
-                <a href="#" @click="logout" class="nav-item dropdown-item"
-                  >Log out</a
-                >
+                <p @click="logout" class="ml-4">Log out</p>
               </li>
             </base-dropdown>
           </ul>
@@ -159,6 +155,7 @@ import { CollapseTransition } from "vue2-transitions";
 import Modal from "@/components/Modal";
 import { LOCAL_STORAGE } from "../../constant/common";
 import { logout } from "../../api/authen";
+import { URL_IMG } from "@/utils/request";
 
 export default {
   components: {
@@ -170,11 +167,8 @@ export default {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
     },
-    isRTL() {
-      return this.$rtl.isRTL;
-    },
     profileImage() {
-      return "data:image;base64," + this.avatar;
+      return URL_IMG + this.avatar;
     },
   },
   data() {

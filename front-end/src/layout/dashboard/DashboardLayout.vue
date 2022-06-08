@@ -52,11 +52,6 @@
           :name="$t('sidebar.typography')"
           icon="tim-icons icon-align-center"
         />
-        <sidebar-link
-          to="/dashboard?enableRTL=true"
-          :name="$t('sidebar.rtlSupport')"
-          icon="tim-icons icon-world"
-        />
         <a
           href="https://www.creative-tim.com/product/vue-white-dashboard-pro-laravel"
           target="_blank"

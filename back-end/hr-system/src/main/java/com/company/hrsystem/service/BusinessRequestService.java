@@ -1,6 +1,5 @@
 package com.company.hrsystem.service;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,10 @@ import com.company.hrsystem.enums.BusinessRequestStatusEnum;
 import com.company.hrsystem.enums.PartialDateEnum;
 import com.company.hrsystem.mapper.ApproverActionMapper;
 import com.company.hrsystem.mapper.CommentMapper;
+import com.company.hrsystem.mapper.EmployeeDocumentMapper;
 import com.company.hrsystem.mapper.EmployeeMapper;
+import com.company.hrsystem.mapper.EmployeePositionMapper;
+import com.company.hrsystem.mapper.HistoryActionMapper;
 import com.company.hrsystem.mapper.RequestEmployeeMapper;
 import com.company.hrsystem.mapper.RequestMapper;
 import com.company.hrsystem.mapper.SupervisorAcctionMapper;
@@ -87,6 +89,15 @@ public class BusinessRequestService {
 
 	@Autowired
 	private HistoryActionService historyActionService;
+
+	@Autowired
+	private EmployeeDocumentMapper employeeDocumentMapper;
+
+	@Autowired
+	private EmployeePositionMapper employeePositionMapper;
+
+	@Autowired
+	private HistoryActionMapper historyActionMapper;
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate insertBusinessRequest(BusinessRequest request, HttpServletRequest httpServletRequest) {
@@ -278,13 +289,11 @@ public class BusinessRequestService {
 	public ResponseTemplate findCurrentUser() {
 		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		FindEmployeeResponse obj = employeeMapper.findEmployeeById(employeeId);
-		try {
-			String image = fileUtil.encodeImg(uploadEmployeeImgDir, obj.getPersonalInfo().getPersonalInfoId(),
-					obj.getPersonalInfo().getPersonalImage());
-			obj.getPersonalInfo().setPersonalImage(image);
-		} catch (IOException e) {
-			LogUtil.error(messageUtil.getFlexMessageLangUS("get.image.error", String.valueOf(employeeId)));
-		}
+		obj.getPersonalInfo().setPersonalImage(fileUtil.getUrlImg(uploadEmployeeImgDir,
+				obj.getPersonalInfo().getPersonalInfoId(), obj.getPersonalInfo().getPersonalImage()));
+		obj.setDocuments(employeeDocumentMapper.findEmployeeDocumentsByEmployeeId(employeeId));
+		obj.setPositions(employeePositionMapper.findEmployeePositionsByEmployeeId(employeeId));
+		obj.setHistoryActions(historyActionMapper.findHistoriesByEmployeeId(employeeId));
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, obj);
 	}

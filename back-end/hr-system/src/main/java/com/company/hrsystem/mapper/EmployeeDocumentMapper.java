@@ -16,5 +16,7 @@ public interface EmployeeDocumentMapper {
 	int updateEmployeeDocument(List<EmployeeDocumentDto> documents, String updatedAt);
 	
 	Set<EmployeeDocumentDto> findLastInsertListEmployeeDocument(Integer employeeId);
+	
+	Set<EmployeeDocumentDto> findEmployeeDocumentsByEmployeeId(Integer employeeId);
 
 }

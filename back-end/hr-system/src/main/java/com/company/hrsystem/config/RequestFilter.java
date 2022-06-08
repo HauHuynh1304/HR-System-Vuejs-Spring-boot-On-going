@@ -87,6 +87,13 @@ public class RequestFilter extends OncePerRequestFilter {
 				responseErrAccessToken(response, e);
 				return;
 			} catch (ExpiredJwtException e) {
+				/*
+				 * In case of restart project, so cache token will be clean
+				 */
+				if (!cacheService.isExistsStringInCache(tokenStore, username, jwtToken)) {
+					responseErrAccessToken(response);
+					return;
+				}
 				String requestURL = request.getRequestURI().toString();
 				if (requestURL
 						.equals(StringUtil.apiBuilder(ApiUrlConstant.ROOT_API, ApiUrlConstant.AUTHEN_REFRESH_TOKEN))) {

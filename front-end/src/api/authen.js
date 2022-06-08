@@ -12,3 +12,11 @@ export function logout(data) {
     return res;
   });
 }
+
+export function changePw(data) {
+  return post(API.AUTHEN.CHANGE_PASSWORD, { data: { account: data } }).then(
+    (res) => {
+      return res;
+    }
+  );
+}

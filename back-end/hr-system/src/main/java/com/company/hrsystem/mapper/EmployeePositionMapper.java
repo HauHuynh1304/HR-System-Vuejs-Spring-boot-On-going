@@ -16,5 +16,7 @@ public interface EmployeePositionMapper {
 	int updateEmployeePosition(List<EmployeePositionDto> positions, String updatedAt);
 
 	Set<EmployeePositionDto> findLastInsertListEmployeePosition(Integer employeeId);
+	
+	List<EmployeePositionDto> findEmployeePositionsByEmployeeId(Integer employeeId);
 
 }

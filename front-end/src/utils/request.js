@@ -16,6 +16,8 @@ const windownProtocol = window.location.protocol.concat(
 );
 const appServerPort = process.env.VUE_APP_SERVER_PORT;
 const appBaseApiUrl = process.env.VUE_APP_BASE_API;
+
+export const URL_IMG = windownProtocol.concat(appServerPort, "/");
 // miliseconds
 const timeOut = 60 * 1000;
 // create an axios instance
@@ -64,7 +66,7 @@ request.interceptors.request.use(
 
 request.interceptors.response.use(async (response) => {
   const originalRequest = response.config;
-  let status = response.data.status;
+  let status = response?.data.status;
   switch (status) {
     case 511:
       if (!originalRequest._retry) {
@@ -75,13 +77,16 @@ request.interceptors.response.use(async (response) => {
           },
         });
         originalRequest.headers["Authorization"] =
-          "Bearer " + res.data.accessToken;
-        await setAccessToken(res.data.accessToken);
+          "Bearer " + res?.data.accessToken;
+        await setAccessToken(res?.data.accessToken);
         return request(originalRequest);
+      } else {
+        // when restart project
+        store.dispatch("logout", false);
       }
       break;
     case 404:
-      if (originalRequest.ulr === API.AUTHEN.REFRESH_TOKEN) {
+      if (originalRequest.url === API.AUTHEN.REFRESH_TOKEN) {
         store.dispatch("logout", false);
       }
       break;

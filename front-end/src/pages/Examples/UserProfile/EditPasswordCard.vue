@@ -9,29 +9,30 @@
       <form ref="password_form" @submit.prevent>
         <div>
           <base-input
-            v-model="password"
+            v-model="formEditPassword.password"
             label="Password"
             type="password"
             placeholder="Password"
           />
-          <validation-error :errors="apiValidationErrors.password" />
+          <!-- <validation-error :errors="apiValidationErrors.password" /> -->
           <base-input
-            v-model="password_confirmation"
+            v-model="formEditPassword.confirmPassword"
             label="Password Confirmation"
             type="password"
             placeholder="Password Confirmation"
           />
-          <validation-error
+          <!-- <validation-error
             :errors="apiValidationErrors.password_confirmation"
-          />
+          /> -->
           <div class="text-center">
             <base-button
               class="btn btn-primary"
               native-type="submit"
               type="primary"
               @click="changePassword()"
-              >Submit</base-button
             >
+              Submit
+            </base-button>
           </div>
         </div>
       </form>
@@ -41,52 +42,70 @@
 <script>
 import ValidationError from "@/components/ValidationError.vue";
 import formMixin from "@/mixins/form-mixin";
+import { MESSAGE } from "../../../constant/message";
+import { changePw } from "../../../api/authen";
+import jwt_decode from "jwt-decode";
+import { getAccessToken } from "@/utils/cookies.js";
+import { isValidPassword } from "@/utils/validate.js";
 export default {
   name: "edit-password-card",
-
   props: {
-    user: Object,
+    formEditPassword: {
+      type: Object,
+      default: {},
+    },
   },
-
-  components: { ValidationError },
-
-  mixins: [formMixin],
-
-  data: () => ({
-    password: null,
-    password_confirmation: null,
-  }),
-
+  // components: { ValidationError },
+  // mixins: [formMixin],
+  data() {
+    return {
+      account: {
+        systemEmail: null,
+        systemPassword: null,
+      },
+    };
+  },
   methods: {
-    async changePassword() {
-      if (this.$isDemo && ["1"].includes(this.user.id)) {
-        await this.$notify({
-          type: "danger",
-          icon: "tim-icons icon-bell-55",
-          message: "You are not allowed to change data of default users.",
-        });
-        return;
-      }
-      this.user.password = this.password;
-      this.user.password_confirmation = this.password_confirmation;
-
-      try {
-        this.resetApiValidation();
-        await this.$store.dispatch("users/update", this.user);
+    changePassword() {
+      let decodeJwt = jwt_decode(getAccessToken());
+      if (
+        this.formEditPassword.password !== this.formEditPassword.confirmPassword
+      ) {
         this.$notify({
-          type: "success",
-          message: "Password changed successfully.",
+          type: "warning",
+          message: MESSAGE.PASSWORD.ERR,
           icon: "tim-icons icon-bell-55",
         });
-        this.user = await this.$store.getters["profile/me"];
-        this.$refs["password_form"].reset();
-      } catch (e) {
-        this.$notify({
-          type: "danger",
-          message: "Oops, something went wrong!",
-          icon: "tim-icons icon-bell-55",
-        });
-        this.setApiValidation(e.response.data.errors);
+      } else {
+        if (!isValidPassword(this.formEditPassword.confirmPassword)) {
+          this.$notify({
+            type: "warning",
+            message: MESSAGE.PASSWORD.FORMAT,
+            icon: "tim-icons icon-bell-55",
+            horizontalAlign: "center",
+          });
+          return;
+        }
+        this.account.systemEmail = decodeJwt.sub;
+        this.account.systemPassword = this.formEditPassword.confirmPassword;
+        changePw(this.account)
+          .then((res) => {
+            this.$notify({
+              type: "success",
+              message: res.message,
+              icon: "tim-icons icon-bell-55",
+              horizontalAlign: "center",
+            });
+            this.$store.dispatch("logout", false);
+          })
+          .catch(() => {
+            this.$notify({
+              type: "warning",
+              message: MESSAGE.CALL_API_ERR.ERR,
+              icon: "tim-icons icon-bell-55",
+              horizontalAlign: "center",
+            });
+          });
       }
     },
   },
