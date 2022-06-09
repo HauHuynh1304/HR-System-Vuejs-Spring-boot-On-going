@@ -3,11 +3,9 @@
     <div class="col-md-8">
       <edit-profile-form :model="user" />
       <card type="tasks">
-        <template slot="header">
-          <h6 class="title d-inline">
-            My Activities
-          </h6>
-        </template>
+        <h4 slot="header">
+          <Strong>My Activities</Strong>
+        </h4>
         <div class="table-full-width table-responsive">
           <base-table :data="user.historyActions" thead-classes="text-primary">
             <template slot-scope="{ row }">

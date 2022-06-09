@@ -101,5 +101,11 @@ public class MasterController {
 	public ResponseEntity<?> updateRoom(@RequestBody RoomRequest request, HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(masterService.updateRoom(request, servletRequest));
 	}
+	
+	@PostMapping(ApiUrlConstant.MASTER_FIND_ROLES)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findRoles() {
+		return ResponseEntity.ok(masterService.findRoles());
+	}
 
 }

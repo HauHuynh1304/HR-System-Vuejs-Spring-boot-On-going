@@ -3,8 +3,8 @@
 <mapper
 	namespace="com.company.hrsystem.mapper.SystemAccountRoleMapper">
 	<insert id="insertAccountRole">
-		insert into System_account_role (system_account_id, system_role_id)
-		values
+		INSERT IGNORE INTO System_account_role (system_account_id, system_role_id)
+		VALUES
 		<foreach collection="roleIds" item="item" open="("
 			separator="),(" close=")">
 			#{systemAccount.systemAccountId, jdbcType=INTEGER}, #{item, jdbcType=INTEGER}
@@ -33,4 +33,17 @@
 				LIMIT 1
 			)
 	</select>
+	
+	<update id="delAccoutRoleById">
+		UPDATE system_account_role
+		SET deleted_flag = true
+		WHERE system_account_role_id 
+			IN (
+				<foreach item="item" index="index" collection="systemRoleIds"
+		             open="(" separator="," close=")">
+		        	#{item}
+        		</foreach>			
+			)
+	</update>
+	
 </mapper>

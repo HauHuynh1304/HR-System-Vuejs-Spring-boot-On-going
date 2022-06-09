@@ -1,108 +1,145 @@
 <template>
-<div class="content">
-    <div class="row mt-5">
-      <div class="col-12">
-         <div class="pro-feature alert alert-danger">
-          <strong
-            >Add, Edit, Delete features are not functional. This is a PRO feature!
-            Click
-            <a
-              href="https://www.creative-tim.com/live/vue-white-dashboard-pro-laravel"
-              target="_blank"
-              >here</a
-            >
-            to see the PRO product.</strong
+  <div class="card ">
+    <card card-body-classes="table-full-width">
+      <h4 slot="header" class="title">Users List</h4>
+      <b-form-input
+        id="filter-input"
+        v-model="filter"
+        type="search"
+        placeholder="Type to Search"
+      />
+      <div class="row">
+        <b-col sm="7" md="6" class="my-3">
+          <b-form-group
+            label="Per page"
+            label-for="per-page-select"
+            label-cols-sm="6"
+            label-cols-md="4"
+            label-cols-lg="3"
+            label-align-sm="right"
+            label-size="sm"
           >
-        </div>
-        <card card-body-classes="table-full-width">
-          <h4 slot="header" class="card-title">Users List</h4>
-          <div>
-            <div class="text-right mb-3">
-              <base-button @click="onProFeature" class="mt-3" type="primary">Add User</base-button>
-            </div>
-            <div class="table-responsive">
-              <base-table tbody-classes="list" :data="users">
-                <template slot="columns">
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Created At</th>
-                  <th></th>
-                </template>
-
-                <template slot-scope="{ row }">
-                  <td>
-                    {{ row.name }}
-                  </td>
-                  <td>
-                    {{ row.email }}
-                  </td>
-                  <td>
-                    {{ row.created_at }}
-                  </td>
-                  <td>
-                    <base-button
-                      @click="onProFeature"
-                      class="edit btn-link"
-                      type="warning"
-                      size="sm"
-                      icon
-                    >
-                      <i class="tim-icons icon-pencil"></i>
-                    </base-button>
-                    <base-button
-                      @click="onProFeature"
-                      class="remove btn-link"
-                      type="danger"
-                      size="sm"
-                      icon
-                    >
-                      <i class="tim-icons icon-simple-remove"></i>
-                    </base-button>
-                  </td>
-                </template>
-              </base-table>
-            </div>
-          </div>
-        </card>
+            <b-form-select
+              id="per-page-select"
+              v-model="perPage"
+              :options="pageOptions"
+              size="sm"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col sm="7" md="6" class="my-3">
+          <b-pagination
+            id="pagination"
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
+            size="sm"
+          />
+        </b-col>
       </div>
-    </div>
-</div>
+      <div class="table-responsive">
+        <b-table
+          hover
+          :items="items"
+          :fields="fields"
+          :select-mode="selectMode"
+          selectable
+          @row-selected="onRowSelected"
+          :filter="filter"
+          :current-page="currentPage"
+          :per-page="perPage"
+        >
+          <template #cell(roles)="data">
+            <span v-html="data.value"></span>
+          </template>
+        </b-table>
+      </div>
+    </card>
+    <accountVue />
+  </div>
 </template>
 
 <script>
-import { BaseTable } from "@/components";
-
-const tableColumns = ["Name", "Email", "Created At"];
-  export default {
-    components: {
-      BaseTable,
+import { findAccounts } from "../../../api/authen";
+import accountVue from "../../../components/Account/account.vue";
+import { EVENT_BUS } from "../../../constant/common";
+export default {
+  components: {
+    accountVue,
+  },
+  data() {
+    return {
+      backgroundColor: "primary",
+      pageOptions: [5, 10, 15, 20],
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 10,
+      selectMode: "single",
+      filter: null,
+      items: null,
+      fields: [
+        {
+          key: "systemEmail",
+          label: "EMAIL",
+          thClass: "text-center text-info",
+          tdClass: "text-center",
+        },
+        {
+          key: "createdAt",
+          label: "CREATED AT",
+          thClass: "text-center text-info",
+          tdClass: "text-center",
+        },
+        {
+          key: "roles",
+          label: "ROLES",
+          thClass: "text-center text-info",
+          formatter: (value) => {
+            let role = value.map((item) => item.roleName + "<br/>").toString();
+            return role.replaceAll(",", "");
+          },
+        },
+        {
+          key: "deletedFlag",
+          label: "ACTIVE",
+          thClass: "text-center text-danger",
+          tdClass: "text-center",
+          formatter: (value) => {
+            return value ? "NO" : "YES";
+          },
+          filterByFormatted: true,
+        },
+      ],
+    };
+  },
+  created() {
+    this.getTabledata();
+    this.$bus.on(EVENT_BUS.REFRESH_TABLE_LIST_USER, () => {
+      this.getTabledata();
+    });
+  },
+  methods: {
+    onRowSelected(item) {
+      this.$bus.emit(EVENT_BUS.EDIT_ACCOUNT, item);
     },
-
-    data: () => ({
-      users: [],
-      footerTable: ["Name", "Created At", "Actions"],
-      columns: [...tableColumns],
-    }),
-
-    created() {
-      this.getList()
+    getTabledata() {
+      findAccounts().then((res) => {
+        this.items = res?.data;
+        this.totalRows = this.items?.length;
+      });
     },
-
-    methods: {
-      getList() {
-        this.users = [{
-          name: "Admin",
-          email: "admin@jsonapi.com",
-          created_at: "2020-01-01"
-        }]
-      },
-
-      onProFeature() {
-        this.$notify({
-          type: 'danger',
-          message: 'This is a PRO feature.'
-        })
-      },
-    }
-  }
+  },
+};
 </script>
+
+<style scoped>
+#per-page-select {
+  color: black;
+}
+
+#pagination /deep/ .page-link {
+  color: black;
+  font-size: 0.75rem;
+}
+</style>

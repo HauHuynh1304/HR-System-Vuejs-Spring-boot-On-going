@@ -74,31 +74,39 @@ export default {
     handleSubmit() {
       removeAccessToken();
       removeRefreshToken();
-      login(this.formLogin).then(async (res) => {
-        let status = res.status;
-        switch (status) {
-          case 200:
-            await setAccessToken(res.data.accessToken);
-            await setRefreshToken(res.data.refreshToken);
-            this.$store.dispatch("isLogin", true);
-            await getLoginUserInfo().then((res) => {
-              localStorage.setItem(
-                LOCAL_STORAGE.NAME,
-                JSON.stringify(res.data.personalInfo)
-              );
-              this.$router.push({ path: "/dashboard" });
-            });
-            break;
-          case 404:
-            this.$notify({
-              type: "danger",
-              message: MESSAGE.LOGIN.ERR,
-              horizontalAlign: "center",
-            });
-          default:
-            break;
-        }
-      });
+      login(this.formLogin)
+        .then(async (res) => {
+          let status = res.status;
+          switch (status) {
+            case 200:
+              await setAccessToken(res.data.accessToken);
+              await setRefreshToken(res.data.refreshToken);
+              this.$store.dispatch("isLogin", true);
+              await getLoginUserInfo().then((res) => {
+                localStorage.setItem(
+                  LOCAL_STORAGE.NAME,
+                  JSON.stringify(res.data.personalInfo)
+                );
+                this.$router.push({ path: "/dashboard" });
+              });
+              break;
+            case 404:
+              this.$notify({
+                type: "danger",
+                message: MESSAGE.LOGIN.ERR,
+                horizontalAlign: "center",
+              });
+            default:
+              break;
+          }
+        })
+        .catch(() => {
+          this.$notify({
+            type: "danger",
+            message: MESSAGE.LOGIN.ERR,
+            horizontalAlign: "center",
+          });
+        });
     },
   },
 };

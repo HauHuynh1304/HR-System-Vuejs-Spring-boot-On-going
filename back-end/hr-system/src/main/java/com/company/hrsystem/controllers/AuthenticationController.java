@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.company.hrsystem.constants.ApiUrlConstant;
 import com.company.hrsystem.request.AuthenRequest;
 import com.company.hrsystem.request.ChangePasswordRequest;
+import com.company.hrsystem.request.IsEmailInDbRequest;
 import com.company.hrsystem.request.ResfreshTokenRequest;
 import com.company.hrsystem.request.SignUpRequest;
+import com.company.hrsystem.request.UpdateAccountRequest;
 import com.company.hrsystem.service.AuthenticationService;
 import com.company.hrsystem.service.RefreshTokenService;
 
@@ -57,5 +59,24 @@ public class AuthenticationController {
 	public ResponseEntity<?> changePassword(HttpServletRequest servletRequest,
 			@RequestBody ChangePasswordRequest ChangePwRequest) {
 		return ResponseEntity.ok(authenService.handleChangePassword(servletRequest, ChangePwRequest));
+	}
+
+	@PostMapping(ApiUrlConstant.AUTHEN_FIND_ACCOUNTS)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<?> findAccounts(HttpServletRequest servletRequest) {
+		return ResponseEntity.ok(authenService.findAccounts(servletRequest));
+	}
+
+	@PostMapping(ApiUrlConstant.AUTHEN_UPDATE_ACCOUNT)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<?> updateAccount(@RequestBody UpdateAccountRequest accountRequest,
+			HttpServletRequest servletRequest) {
+		return ResponseEntity.ok(authenService.updateAccount(accountRequest, servletRequest));
+	}
+	
+	@PostMapping(ApiUrlConstant.AUTHEN_IS_EMAIL_IN_DB)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<?> isEmailInDb(@RequestBody IsEmailInDbRequest request) {
+		return ResponseEntity.ok(authenService.isEmailInDb(request));
 	}
 }

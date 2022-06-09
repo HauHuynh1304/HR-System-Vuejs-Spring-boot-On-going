@@ -246,7 +246,6 @@
 			<result property="roleName" jdbcType="VARCHAR" column="role_name"/>
 		</collection>
 	</resultMap>
-	
 	<select id="findAuthenAccountByEmail" resultMap="authenResult" parameterType="java.lang.String">
 		SELECT
 			sa.system_account_id,
@@ -263,5 +262,63 @@
 			AND sa.deleted_flag = false
 			AND sar.deleted_flag = false
 			AND sr.deleted_flag = false
+	</select>
+	
+	<resultMap type="com.company.hrsystem.dto.AuthenAccountDto" id="findAccounts">
+		<id property="systemAccountId" jdbcType="INTEGER" column="system_account_id"/>
+		<result property="systemEmail" jdbcType="VARCHAR" column="system_email"/>
+		<result property="createdAt" jdbcType="TIMESTAMP" column="created_at"/>
+		<result property="deletedFlag" jdbcType="TIMESTAMP" column="deleted_flag"/>
+		<collection property="roles" ofType="com.company.hrsystem.dto.AuthenRoleDto">
+			<id property="systemAccountRoleId" jdbcType="INTEGER" column="system_account_role_id"/>
+			<result property="systemRoleId" jdbcType="INTEGER" column="system_role_id"/>
+			<result property="roleName" jdbcType="VARCHAR" column="role_name"/>
+		</collection>
+	</resultMap>
+	<select id="findAccounts" resultMap="findAccounts">
+		SELECT
+			sa.system_account_id,
+			sa.system_email,
+			sa.created_at,
+			sa.deleted_flag,
+			sr.role_name,
+			sr.system_role_id,
+			sar.system_account_role_id
+		FROM system_account sa
+			LEFT JOIN system_account_role sar
+				ON sa.system_account_id = sar.system_account_id
+			LEFT JOIN system_role sr
+				ON sar.system_role_id = sr.system_role_id
+		WHERE 
+			sar.deleted_flag = false
+			AND sr.deleted_flag = false
+		ORDER BY 
+			sa.system_account_id DESC
+	</select>
+	
+	<update id="updateAccount" parameterType="com.company.hrsystem.dto.SystemAccountDto">
+		UPDATE system_account
+		<set>
+			<if test="systemPassword != null and systemPassword != ''">
+				system_password = #{systemPassword, jdbcType=VARCHAR},
+			</if>
+			<if test="deletedFlag != null and deletedFlag != ''">
+				deleted_flag = #{deletedFlag, jdbcType=BIT},
+			</if>
+		</set>
+		WHERE system_account_id = #{systemAccountId, jdbcType=INTEGER}
+	</update>
+	
+	<select id="isEmailInDb" parameterType="STRING" resultType="BOOLEAN">
+		SELECT
+			CASE
+				WHEN EXISTS (
+						SELECT sa.system_email
+						FROM system_account sa
+						WHERE sa.system_email = #{email, jdbcType=VARCHAR}
+					)
+				THEN true
+				ELSE false
+			END	
 	</select>
 </mapper>

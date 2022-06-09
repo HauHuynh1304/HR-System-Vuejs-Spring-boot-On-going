@@ -1,5 +1,6 @@
 package com.company.hrsystem.service;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.constants.CommonConstant;
@@ -27,12 +30,15 @@ import com.company.hrsystem.mapper.SystemAccountMapper;
 import com.company.hrsystem.mapper.SystemAccountRoleMapper;
 import com.company.hrsystem.request.AuthenRequest;
 import com.company.hrsystem.request.ChangePasswordRequest;
+import com.company.hrsystem.request.IsEmailInDbRequest;
 import com.company.hrsystem.request.SignUpRequest;
+import com.company.hrsystem.request.UpdateAccountRequest;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.TokenUtil;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.MessageUtil;
+import com.company.hrsystem.utils.ObjectUtil;
 
 @Service
 public class AuthenticationService {
@@ -82,6 +88,9 @@ public class AuthenticationService {
 	@Autowired
 	private SystemAccountMapper systemAccountMapper;
 
+	@Autowired
+	private ObjectUtil objectUtil;
+
 	public ResponseTemplate handleLogin(AuthenRequest req, HttpServletRequest servletRequest) throws Exception {
 		String email = req.getData().getUsername();
 		String password = req.getData().getPassword();
@@ -109,6 +118,8 @@ public class AuthenticationService {
 	public ResponseTemplate handleSignUp(SignUpRequest request, HttpServletRequest servletRequest) {
 		SystemAccountDto systemAccount = request.getData().getAccount();
 		Integer[] roleIds = request.getData().getRoleIds();
+		// Remove duplicate
+		roleIds = Arrays.stream(roleIds).distinct().toArray(Integer[]::new);
 		systemAccount.setSystemPassword(passwordEncoder.encode(systemAccount.getSystemPassword()));
 		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		accountMapper.insertSelective(systemAccount);
@@ -127,7 +138,7 @@ public class AuthenticationService {
 				messageUtil.getMessagelangUS("user.signup.successful"), null, null);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate handleChangePassword(HttpServletRequest servletRequest,
 			ChangePasswordRequest ChangePwRequest) {
 		String emailFromToken = tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(servletRequest));
@@ -153,4 +164,59 @@ public class AuthenticationService {
 			throw new GlobalException(system, version, messageUtil.getMessagelangUS("not.correct.email"));
 		}
 	}
+
+	public ResponseTemplate findAccounts(HttpServletRequest servletRequest) {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("change.password.success"), null, systemAccountMapper.findAccounts());
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	public ResponseTemplate updateAccount(UpdateAccountRequest accountRequest, HttpServletRequest servletRequest) {
+		int updaterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		SystemAccountDto account = accountRequest.getData().getAccount();
+		if (objectUtil.countNotNullParamater(account) > 1) {
+			if (ObjectUtils.isNotEmpty(account.getSystemPassword())) {
+				account.setSystemPassword(passwordEncoder.encode(account.getSystemPassword()));
+			}
+			systemAccountMapper.updateAccount(account);
+			historyActionService.saveHistoryAction(account, updaterId, CommonConstant.UPDATE_ACTION,
+					account.getSystemAccountId(), CommonConstant.TABLE_SYSTEM_ACCOUNT, servletRequest);
+		}
+		if (accountRequest.getData().getDeleteRoleIds().length > 0) {
+			Integer[] deletedRoleIds = accountRequest.getData().getDeleteRoleIds();
+			// Remove duplicate
+			deletedRoleIds = Arrays.stream(deletedRoleIds).distinct().toArray(Integer[]::new);
+			accountRoleMapper.delAccoutRoleById(deletedRoleIds);
+			for (Integer i : deletedRoleIds) {
+				SystemAccountRoleDto obj = new SystemAccountRoleDto();
+				obj.setSystemAccountRoleId(i);
+				obj.setDeletedFlag(true);
+				historyActionService.saveHistoryAction(obj, updaterId, CommonConstant.DELETE_ACTION, i,
+						CommonConstant.TABLE_SYSTEM_ACCOUNT_ROLE, servletRequest);
+			}
+		}
+		if (accountRequest.getData().getAddNewRoleIds().length > 0) {
+			Integer[] addNewRoleIds = accountRequest.getData().getAddNewRoleIds();
+			// Remove duplicate
+			addNewRoleIds = Arrays.stream(addNewRoleIds).distinct().toArray(Integer[]::new);
+			accountRoleMapper.insertAccountRole(account, addNewRoleIds);
+			Set<SystemAccountRoleDto> accountRoleDtos = accountRoleMapper
+					.findNewestRecordsByCurrentUser(account.getSystemAccountId());
+			for (SystemAccountRoleDto systemAccountRoleDto : accountRoleDtos) {
+				historyActionService.saveHistoryAction(systemAccountRoleDto, updaterId, CommonConstant.INSERT_ACTION,
+						systemAccountRoleDto.getSystemAccountRoleId(), CommonConstant.TABLE_SYSTEM_ACCOUNT_ROLE,
+						servletRequest);
+			}
+		}
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("update.success"), null, null);
+	}
+
+	public ResponseTemplate isEmailInDb(IsEmailInDbRequest request) {
+		System.err.println(request.getData().getEmail());
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null,
+				accountMapper.isEmailInDb(request.getData().getEmail()));
+	}
+
 }

@@ -5,6 +5,9 @@ export const API = {
     REFRESH_TOKEN: "/authen/refresh-token",
     SIGN_UP: "/authen/sign-up",
     CHANGE_PASSWORD: "/authen/change-password",
+    FIND_ACCOUNTS: "/authen/find-accounts",
+    UPDATE_ACCOUNT: "/authen/update-account",
+    IS_EMAIL_IN_DB: "/authen/is-email-in-db",
   },
   MASTER: {
     INSERT_ROLE: "/master/insert-role",
@@ -19,6 +22,7 @@ export const API = {
     UPDATE_REQUEST_TYPE: "/master/update-request-type",
     INSERT_ROOM: "/master/insert-room",
     UPDATE_ROOM: "/master/update-room",
+    FIND_ROLES: "/master/find-roles",
   },
   HUMAN_RESOURCE: {
     INSERT_EMPLOYEE: "/human-resources/insert-employee",

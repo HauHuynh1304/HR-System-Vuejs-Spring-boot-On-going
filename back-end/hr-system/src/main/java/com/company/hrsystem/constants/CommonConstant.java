@@ -34,6 +34,7 @@ public class CommonConstant {
 	public static final String LOGIN_ACTION = "LOG IN";
 	public static final String LOGOUT_ACTION = "LOG OUT";
 	public static final String CHANGE_PW_ACTION = "CHANGE PASSWORD";
+	public static final String DELETE_ACTION = "SOFT DELETED";
 
 	// DEFAULT VALUE
 	public static final int ZERO_VALUE = 0;

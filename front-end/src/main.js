@@ -28,6 +28,7 @@ import "./registerServiceWorker";
 import VueMeta from "vue-meta";
 import IsDemo from "./plugins/isDemo";
 import { BootstrapVue } from "bootstrap-vue";
+import EventBus from "./utils/EventBus";
 
 Vue.use(BlackDashboard);
 Vue.use(VueRouter);
@@ -35,6 +36,7 @@ Vue.use(RouterPrefetch);
 Vue.use(IsDemo);
 Vue.use(VueMeta, { keyName: "head" });
 Vue.use(BootstrapVue);
+Vue.use(EventBus);
 
 /* eslint-disable no-new */
 new Vue({
