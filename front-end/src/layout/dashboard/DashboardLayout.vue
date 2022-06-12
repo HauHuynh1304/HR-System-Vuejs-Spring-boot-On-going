@@ -8,19 +8,9 @@
           icon="tim-icons icon-chart-pie-36"
         />
         <sidebar-link
-          to="#"
-          :name="$t('sidebar.examples')"
-          icon="fab fa-vuejs fa-2x"
-        />
-        <sidebar-link
-          to="/examples/user-profile"
-          :name="$t('sidebar.userProfile')"
-          class="ml-5"
-        />
-        <sidebar-link
           to="/examples/user-management/list-users"
           :name="$t('sidebar.userManagement')"
-          class="ml-5"
+          icon="tim-icons icon-notes"
         />
         <sidebar-link
           to="/icons"
@@ -28,6 +18,7 @@
           icon="tim-icons icon-atom"
         />
         <sidebar-link
+          v-if="roles.includes(ROLES.ADMIN)"
           to="/maps"
           :name="$t('sidebar.maps')"
           icon="tim-icons icon-pin"
@@ -52,25 +43,10 @@
           :name="$t('sidebar.typography')"
           icon="tim-icons icon-align-center"
         />
-        <a
-          href="https://www.creative-tim.com/product/vue-white-dashboard-pro-laravel"
-          target="_blank"
-          class="btn btn-warning"
-          rel="noopener"
-          style="margin-left: 13px"
-        >
-          <span class="btn-inner--icon" style="margin-left: -26px"
-            ><i class="fas fa-download mr-2"></i
-          ></span>
-          <span
-            class="nav-link-inner--text"
-            style="margin-left: -34px; margin-right: 25px; margin-top: 5px"
-            >Upgrade to PRO</span
-          ></a
         >
       </template>
     </side-bar>
-    <sidebar-share :background-color.sync="backgroundColor"> </sidebar-share>
+    <!-- <sidebar-share :background-color.sync="backgroundColor"> </sidebar-share> -->
     <div class="main-panel" :data="backgroundColor">
       <top-navbar></top-navbar>
 
@@ -86,6 +62,11 @@ import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
 import SidebarShare from "./SidebarSharePlugin";
 import ContentFooter from "./ContentFooter";
+import jwt_decode from "jwt-decode";
+import { getAccessToken } from "../../utils/cookies";
+import { ROLES } from "../../constant/common";
+import { MESSAGE } from "../../constant/message";
+
 export default {
   components: {
     TopNavbar,
@@ -97,6 +78,9 @@ export default {
   data() {
     return {
       backgroundColor: "primary",
+      roles: null,
+      role_admin: "a",
+      ROLES: ROLES,
     };
   },
   methods: {
@@ -105,6 +89,31 @@ export default {
         this.$sidebar.displaySidebar(false);
       }
     },
+    getRoleFromToken() {
+      this.roles = jwt_decode(getAccessToken()).roles;
+      if (!this.roles) {
+        this.$notify({
+          type: "success",
+          message: MESSAGE.REFRESH_TOKEN_EXPIRED.ERR,
+          icon: "tim-icons icon-bell-55",
+          horizontalAlign: "center",
+        });
+        this.$store.dispatch("logout", false);
+      }
+    },
+  },
+  watch: {
+    accessToken(newToken) {
+      this.getRoleFromToken();
+    },
+  },
+  mounted() {
+    if (getAccessToken()) {
+      this.getRoleFromToken();
+    }
+  },
+  created() {
+    this.getRoleFromToken();
   },
 };
 </script>

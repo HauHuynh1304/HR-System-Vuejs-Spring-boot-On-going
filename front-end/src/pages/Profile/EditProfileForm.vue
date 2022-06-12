@@ -1,6 +1,6 @@
 <template>
   <card>
-    <h5 slot="header" class="title">Profile</h5>
+    <h4 slot="header" class="title">Profile</h4>
     <div class="row">
       <div class="col-md-6 pr-md-1">
         <base-input

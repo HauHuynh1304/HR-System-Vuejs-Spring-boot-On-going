@@ -332,5 +332,10 @@ public class MasterService {
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getFlexMessageLangUS("udpate.row", String.valueOf(updateRows)), null, null);
 	}
+	
+	public ResponseTemplate findRoles() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, roleMapper.findRoles());
+	}
 
 }

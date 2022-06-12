@@ -51,4 +51,18 @@
 		</set>
 		Where system_role_id = #{systemRoleId, jdbcType=INTEGER}
 	</update>
+	
+	<resultMap type="com.company.hrsystem.dto.SystemRoleDto" id="findRoles">
+		<id column="system_role_id" jdbcType="INTEGER" property="systemRoleId"/>
+		<result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+	</resultMap>
+	<select id="findRoles" resultMap="findRoles">
+		SELECT
+			 sr.role_name,
+			 sr.system_role_id
+		FROM system_role sr
+		WHERE sr.deleted_flag = false
+		ORDER BY sr.system_role_id
+	</select>
+	
 </mapper>
