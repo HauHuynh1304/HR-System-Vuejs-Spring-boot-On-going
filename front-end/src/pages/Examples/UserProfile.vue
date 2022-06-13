@@ -4,7 +4,7 @@
       <edit-profile-form :model="user" />
       <card type="tasks">
         <h4 slot="header">
-          <Strong>My Activities</Strong>
+          <Strong>MY ACTIVITIES</Strong>
         </h4>
         <div class="table-full-width table-responsive">
           <base-table :data="user.historyActions" thead-classes="text-primary">

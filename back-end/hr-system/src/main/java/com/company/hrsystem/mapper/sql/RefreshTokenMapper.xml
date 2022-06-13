@@ -34,7 +34,7 @@
 		VALUES (
 			#{systemAccountId, jdbcType=INTEGER},
 			#{refreshTokenName, jdbcType=VARCHAR},
-			#{expiryDate, jdbcType=VARCHAR},
+			#{expiryDate, jdbcType=VARCHAR}
 		)
 	</update>
 	

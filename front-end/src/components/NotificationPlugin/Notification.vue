@@ -147,7 +147,6 @@ export default {
     },
     tryClose(evt) {
       if (this.clickHandler) {
-        console.log("a");
         this.clickHandler(evt, this);
       }
       if (this.closeOnClick) {

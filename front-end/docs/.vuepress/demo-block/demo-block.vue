@@ -1,9 +1,10 @@
 <template>
   <div
     class="demo-block bd-example"
-    :class="[blockClass, { 'hover': hovering }]"
+    :class="[blockClass, { hover: hovering }]"
     @mouseenter="hovering = true"
-    @mouseleave="hovering = false">
+    @mouseleave="hovering = false"
+  >
     <slot name="source"></slot>
     <div class="meta" ref="meta">
       <div class="description" v-if="$slots.default">
@@ -19,9 +20,10 @@
     <div
       class="demo-block-control"
       ref="control"
-      @click="isExpanded = !isExpanded">
+      @click="isExpanded = !isExpanded"
+    >
       <transition name="arrow-slide">
-        <i :class="[iconClass, { 'hovering': hovering }]"></i>
+        <i :class="[iconClass, { hovering: hovering }]"></i>
       </transition>
       <transition name="text-slide">
         <span class="showText">{{ controlText }}</span>
@@ -31,216 +33,224 @@
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      hovering: false,
+      isExpanded: false,
+      fixedControl: false,
+      scrollParent: null,
+    };
+  },
 
-  export default {
-    data() {
-      return {
-        hovering: false,
-        isExpanded: false,
-        fixedControl: false,
-        scrollParent: null
-      };
+  props: {
+    source: {
+      type: String,
+    },
+  },
+
+  methods: {
+    scrollHandler() {
+      // const { top, bottom, left } = this.$refs.meta.getBoundingClientRect();
+      // this.fixedControl = bottom > document.documentElement.clientHeight &&
+      //   top + 44 <= document.documentElement.clientHeight;
+      // this.$refs.control.style.left = this.fixedControl ? `${ left }px` : '0';
     },
 
-    props: {
-      source: {
-        type: String
+    removeScrollHandler() {
+      this.scrollParent &&
+        this.scrollParent.removeEventListener("scroll", this.scrollHandler);
+    },
+    doCopy() {
+      let html = this.$el.querySelector(".raw-code").innerText;
+      this.$copyText(html).then(
+        (e) => {
+          this.$notify("Copied to clipboard");
+        },
+        (e) => {}
+      );
+    },
+  },
+
+  computed: {
+    lang() {
+      return this.$route.path.split("/")[1];
+    },
+
+    blockClass() {
+      return `demo-${this.lang} demo-${this.$router.currentRoute.path
+        .split("/")
+        .pop()}`;
+    },
+
+    iconClass() {
+      return this.isExpanded ? "el-icon-caret-top" : "el-icon-caret-bottom";
+    },
+
+    controlText() {
+      return this.isExpanded ? "Hide" : "Show Code";
+    },
+
+    codeArea() {
+      return this.$el.getElementsByClassName("meta")[0];
+    },
+
+    codeAreaHeight() {
+      if (this.$el.getElementsByClassName("description").length > 0) {
+        return (
+          this.$el.getElementsByClassName("description")[0].clientHeight +
+          this.$el.getElementsByClassName("highlight")[0].clientHeight +
+          20
+        );
       }
+      return this.$el.getElementsByClassName("highlight")[0].clientHeight;
     },
+  },
 
-    methods: {
-
-      scrollHandler() {
-        // const { top, bottom, left } = this.$refs.meta.getBoundingClientRect();
-        // this.fixedControl = bottom > document.documentElement.clientHeight &&
-        //   top + 44 <= document.documentElement.clientHeight;
-        // this.$refs.control.style.left = this.fixedControl ? `${ left }px` : '0';
-      },
-
-      removeScrollHandler() {
-        this.scrollParent && this.scrollParent.removeEventListener('scroll', this.scrollHandler);
-      },
-      doCopy () {
-        let html = this.$el.querySelector('.raw-code').innerText;
-        this.$copyText(html).then((e) => {
-          this.$notify('Copied to clipboard')
-        }, (e) => {
-          console.log(e)
-        })
+  watch: {
+    isExpanded(val) {
+      this.codeArea.style.height = val ? `${this.codeAreaHeight + 1}px` : "0";
+      if (!val) {
+        this.fixedControl = false;
+        this.$refs.control.style.left = "0";
+        this.removeScrollHandler();
+        return;
       }
+      setTimeout(() => {
+        this.scrollParent = document.querySelector(
+          ".page-component__scroll > .el-scrollbar__wrap"
+        );
+        this.scrollParent &&
+          this.scrollParent.addEventListener("scroll", this.scrollHandler);
+        this.scrollHandler();
+      }, 200);
     },
+  },
 
-    computed: {
-      lang() {
-        return this.$route.path.split('/')[1];
-      },
-
-      blockClass() {
-        return `demo-${ this.lang } demo-${ this.$router.currentRoute.path.split('/').pop() }`;
-      },
-
-      iconClass() {
-        return this.isExpanded ? 'el-icon-caret-top' : 'el-icon-caret-bottom';
-      },
-
-      controlText() {
-        return this.isExpanded ? 'Hide' : 'Show Code';
-      },
-
-      codeArea() {
-        return this.$el.getElementsByClassName('meta')[0];
-      },
-
-      codeAreaHeight() {
-        if (this.$el.getElementsByClassName('description').length > 0) {
-          return this.$el.getElementsByClassName('description')[0].clientHeight +
-            this.$el.getElementsByClassName('highlight')[0].clientHeight + 20;
-        }
-        return this.$el.getElementsByClassName('highlight')[0].clientHeight;
+  mounted() {
+    this.$nextTick(() => {
+      let highlight = this.$el.getElementsByClassName("highlight")[0];
+      if (this.$el.getElementsByClassName("description").length === 0) {
+        highlight.style.width = "100%";
+        highlight.borderRight = "none";
       }
-    },
+    });
+  },
 
-    watch: {
-      isExpanded(val) {
-        this.codeArea.style.height = val ? `${ this.codeAreaHeight + 1 }px` : '0';
-        if (!val) {
-          this.fixedControl = false;
-          this.$refs.control.style.left = '0';
-          this.removeScrollHandler();
-          return;
-        }
-        setTimeout(() => {
-          this.scrollParent = document.querySelector('.page-component__scroll > .el-scrollbar__wrap');
-          this.scrollParent && this.scrollParent.addEventListener('scroll', this.scrollHandler);
-          this.scrollHandler();
-        }, 200);
-      }
-    },
-
-    mounted() {
-      this.$nextTick(() => {
-        let highlight = this.$el.getElementsByClassName('highlight')[0];
-        if (this.$el.getElementsByClassName('description').length === 0) {
-          highlight.style.width = '100%';
-          highlight.borderRight = 'none';
-        }
-      });
-    },
-
-    beforeDestroy() {
-      this.removeScrollHandler();
-    }
-  };
+  beforeDestroy() {
+    this.removeScrollHandler();
+  },
+};
 </script>
 <style lang="scss">
-  .demo-block {
-    border-radius: 3px;
-    transition: .2s;
+.demo-block {
+  border-radius: 3px;
+  transition: 0.2s;
 
-    &.hover {
-      box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6), 0 2px 4px 0 rgba(232, 237, 250, .5);
+  &.hover {
+    box-shadow: 0 0 8px 0 rgba(232, 237, 250, 0.6),
+      0 2px 4px 0 rgba(232, 237, 250, 0.5);
+  }
+
+  code {
+    font-family: Menlo, Monaco, Consolas, Courier, monospace;
+  }
+
+  .demo-button {
+    float: right;
+  }
+
+  .source {
+    padding: 24px;
+  }
+
+  .source-code {
+    position: relative;
+  }
+  .meta {
+    height: 0;
+    transition: height 0.2s;
+    overflow: scroll;
+  }
+
+  .highlight {
+    background: transparent;
+    > div {
+      box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.2);
+    }
+    pre {
+      margin: 0;
     }
 
-    code {
-      font-family: Menlo, Monaco, Consolas, Courier, monospace;
-    }
+    code.hljs {
+      margin: 0;
+      border: none;
+      max-height: none;
+      border-radius: 0;
 
-    .demo-button {
-      float: right;
-    }
-
-    .source {
-      padding: 24px;
-    }
-
-    .source-code {
-      position: relative;
-    }
-    .meta {
-      height: 0;
-      transition: height .2s;
-      overflow: scroll;
-    }
-
-
-    .highlight {
-      background: transparent;
-      >div {
-        box-shadow: 0 4px 8px -4px rgba(0, 0, 0, .2);
-      }
-      pre {
-        margin: 0;
-      }
-
-      code.hljs {
-        margin: 0;
-        border: none;
-        max-height: none;
-        border-radius: 0;
-
-        &::before {
-          content: none;
-        }
-      }
-    }
-
-    .demo-block-control {
-      height: 44px;
-      box-sizing: border-box;
-      border-bottom-left-radius: 4px;
-      border-bottom-right-radius: 4px;
-      text-align: center;
-      margin-top: -1px;
-      color: #d3dce6;
-      cursor: pointer;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      &.is-fixed {
-        position: fixed;
-        bottom: 0;
-        width: 868px;
-      }
-
-      i {
-        font-size: 16px;
-        line-height: 44px;
-        transition: .3s;
-        &.hovering {
-          transform: translateX(-40px);
-        }
-      }
-
-      > span {
-        position: absolute;
-        transform: translateX(-30px);
-        font-size: 14px;
-        line-height: 44px;
-        transition: .3s;
-        display: inline-block;
-      }
-
-      &:hover {
-        color: #409EFF;
-      }
-
-      & .text-slide-enter,
-      & .text-slide-leave-active {
-        opacity: 0;
-        transform: translateX(10px);
-      }
-
-      .control-button {
-        line-height: 26px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        font-size: 14px;
-        padding-left: 5px;
-        padding-right: 25px;
+      &::before {
+        content: none;
       }
     }
   }
+
+  .demo-block-control {
+    height: 44px;
+    box-sizing: border-box;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    text-align: center;
+    margin-top: -1px;
+    color: #d3dce6;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.is-fixed {
+      position: fixed;
+      bottom: 0;
+      width: 868px;
+    }
+
+    i {
+      font-size: 16px;
+      line-height: 44px;
+      transition: 0.3s;
+      &.hovering {
+        transform: translateX(-40px);
+      }
+    }
+
+    > span {
+      position: absolute;
+      transform: translateX(-30px);
+      font-size: 14px;
+      line-height: 44px;
+      transition: 0.3s;
+      display: inline-block;
+    }
+
+    &:hover {
+      color: #409eff;
+    }
+
+    & .text-slide-enter,
+    & .text-slide-leave-active {
+      opacity: 0;
+      transform: translateX(10px);
+    }
+
+    .control-button {
+      line-height: 26px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 25px;
+    }
+  }
+}
 </style>

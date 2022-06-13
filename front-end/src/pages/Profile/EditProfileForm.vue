@@ -1,6 +1,8 @@
 <template>
   <card>
-    <h4 slot="header" class="title">Profile</h4>
+    <h4 slot="header" class="title">
+      {{ routerProps.USER.NAME.toUpperCase() }}
+    </h4>
     <div class="row">
       <div class="col-md-6 pr-md-1">
         <base-input
@@ -72,11 +74,16 @@
         />
       </div>
     </div>
-    <!-- <base-button slot="footer" type="primary" fill>Save</base-button> -->
   </card>
 </template>
 <script>
+import { FE_ROUTER_PROP } from "@/constant/routerProps";
 export default {
+  data() {
+    return {
+      routerProps: FE_ROUTER_PROP,
+    };
+  },
   props: {
     model: {
       type: Object,

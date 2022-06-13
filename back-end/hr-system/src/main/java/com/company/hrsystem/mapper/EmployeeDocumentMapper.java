@@ -17,6 +17,6 @@ public interface EmployeeDocumentMapper {
 	
 	Set<EmployeeDocumentDto> findLastInsertListEmployeeDocument(Integer employeeId);
 	
-	Set<EmployeeDocumentDto> findEmployeeDocumentsByEmployeeId(Integer employeeId);
+	List<EmployeeDocumentDto> findEmployeeDocumentsByEmployeeId(Integer employeeId);
 
 }

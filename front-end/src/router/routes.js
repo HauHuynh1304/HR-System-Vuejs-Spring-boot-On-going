@@ -7,6 +7,7 @@ import NotFound from "@/pages/NotFoundPage.vue";
 //import middleware
 import auth from "@/middleware/auth";
 import guest from "@/middleware/guest";
+import { FE_ROUTER_PROP } from "../constant/routerProps";
 
 const Login = () => import(/* webpackChunkName: "pages" */ "@/pages/Login.vue");
 const Register = () =>
@@ -36,71 +37,97 @@ const UserProfile = () => import("@/pages/Examples/UserProfile.vue");
 // User Management
 const ListUserPage = () =>
   import("@/pages/Examples/UserManagement/ListUserPage.vue");
+const ListAccountsPage = () => import("../pages/Admin/ListAccouts.vue");
+const NewUserPage = () => import("@/pages/Examples/UserManagement/NewUser.vue");
+const UpdateUserPage = () =>
+  import("@/pages/Examples/UserManagement/UpdateUserPage.vue");
 
 let authPages = {
-  path: "/",
-  redirect: "/login",
+  path: FE_ROUTER_PROP.LOGIN.ROOT_PATH,
+  redirect: FE_ROUTER_PROP.LOGIN.REDIRECT,
   component: AuthLayout,
   children: [
     {
-      path: "/login",
-      name: "Login",
+      path: FE_ROUTER_PROP.LOGIN.CHILDREN.LOGIN.PATH,
+      name: FE_ROUTER_PROP.LOGIN.CHILDREN.LOGIN.NAME,
       component: Login,
       meta: { middleware: guest },
     },
+    // {
+    //   path: "/register",
+    //   name: "Register",
+    //   component: Register,
+    //   meta: { middleware: guest },
+    // },
+    // {
+    //   path: "/password/reset",
+    //   name: "Password Reset",
+    //   component: PasswordReset,
+    //   meta: { middleware: guest },
+    // },
+  ],
+};
+
+let adminMenu = {
+  path: FE_ROUTER_PROP.ADMIN.ROOT_PATH,
+  component: DashboardLayout,
+  name: FE_ROUTER_PROP.ADMIN.ROOT_NAME,
+  children: [
     {
-      path: "/register",
-      name: "Register",
-      component: Register,
-      meta: { middleware: guest },
-    },
-    {
-      path: "/password/reset",
-      name: "Password Reset",
-      component: PasswordReset,
-      meta: { middleware: guest },
+      path: FE_ROUTER_PROP.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.PATH,
+      name: FE_ROUTER_PROP.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.NAME,
+      components: { default: ListAccountsPage },
+      meta: { middleware: auth },
     },
   ],
 };
 
-let examplesMenu = {
-  path: "/examples",
+let humanManagementMenu = {
+  path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.ROOT_PATH,
   component: DashboardLayout,
-  name: "Examples",
+  name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.ROOT_NAME,
   children: [
     {
-      path: "user-profile",
-      name: "User Profile",
-      components: { default: UserProfile },
+      path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.PATH,
+      name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.NAME,
+      components: { default: ListUserPage },
       meta: { middleware: auth },
     },
     {
-      path: "user-management/list-users",
-      name: "List Users",
-      components: { default: ListUserPage },
+      path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.ADD_EMPLOYEE.PATH,
+      name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.ADD_EMPLOYEE.NAME,
+      components: { default: NewUserPage },
+      meta: { middleware: auth },
+    },
+    {
+      path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.PATH,
+      name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.NAME,
+      components: { default: UpdateUserPage },
       meta: { middleware: auth },
     },
   ],
 };
 
 const routes = [
-  examplesMenu,
+  adminMenu,
   authPages,
+  humanManagementMenu,
   {
-    path: "/",
+    path: FE_ROUTER_PROP.DASHBOARD.ROOT_PATH,
     component: DashboardLayout,
-    redirect: "/dashboard",
+    redirect: FE_ROUTER_PROP.DASHBOARD.REDIRECT,
     children: [
       {
-        path: "dashboard",
-        name: "dashboard",
+        path: FE_ROUTER_PROP.DASHBOARD.CHILDREN.DASHBOARD.PATH,
+        name: FE_ROUTER_PROP.DASHBOARD.CHILDREN.DASHBOARD.NAME,
         component: Dashboard,
         meta: { middleware: auth },
       },
       {
-        path: "profile",
-        name: "profile",
-        component: Profile,
+        path: FE_ROUTER_PROP.USER.PATH,
+        name: FE_ROUTER_PROP.USER.NAME,
+        components: { default: UserProfile },
+        meta: { middleware: auth },
       },
       {
         path: "notifications",

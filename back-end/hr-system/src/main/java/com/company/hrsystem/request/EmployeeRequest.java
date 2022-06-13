@@ -24,7 +24,5 @@ public class EmployeeRequest implements Serializable {
 	private List<EmployeeDocumentDto> documents;
 
 	private List<EmployeePositionDto> positions;
-	
-	private EmployeeRequest data;
 
 }

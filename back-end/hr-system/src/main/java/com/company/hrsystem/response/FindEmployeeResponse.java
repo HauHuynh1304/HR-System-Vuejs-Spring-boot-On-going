@@ -4,7 +4,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 import com.company.hrsystem.dto.EmployeeDocumentDto;
 import com.company.hrsystem.dto.EmployeeDto;
@@ -36,7 +35,7 @@ public class FindEmployeeResponse implements Serializable {
 	
 	private List<EmployeePositionDto> positions;
 	
-	private Set<EmployeeDocumentDto> documents;
+	private List<EmployeeDocumentDto> documents;
 	
 	private List<HistoryActionDto> historyActions;
 	
