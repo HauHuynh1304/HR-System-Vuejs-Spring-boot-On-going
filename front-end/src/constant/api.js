@@ -23,12 +23,17 @@ export const API = {
     INSERT_ROOM: "/master/insert-room",
     UPDATE_ROOM: "/master/update-room",
     FIND_ROLES: "/master/find-roles",
+    FIND_ALL_ACCOUNT: "/master/find-all-accounts",
+    FIND_AVAILABLE_ACCOUNTS: "/master/find-available-accounts",
+    FIND_ALL_ROOMS: "/master/find-all-rooms",
+    FIND_ALL_POSITIONS: "/master/find-all-positions",
+    FIND_ALL_DOCUMENTS: "/master/find-all-documents",
   },
   HUMAN_RESOURCE: {
     INSERT_EMPLOYEE: "/human-resources/insert-employee",
     UPDATE_EMPLOYEE: "/human-resources/update-employee",
     SEARCH_ALL_EMPLOYEES: "/human-resources/search-all-employees",
-    SEARCH_EMPLOYEE_BY_ACCOUNT_ID: "/human-resources/search-employee/{id}",
+    SEARCH_EMPLOYEE_BY_ACCOUNT_ID: "/human-resources/search-employee/",
   },
   BUSINESS: {
     INSERT_REQUEST: "/business/insert-request",

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.company.hrsystem.constants.ApiUrlConstant;
-import com.company.hrsystem.request.EmployeeRequest;
 import com.company.hrsystem.request.FindListEmployeesRequest;
 import com.company.hrsystem.service.HumanResourceService;
 
@@ -32,7 +31,7 @@ public class HumanResourceController {
 
 	@PostMapping(value = ApiUrlConstant.HUMAN_RESOURCE_INSERT_EMPLOYEE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasRole('ROLE_HR')")
-	public ResponseEntity<?> insertEmployee(@RequestPart("formEmployee") EmployeeRequest request,
+	public ResponseEntity<?> insertEmployee(@RequestPart("formEmployee") String request,
 			@RequestPart(name = "image", required = false) MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(humanResourceService.insertEmployee(request, multipartFile, servletRequest));
@@ -52,7 +51,7 @@ public class HumanResourceController {
 
 	@PostMapping(value = ApiUrlConstant.HUMAN_RESOURCE_UPDATE_EMPLOYEE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasRole('ROLE_HR')")
-	public ResponseEntity<?> updateEmployee(@RequestPart("formEmployee") EmployeeRequest request,
+	public ResponseEntity<?> updateEmployee(@RequestPart("formEmployee") String request,
 			@RequestPart(name = "image", required = false) MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(humanResourceService.updateEmployee(request, multipartFile, servletRequest));

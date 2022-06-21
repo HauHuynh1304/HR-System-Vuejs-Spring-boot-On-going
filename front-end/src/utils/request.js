@@ -4,9 +4,7 @@ import {
   getRefreshToken,
   setAccessToken,
 } from "@/utils/cookies";
-import router from "@/router";
 import { API } from "../constant/api";
-import { removeAccessToken, removeRefreshToken } from "./cookies";
 import store from "../store";
 
 const windownProtocol = window.location.protocol.concat(
@@ -26,9 +24,9 @@ const request = axios.create({
   baseURL: windownProtocol.concat(appServerPort, appBaseApiUrl),
 });
 
-export const get = (url, params = {}) => {
+export const get = (url, params) => {
   return new Promise((resolve, reject) => {
-    request.get(url, params).then(
+    request.get(url + params).then(
       (obj) => {
         resolve(obj.data);
       },
@@ -55,7 +53,7 @@ export const post = (url, params, config) => {
 request.interceptors.request.use(
   async (config) => {
     if (getAccessToken()) {
-      config.headers["Authorization"] = "Bearer " + getAccessToken();
+      config.headers["Authorization"] = "Bearer " + (await getAccessToken());
     }
     return config;
   },

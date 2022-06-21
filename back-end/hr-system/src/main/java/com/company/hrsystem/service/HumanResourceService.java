@@ -40,6 +40,7 @@ import com.company.hrsystem.utils.FileUtil;
 import com.company.hrsystem.utils.LogUtil;
 import com.company.hrsystem.utils.MessageUtil;
 import com.company.hrsystem.utils.ObjectUtil;
+import com.google.gson.Gson;
 
 @Service
 public class HumanResourceService {
@@ -81,8 +82,10 @@ public class HumanResourceService {
 	private HistoryActionService historyActionService;
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public ResponseTemplate insertEmployee(EmployeeRequest request, MultipartFile multipartFile,
+	public ResponseTemplate insertEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
+		Gson gson = new Gson();
+		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
 		String fileName = null;
 		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		try {
@@ -90,22 +93,24 @@ public class HumanResourceService {
 				fileName = fileUtil.generateFileName(multipartFile);
 			}
 
-			PersonalInfoDto personalInfo = request.getData().getPersonalInfo();
+			PersonalInfoDto personalInfo = request.getPersonalInfo();
 			personalInfo.setPersonalImage(fileName);
 			personnalInfoMapper.insertPersonalInfo(personalInfo);
 			historyActionService.saveHistoryAction(personalInfo, inserterId, CommonConstant.INSERT_ACTION,
 					personalInfo.getPersonalInfoId(), CommonConstant.TABLE_PERSONAL, servletRequest);
 
-			EmployeeDto employeeDto = request.getData().getEmployee();
+			EmployeeDto employeeDto = request.getEmployee();
 			employeeMapper.insertEmployee(personalInfo, employeeDto);
 			historyActionService.saveHistoryAction(employeeDto, inserterId, CommonConstant.INSERT_ACTION,
 					employeeDto.getEmployeeId(), CommonConstant.TABLE_EMPLOYEE, servletRequest);
 
-			List<EmployeeDocumentDto> listEmployeeDocument = request.getData().getDocuments();
-			employeeDocumentMapper.insertEmployeeDocument(employeeDto, listEmployeeDocument);
-			saveHistoryLastInsertDocuments(inserterId, employeeDto.getEmployeeId(), servletRequest);
+			List<EmployeeDocumentDto> listEmployeeDocument = request.getDocuments();
+			if (ObjectUtils.isNotEmpty(listEmployeeDocument)) {
+				employeeDocumentMapper.insertEmployeeDocument(employeeDto, listEmployeeDocument);
+				saveHistoryLastInsertDocuments(inserterId, employeeDto.getEmployeeId(), servletRequest);
+			}
 
-			List<EmployeePositionDto> listEmployeePosition = request.getData().getPositions();
+			List<EmployeePositionDto> listEmployeePosition = request.getPositions();
 			employeePositionMapper.insertEmployeePosition(employeeDto, listEmployeePosition);
 			saveHistoryLastInsertPositons(inserterId, employeeDto.getEmployeeId(), servletRequest);
 
@@ -128,12 +133,14 @@ public class HumanResourceService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public ResponseTemplate updateEmployee(EmployeeRequest request, MultipartFile multipartFile,
+	public ResponseTemplate updateEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
-		EmployeeDto employee = request.getData().getEmployee();
-		PersonalInfoDto personalInfo = request.getData().getPersonalInfo();
-		List<EmployeeDocumentDto> documents = request.getData().getDocuments();
-		List<EmployeePositionDto> positions = request.getData().getPositions();
+		Gson gson = new Gson();
+		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
+		EmployeeDto employee = request.getEmployee();
+		PersonalInfoDto personalInfo = request.getPersonalInfo();
+		List<EmployeeDocumentDto> documents = request.getDocuments();
+		List<EmployeePositionDto> positions = request.getPositions();
 		String updatedAt = DateUtil.getCurrentDayHourSecond();
 		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 
@@ -174,14 +181,21 @@ public class HumanResourceService {
 				historyActionService.saveHistoryAction(personalInfo, inserterId, CommonConstant.UPDATE_ACTION,
 						personalInfo.getPersonalInfoId(), CommonConstant.TABLE_PERSONAL, servletRequest);
 			}
-
+			
+			/*
+			 * In documents, parameter employeeDocumentId is always not null then it will call
+			 * API update updateEmployeeDocument if only use ObjectUtil.isEmpty(personalInfo)
+			 * So, update updateEmployeeDocument API will be executive if not null parameter
+			 * greater than 1
+			 */
 			if (ObjectUtils.isNotEmpty(documents)) {
 				List<EmployeeDocumentDto> oldDocuments = new ArrayList<EmployeeDocumentDto>();
 				List<EmployeeDocumentDto> newDocuments = new ArrayList<EmployeeDocumentDto>();
 				documents.stream().forEach(e -> {
-					if (ObjectUtils.isNotEmpty(e.getEmployeeDocumentId())) {
+					if (ObjectUtils.isNotEmpty(e.getEmployeeDocumentId()) && objectUtil.countNotNullParamater(e) > 1) {
 						oldDocuments.add(e);
-					} else {
+					} else if (ObjectUtils.isEmpty(e.getEmployeeDocumentId())
+							&& objectUtil.countNotNullParamater(e) > 1) {
 						newDocuments.add(e);
 					}
 				});
@@ -197,14 +211,21 @@ public class HumanResourceService {
 					saveHistoryLastInsertDocuments(inserterId, employee.getEmployeeId(), servletRequest);
 				}
 			}
-
+			
+			/*
+			 * In positions, parameter employeePositionId is always not null then it will call
+			 * API update updateEmployeePosition if only use ObjectUtil.isEmpty(personalInfo)
+			 * So, update updateEmployeePosition API will be executive if not null parameter
+			 * greater than 1
+			 */
 			if (ObjectUtils.isNotEmpty(positions)) {
 				List<EmployeePositionDto> oldPositions = new ArrayList<EmployeePositionDto>();
 				List<EmployeePositionDto> newPositions = new ArrayList<EmployeePositionDto>();
 				positions.stream().forEach(e -> {
-					if (ObjectUtils.isNotEmpty(e.getEmployeePositionId())) {
+					if (ObjectUtils.isNotEmpty(e.getEmployeePositionId()) && objectUtil.countNotNullParamater(e) > 1) {
 						oldPositions.add(e);
-					} else {
+					} else if (ObjectUtils.isEmpty(e.getEmployeePositionId())
+							&& objectUtil.countNotNullParamater(e) > 1) {
 						newPositions.add(e);
 					}
 				});

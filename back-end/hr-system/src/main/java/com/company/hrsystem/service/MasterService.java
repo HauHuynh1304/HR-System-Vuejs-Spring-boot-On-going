@@ -25,6 +25,7 @@ import com.company.hrsystem.mapper.PositionMapper;
 import com.company.hrsystem.mapper.ReasonMapper;
 import com.company.hrsystem.mapper.RequestTypeMapper;
 import com.company.hrsystem.mapper.RoomMapper;
+import com.company.hrsystem.mapper.SystemAccountMapper;
 import com.company.hrsystem.mapper.SytemRoleMapper;
 import com.company.hrsystem.request.DocumentRequest;
 import com.company.hrsystem.request.PositionRequest;
@@ -63,6 +64,9 @@ public class MasterService {
 
 	@Autowired
 	private RoomMapper roomMapper;
+
+	@Autowired
+	private SystemAccountMapper systemAccountMapper;
 
 	@Autowired
 	private MessageUtil messageUtil;
@@ -332,10 +336,35 @@ public class MasterService {
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getFlexMessageLangUS("udpate.row", String.valueOf(updateRows)), null, null);
 	}
-	
+
 	public ResponseTemplate findRoles() {
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, roleMapper.findRoles());
+	}
+
+	public ResponseTemplate findAllAccounts() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, systemAccountMapper.findAllAccount());
+	}
+
+	public ResponseTemplate findAllRooms() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findAllRooms());
+	}
+
+	public ResponseTemplate findAllPositions() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, positionMapper.findAllPositions());
+	}
+
+	public ResponseTemplate findAllDocuments() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, documentMapper.findAllDocuments());
+	}
+	
+	public ResponseTemplate findAvailbleAccounts() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, systemAccountMapper.findAvailbleAccounts());
 	}
 
 }

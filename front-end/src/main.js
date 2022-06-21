@@ -29,6 +29,7 @@ import VueMeta from "vue-meta";
 import IsDemo from "./plugins/isDemo";
 import { BootstrapVue } from "bootstrap-vue";
 import EventBus from "./utils/EventBus";
+import _ from "lodash";
 
 Vue.use(BlackDashboard);
 Vue.use(VueRouter);
@@ -37,6 +38,7 @@ Vue.use(IsDemo);
 Vue.use(VueMeta, { keyName: "head" });
 Vue.use(BootstrapVue);
 Vue.use(EventBus);
+Vue.use(_);
 
 /* eslint-disable no-new */
 new Vue({

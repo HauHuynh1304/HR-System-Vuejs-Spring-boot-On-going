@@ -2,9 +2,8 @@
   <div class="card ">
     <card card-body-classes="table-full-width">
       <h4 slot="header" class="title">
-        {{ routerProps.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.NAME.toUpperCase() }}
+        {{ routerProps.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.NAME.toUpperCase() }}
       </h4>
-      <Search-list-user />
       <card>
         <div class="row">
           <div class="col-md-2 p-auto">
@@ -51,66 +50,100 @@
               hover
               :items="items"
               :fields="fields"
+              :select-mode="selectMode"
+              selectable
+              @row-selected="onRowSelected"
               :filter="filter"
               :current-page="currentPage"
               :per-page="perPage"
             >
-              <template #cell(systemEmail)="row">
-                <router-link
-                  :to="
-                    routerProps.HUMAN_MANAGEMENT.ROOT_PATH.concat(
-                      '/',
-                      routerProps.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.PATH.replace(
-                        ':id',
-                        row.item.employee.employeeId
-                      )
-                    )
-                  "
-                  target="_blank"
-                >
-                  {{ row.item.systemEmail }}
-                </router-link>
+              <template #cell(roles)="data">
+                <span v-html="data.value"></span>
               </template>
             </b-table>
           </div>
         </div>
       </card>
     </card>
+    <accountVue />
   </div>
 </template>
 
 <script>
-import { EVENT_BUS } from "../../../constant/common";
+import { findAccounts } from "../../api/authen";
+import accountVue from "./account.vue";
+import { EVENT_BUS } from "../../constant/common";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
-import { TABLE_LIST_EMPLOYEE } from "@/constant/tableListEmployee";
-import SearchListUser from "./SearchListUser.vue";
-import Card from "../../../components/Cards/Card.vue";
-import { URL_IMG } from "@/utils/request";
-import { API } from "../../../constant/api";
+import Card from "../../components/Cards/Card.vue";
 
 export default {
-  components: { SearchListUser, Card },
+  components: {
+    accountVue,
+    Card,
+  },
   data() {
     return {
-      URL_IMG: URL_IMG,
-      API: API,
       routerProps: FE_ROUTER_PROP,
+      backgroundColor: "primary",
       pageOptions: [5, 10, 15, 20],
       totalRows: null,
       currentPage: 1,
       perPage: 10,
+      selectMode: "single",
       filter: null,
       items: null,
-      fields: TABLE_LIST_EMPLOYEE.fields,
+      fields: [
+        {
+          key: "systemEmail",
+          label: "EMAIL",
+          thClass: "text-center text-info",
+          tdClass: "text-center",
+        },
+        {
+          key: "createdAt",
+          label: "CREATED AT",
+          thClass: "text-center text-info",
+          tdClass: "text-center",
+        },
+        {
+          key: "roles",
+          label: "ROLES",
+          thClass: "text-center text-info",
+          formatter: (value) => {
+            let role = value.map((item) => item.roleName + "<br/>").toString();
+            return role.replaceAll(",", "");
+          },
+        },
+        {
+          key: "deletedFlag",
+          label: "ACTIVE",
+          thClass: "text-center text-danger",
+          tdClass: "text-center",
+          formatter: (value) => {
+            return value ? "NO" : "YES";
+          },
+          filterByFormatted: true,
+        },
+      ],
     };
   },
   created() {
-    this.$bus.on(EVENT_BUS.FETCH_DATA_LIST_EMPLOYEE, (data) => {
-      this.items = data ? data : [];
-      this.totalRows = this.items.length;
+    this.getTabledata();
+    this.$bus.on(EVENT_BUS.REFRESH_TABLE_LIST_USER, () => {
+      this.getTabledata();
     });
   },
-  methods: {},
+  methods: {
+    onRowSelected(item) {
+      this.$bus.emit(EVENT_BUS.EDIT_ACCOUNT, item);
+    },
+    getTabledata() {
+      findAccounts().then((res) => {
+        this.items = res?.data;
+        this.totalRows = this.items?.length;
+      });
+    },
+  },
 };
 </script>
 

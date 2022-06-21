@@ -14,6 +14,10 @@ export const ROLES = {
 export const EVENT_BUS = {
   EDIT_ACCOUNT: "TARGET_ACCOUNT",
   REFRESH_TABLE_LIST_USER: "REFRESH_TABLE_LIST_USER",
+  FETCH_DATA_LIST_EMPLOYEE: "FETCH_DATA_LIST_EMPLOYEE",
+  UPDATE_EMPLOYEE: "UPDATE_EMPLOYEE",
+  REFRESH_EMPLOYEE: "REFRESH_EMPLOYEE",
+  REFRESH_LOCAL_STORAGE: "REFRESH_LOCAL_STORAGE",
 };
 
 export const ACCOUNT_STATUS = {
@@ -25,4 +29,16 @@ export const ACCOUNT_STATUS = {
     value: true,
     text: "NO",
   },
+};
+
+export const SEX_SELECT = [
+  { value: "MALE", text: "MALE" },
+  { value: "FEMALE", text: "FEMALE" },
+];
+
+export const ACTION = {
+  UPDATE: "UPDATE",
+  INSERT: "INSERT",
+  DELETE: "DELETE",
+  UNDELETE: "UNDELETE",
 };

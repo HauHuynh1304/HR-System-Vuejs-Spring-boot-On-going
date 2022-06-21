@@ -26,6 +26,11 @@ public class ApiUrlConstant {
 	public static final String MASTER_INSERT_ROOM = "/master/insert-room";
 	public static final String MASTER_UPDATE_ROOM = "/master/update-room";
 	public static final String MASTER_FIND_ROLES = "/master/find-roles";
+	public static final String MASTER_FIND_ALL_ACCOUNTS ="/master/find-all-accounts";
+	public static final String MASTER_FIND_AVAILABLE_ACCOUNTS = "/master/find-available-accounts";
+	public static final String MASTER_FIND_ALL_ROOM = "/master/find-all-rooms";
+	public static final String MASTER_FIND_ALL_POSITIONS = "/master/find-all-positions";
+	public static final String MASTER_FIND_ALL_DOCUMENTS = "/master/find-all-documents";
 
 	public static final String HUMAN_RESOURCE_INSERT_EMPLOYEE = "/human-resources/insert-employee";
 	public static final String HUMAN_RESOURCE_UPDATE_EMPLOYEE = "/human-resources/update-employee";

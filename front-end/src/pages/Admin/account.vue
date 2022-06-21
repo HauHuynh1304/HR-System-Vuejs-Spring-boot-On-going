@@ -123,6 +123,7 @@
                   <b-form-select
                     v-model="updateLogicProperties.selected"
                     :options="statusOptions"
+                    class="form-control"
                   >
                   </b-form-select>
                 </form>
@@ -188,7 +189,7 @@
   </div>
 </template>
 <script>
-import BaseButton from "../BaseButton.vue";
+import BaseButton from "@/components/BaseButton.vue";
 import { getRoles } from "../../api/master";
 import { addNewAccount, updateAccount, isEmailInDb } from "../../api/authen";
 import { EVENT_BUS, ACCOUNT_STATUS } from "../../constant/common";
@@ -276,6 +277,8 @@ export default {
       }
     },
     onSubmit() {
+      // refresh before submit form
+      this.data.roleIds = [];
       let finalRolesObj = this.originRoleObj.filter((el) => {
         return this.tagValue.includes(el.roleName);
       });

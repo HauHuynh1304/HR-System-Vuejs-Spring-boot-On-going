@@ -31,12 +31,7 @@ export default {
       urlImg: URL_IMG + this.user.personalInfo.personalImage,
     };
   },
-  methods: {
-    getProfile() {
-      console.log();
-      return;
-    },
-  },
+  methods: {},
 };
 </script>
 <style></style>

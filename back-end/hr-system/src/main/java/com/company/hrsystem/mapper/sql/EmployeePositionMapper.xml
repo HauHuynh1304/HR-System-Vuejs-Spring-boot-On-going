@@ -63,20 +63,26 @@
 	
 	<resultMap type="com.company.hrsystem.dto.EmployeePositionDto" 
 		id="findEmployeePositionsByEmployeeId">
-		<result column="employee_position_id" jdbcType="INTEGER" property="employeePositionId"/>
-		<result column="position_id" jdbcType="INTEGER" property="positionId"/>
+		<id column="employee_position_id" jdbcType="INTEGER" property="employeePositionId"/>
 		<result column="start_date" jdbcType="VARCHAR" property="startDate"/>
+		<result column="end_date" jdbcType="VARCHAR" property="endDate"/>
+		<result column="position_name" jdbcType="VARCHAR" property="positionName"/>
+		<result column="deleted_flag" jdbcType="BIT" property="deletedFlag"/>
 	</resultMap>
 	<select id="findEmployeePositionsByEmployeeId" parameterType="INTEGER" 
 		resultMap="findEmployeePositionsByEmployeeId">
 		SELECT 
 			ep.employee_position_id,
-			ep.position_id,
-			ep.start_date
+			ep.start_date,
+			ep.end_date,
+			pos.position_name,
+			ep.deleted_flag
 		FROM employee_position ep
 			LEFT JOIN position pos
 				ON ep.position_id = pos.position_id
 		WHERE ep.employee_id = #{employeeId}
 			AND pos.deleted_flag = false
+		ORDER BY
+			ep.employee_position_id DESC
 	</select>
 </mapper>

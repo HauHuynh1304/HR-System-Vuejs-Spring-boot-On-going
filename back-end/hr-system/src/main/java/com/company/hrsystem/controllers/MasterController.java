@@ -80,13 +80,15 @@ public class MasterController {
 
 	@PostMapping(ApiUrlConstant.MASTER_INSERT_REQUEST_TYPE)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> insertRequestType(@RequestBody RequestTypeRequest request, HttpServletRequest servletRequest) {
+	public ResponseEntity<?> insertRequestType(@RequestBody RequestTypeRequest request,
+			HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(masterService.insertRequestType(request, servletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.MASTER_UPDATE_REQUEST_TYPE)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> updateRequestType(@RequestBody RequestTypeRequest request, HttpServletRequest servletRequest) {
+	public ResponseEntity<?> updateRequestType(@RequestBody RequestTypeRequest request,
+			HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(masterService.updateRequestType(request, servletRequest));
 	}
 
@@ -101,11 +103,41 @@ public class MasterController {
 	public ResponseEntity<?> updateRoom(@RequestBody RoomRequest request, HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(masterService.updateRoom(request, servletRequest));
 	}
-	
+
 	@PostMapping(ApiUrlConstant.MASTER_FIND_ROLES)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HR')")
 	public ResponseEntity<?> findRoles() {
 		return ResponseEntity.ok(masterService.findRoles());
+	}
+
+	@PostMapping(ApiUrlConstant.MASTER_FIND_ALL_ACCOUNTS)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findAllAccounts() {
+		return ResponseEntity.ok(masterService.findAllAccounts());
+	}
+
+	@PostMapping(ApiUrlConstant.MASTER_FIND_ALL_ROOM)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findAllRooms() {
+		return ResponseEntity.ok(masterService.findAllRooms());
+	}
+	
+	@PostMapping(ApiUrlConstant.MASTER_FIND_ALL_POSITIONS)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findAllPositions() {
+		return ResponseEntity.ok(masterService.findAllPositions());
+	}
+	
+	@PostMapping(ApiUrlConstant.MASTER_FIND_ALL_DOCUMENTS)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findAllDocuments() {
+		return ResponseEntity.ok(masterService.findAllDocuments());
+	}
+	
+	@PostMapping(ApiUrlConstant.MASTER_FIND_AVAILABLE_ACCOUNTS)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findAvailbleAccounts() {
+		return ResponseEntity.ok(masterService.findAvailbleAccounts());
 	}
 
 }

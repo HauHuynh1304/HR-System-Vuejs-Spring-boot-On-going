@@ -221,11 +221,35 @@
     where system_account_id = #{systemAccountId,jdbcType=INTEGER}
   </update>
   
-  <select id="selectAll" resultMap="BaseResultMap">
+  
+  <resultMap id="findAllAccount" type="com.company.hrsystem.dto.SystemAccountDto">
+    <id column="system_account_id" jdbcType="INTEGER" property="systemAccountId" />
+    <result column="system_email" jdbcType="VARCHAR" property="systemEmail" />
+  </resultMap>
+  <select id="findAllAccount" resultMap="findAllAccount">
   	SELECT
-		*
-	FROM system_account  
+		sa.system_account_id,
+		sa.system_email
+	FROM system_account sa
+	ORDER BY
+		sa.system_account_id DESC
   </select>
+  <select id="findAvailbleAccounts" resultMap="findAllAccount">
+		SELECT
+			sa.system_account_id,
+			sa.system_email
+		FROM 
+			system_account sa
+		WHERE 
+			sa.system_account_id 
+				NOT IN
+					(
+						SELECT e.system_account_id
+						FROM employee e
+					)
+		ORDER BY 
+			sa.system_account_id DESC
+	</select>
   
 	<select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT

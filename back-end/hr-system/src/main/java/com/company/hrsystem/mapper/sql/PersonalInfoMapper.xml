@@ -8,55 +8,55 @@
 		keyColumn="personal_info_id">
 		insert into personal_info
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="personalName != null">
+			<if test="personalName != null and personalName != '' ">
 				personal_name,
 			</if>
-			<if test="personalBirthday != null">
+			<if test="personalBirthday != null and personalBirthday != '' ">
 				personal_birthday,
 			</if>
-			<if test="personalAddress != null">
+			<if test="personalAddress != null and personalAddress != '' ">
 				personal_address,
 			</if>
-			<if test="personalPhoneNumber != null">
+			<if test="personalPhoneNumber != null and personalPhoneNumber != '' ">
 				personal_phone_number,
 			</if>
-			<if test="personalSex != null">
+			<if test="personalSex != null and personalSex != '' ">
 				personal_sex,
 			</if>
-			<if test="personalIdCard != null">
+			<if test="personalIdCard != null and personalIdCard != '' ">
 				personal_id_card,
 			</if>
-			<if test="personalEmail != null">
+			<if test="personalEmail != null and personalEmail != '' ">
 				personal_email,
 			</if>
-			<if test="personalImage != null">
+			<if test="personalImage != null and personalImage != '' ">
 				personal_image,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="personalName != null">
+			<if test="personalName != null and personalName != '' ">
 				#{personalName, jdbcType=VARCHAR},
 			</if>
-			<if test="personalBirthday != null">
+			<if test="personalBirthday != null and personalBirthday != '' ">
 				STR_TO_DATE(#{personalBirthday, jdbcType=VARCHAR},
 				"%Y-%m-%d"),
 			</if>
-			<if test="personalAddress != null">
+			<if test="personalAddress != null and personalAddress != '' ">
 				#{personalAddress, jdbcType=VARCHAR},
 			</if>
-			<if test="personalPhoneNumber != null">
+			<if test="personalPhoneNumber != null and personalPhoneNumber != '' ">
 				#{personalPhoneNumber, jdbcType=VARCHAR},
 			</if>
-			<if test="personalSex != null">
+			<if test="personalSex != null and personalSex != '' ">
 				#{personalSex, jdbcType=VARCHAR},
 			</if>
-			<if test="personalIdCard != null">
+			<if test="personalIdCard != null and personalIdCard != '' ">
 				#{personalIdCard, jdbcType=VARCHAR},
 			</if>
-			<if test="personalEmail != null">
+			<if test="personalEmail != null and personalEmail != '' ">
 				#{personalEmail, jdbcType=VARCHAR},
 			</if>
-			<if test="personalImage != null">
+			<if test="personalImage != null and personalImage != '' ">
 				#{personalImage, jdbcType=VARCHAR},
 			</if>
 		</trim>
@@ -66,32 +66,32 @@
 		parameterType="com.company.hrsystem.dto.PersonalInfoDto">
 		UPDATE personal_info
 		<set>
-			<if test="personalName != null" >
+			<if test="personalName != null and personalName != '' ">
 				personal_name = #{personalName, jdbcType=VARCHAR},
 			</if>
-			<if test="personalBirthday != null" >
+			<if test="personalBirthday != null and personalBirthday != '' ">
 				personal_birthday = STR_TO_DATE(#{personalBirthday, jdbcType=VARCHAR},
 				"%Y-%m-%d"),
 			</if>
-			<if test="personalAddress != null" >
+			<if test="personalAddress != null and personalAddress != '' ">
 				personal_address = #{personalAddress, jdbcType=VARCHAR},
 			</if>
-			<if test="personalPhoneNumber != null" >
+			<if test="personalPhoneNumber != null and personalPhoneNumber != '' ">
 				personal_phone_number = #{personalPhoneNumber, jdbcType=VARCHAR},
 			</if>
-			<if test="personalSex != null" >
+			<if test="personalSex != null and personalSex != '' ">
 				personal_sex = #{personalSex, jdbcType=VARCHAR},
 			</if>
-			<if test="personalIdCard != null" >
+			<if test="personalIdCard != null and personalIdCard != '' ">
 				personal_id_card = #{personalIdCard, jdbcType=VARCHAR},
 			</if>
-			<if test="personalEmail != null" >
+			<if test="personalEmail != null and personalEmail != '' ">
 				personal_email = #{personalEmail, jdbcType=VARCHAR},
 			</if>
-			<if test="personalImage != null" >
+			<if test="personalImage != null and personalImage != '' ">
 				personal_image = #{personalImage, jdbcType=VARCHAR},
 			</if>
-			<if test="updatedAt != null">
+			<if test="updatedAt != null and updatedAt != '' ">
 				updated_at = #{updatedAt, jdbcType=TIMESTAMP},
 			</if>
 		</set>

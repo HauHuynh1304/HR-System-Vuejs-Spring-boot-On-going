@@ -31,4 +31,20 @@
 		</set>
 		where position_id= #{positionId, jdbcType=INTEGER}
 	</update>
+	
+	<resultMap type="com.company.hrsystem.dto.PositionDto" id="findAllPositions">
+		<id column="position_id" jdbcType="INTEGER" property="positionId"/>
+		<result column="position_name" jdbcType="VARCHAR" property="positionName"/>
+	</resultMap>
+	<select id="findAllPositions" resultMap="findAllPositions">
+		SELECT
+			position_name,
+			position_id
+		FROM 
+			position
+		WHERE
+			deleted_flag = false
+		ORDER BY
+			position_id DESC
+	</select>
 </mapper>

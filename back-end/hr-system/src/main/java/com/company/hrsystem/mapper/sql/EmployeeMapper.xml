@@ -51,9 +51,6 @@
 			<if test="roomId != null">
 				room_id = #{roomId, jdbcType=INTEGER},
 			</if>
-			<if test="systemAccountId != null">
-				system_account_id = #{roomId, jdbcType=INTEGER},
-			</if>
 			<if test="deletedFlag != null">
 				deleted_flag = #{deletedFlag, jdbcType=BIT},
 			</if>

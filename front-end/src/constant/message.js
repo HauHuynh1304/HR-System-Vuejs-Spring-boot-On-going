@@ -20,4 +20,11 @@ export const MESSAGE = {
   REFRESH_TOKEN_EXPIRED: {
     ERR: "Out of time, please sign-in again!",
   },
+  INSERT_EMPLOYEE: {
+    ERR_EMPTY: "Only Submited Documents can be empty!",
+    ERR_FORMAT: "Format of Email or Phone not correctly!",
+    ERR_COMMON: "Start Date can't be empty!",
+    ERR_INSERT: "Nothing to insert!",
+    ERR_UPDATE_EMPLOYEE: "Have some empty value, please check again!",
+  },
 };

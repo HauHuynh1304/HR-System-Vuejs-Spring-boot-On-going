@@ -33,4 +33,20 @@
 		</set>
 		where room_id = #{roomId, jdbcType=INTEGER}
 	</update>
+	
+	<resultMap type="com.company.hrsystem.dto.RoomDto" id="findAllRooms">
+		<id column="room_id" jdbcType="INTEGER" property="roomId"/>
+		<result column="room_name" jdbcType="VARCHAR" property="roomName"/>
+	</resultMap>
+	<select id="findAllRooms" resultMap="findAllRooms">
+		SELECT 
+			r.room_id,
+			r.room_name
+		FROM 
+			room r
+		WHERE
+			r.deleted_flag = false
+		ORDER BY 
+			r.room_id DESC
+	</select>
 </mapper>

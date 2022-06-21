@@ -129,7 +129,7 @@
               >
                 <div
                   class="photo avatar-image"
-                  :style="{ 'background-image': `url('${profileImage}')` }"
+                  :style="{ 'background-image': `url('${avatar}')` }"
                 />
                 <b class="caret d-none d-lg-block d-xl-block"></b>
                 <p class="d-lg-none">
@@ -137,7 +137,7 @@
                 </p>
               </a>
               <li class="nav-link">
-                <sidebar-link to="/examples/user-profile" name="Profile" />
+                <sidebar-link to="/user/profile" name="Profile" />
               </li>
               <div class="dropdown-divider"></div>
               <li class="nav-link">
@@ -153,7 +153,7 @@
 <script>
 import { CollapseTransition } from "vue2-transitions";
 import Modal from "@/components/Modal";
-import { LOCAL_STORAGE } from "../../constant/common";
+import { LOCAL_STORAGE, EVENT_BUS } from "../../constant/common";
 import { logout } from "../../api/authen";
 import { URL_IMG } from "@/utils/request";
 
@@ -167,9 +167,6 @@ export default {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
     },
-    profileImage() {
-      return URL_IMG + this.avatar;
-    },
   },
   data() {
     return {
@@ -180,14 +177,17 @@ export default {
       avatar: null,
     };
   },
-  async created() {
+  created() {
     this.getProfile();
+    this.$bus.on(EVENT_BUS.REFRESH_LOCAL_STORAGE, () => {
+      this.getProfile();
+    });
   },
   methods: {
     async getProfile() {
-      let user = JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
+      let user = await JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
       this.title = user.personalName;
-      this.avatar = user.personalImage;
+      this.avatar = URL_IMG + user.personalImage;
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
