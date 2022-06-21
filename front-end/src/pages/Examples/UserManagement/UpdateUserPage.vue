@@ -243,7 +243,8 @@ export default {
       findEmployeeById(this.$route.params.id).then((res) => {
         this.employeeObj = res.data;
         this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
-        if (res.data.employee.employeeId == this.$route.params.id) {
+        let user = JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
+        if (res.data.personalInfo.personalInfoId == user.personalInfoId) {
           localStorage.setItem(
             LOCAL_STORAGE.NAME,
             JSON.stringify(res.data.personalInfo)
