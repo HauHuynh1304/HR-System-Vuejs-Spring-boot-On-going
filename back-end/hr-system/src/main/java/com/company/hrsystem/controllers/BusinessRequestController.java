@@ -18,6 +18,7 @@ import com.company.hrsystem.request.ApproverActionRequest;
 import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
 import com.company.hrsystem.request.FindListTicketRequest;
+import com.company.hrsystem.request.RequesterActionRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
 import com.company.hrsystem.service.BusinessRequestService;
 
@@ -36,11 +37,11 @@ public class BusinessRequestController {
 		return ResponseEntity.ok(businessRequestService.insertBusinessRequest(request, httpServletRequest));
 	}
 
-	@PostMapping(ApiUrlConstant.BUSINESS_UPDATE_REQUEST)
+	@PostMapping(ApiUrlConstant.BUSINESS_UPDATE_REQUESTER_ACTION)
 	@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
-	public ResponseEntity<?> updateBusinessRequest(@RequestBody BusinessRequest request,
+	public ResponseEntity<?> updateRequesterAction(@RequestBody RequesterActionRequest request,
 			HttpServletRequest httpServletRequest) {
-		return ResponseEntity.ok(businessRequestService.updateBusinessRequest(request, httpServletRequest));
+		return ResponseEntity.ok(businessRequestService.updateRequesterAction(request, httpServletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_UPDATE_SUPERVISOR_ACTION)
@@ -85,6 +86,36 @@ public class BusinessRequestController {
 	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
 	public ResponseEntity<?> findCurrentUser() {
 		return ResponseEntity.ok(businessRequestService.findCurrentUser());
+	}
+
+	@GetMapping(ApiUrlConstant.BUSINSES_FIND_ACCOUNT_BY_ROLE)
+	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
+	public ResponseEntity<?> findAccountByRole(@PathVariable(required = true) String role) {
+		return ResponseEntity.ok(businessRequestService.findAccountByRole(role));
+	}
+
+	@PostMapping(ApiUrlConstant.BUSINESS_FIND_ALL_REASON)
+	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
+	public ResponseEntity<?> findAllReason() {
+		return ResponseEntity.ok(businessRequestService.findAllReason());
+	}
+
+	@PostMapping(ApiUrlConstant.BUSINESS_FIND_ALL_REQUEST_TYPE)
+	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
+	public ResponseEntity<?> findAllRequestType() {
+		return ResponseEntity.ok(businessRequestService.findAllRequestType());
+	}
+
+	@PostMapping(ApiUrlConstant.BUSINESS_FIND_EMPLOYEE_ID)
+	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
+	public ResponseEntity<?> findEmployeeId() {
+		return ResponseEntity.ok(businessRequestService.findEmployeeId());
+	}
+	
+	@GetMapping(ApiUrlConstant.BUSINESS_FIND_LIST_COMMENT)
+	@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
+	public ResponseEntity<?> findListComment(@PathVariable Integer id) {
+		return ResponseEntity.ok(businessRequestService.findListComment(id));
 	}
 
 }

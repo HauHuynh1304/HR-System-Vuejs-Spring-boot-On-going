@@ -6,23 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
-public abstract class CommentModel implements Serializable {
+public abstract class RequesterActionModel implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	
-	private Integer commentId;
 
-	private Integer supervisorActionId;
-
-	private Integer approverActionId;
-	
 	private Integer requesterActionId;
 
-	private String commentDetail;
+	private Integer requesterId;
+
+	private String actionType;
 
 	private String createdAt;
+
+	private String updatedAt;
 	
 }

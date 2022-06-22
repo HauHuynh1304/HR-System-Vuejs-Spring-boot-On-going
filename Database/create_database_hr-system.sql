@@ -179,16 +179,31 @@ CREATE TABLE IF NOT EXISTS supervisor_action (
 		REFERENCES employee(employee_id)
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS requester_action (
+	requester_action_id INT(11) auto_increment NOT NULL,
+    requester_id int(11) NOT NULL,
+    action_type varchar(10) NOT NULL DEFAULT 'WAITING',
+    created_at datetime NOT NULL default current_timestamp(),
+    updated_at datetime NOT NULL default current_timestamp(),
+    primary key (`requester_action_id`),
+    CONSTRAINT `fk_requester_id` FOREIGN KEY (requester_id)  
+		REFERENCES employee(employee_id)
+) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `comment` (
 	comment_id INT(11) auto_increment NOT NULL,
 	supervisor_action_id INT(11),
     approver_action_id int(11),
+    requester_action_id int(11),
     comment_detail varchar(255),
     created_at datetime NOT NULL default current_timestamp(),
+	primary key (`comment_id`),
     CONSTRAINT `fk_comment_supervisor` FOREIGN KEY (supervisor_action_id)  
 		REFERENCES supervisor_action(supervisor_action_id),
     CONSTRAINT `fk_comment_approver` FOREIGN KEY (approver_action_id)  
-		REFERENCES approver_action(approver_action_id)
+		REFERENCES approver_action(approver_action_id),
+	CONSTRAINT `fk_comment_requester` FOREIGN KEY (requester_action_id)  
+		REFERENCES requester_action(requester_action_id)
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS request_employee (
@@ -196,11 +211,12 @@ CREATE TABLE IF NOT EXISTS request_employee (
     request_id int(11) NOT NULL,
     supervisor_action_id int(11) NOT NULL,
     approver_action_id int(11) NOT NULL,
+    requester_action_id int(11) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     partial_date varchar(10) NOT NULL DEFAULT 'ALL DAY',
     request_description varchar(255),
-    expected_approve_date date NOT NULL,
+    expected_approve_date datetime NOT NULL,
     duration DECIMAL (5,2) NOT NULL,
     request_status varchar(10) NOT NULL DEFAULT 'WAITING',
     created_at datetime NOT NULL default current_timestamp(),
@@ -212,7 +228,9 @@ CREATE TABLE IF NOT EXISTS request_employee (
     CONSTRAINT `fk_request_employee_supervisor_action_id` FOREIGN KEY (supervisor_action_id)  
 		REFERENCES supervisor_action(supervisor_action_id),
     CONSTRAINT `fk_request_employee_approver_action_id` FOREIGN KEY (approver_action_id)  
-		REFERENCES approver_action(approver_action_id)
+		REFERENCES approver_action(approver_action_id),
+    CONSTRAINT `fk_request_employee_requester_action_id` FOREIGN KEY (requester_action_id)  
+		REFERENCES requester_action(requester_action_id)
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS refresh_token (

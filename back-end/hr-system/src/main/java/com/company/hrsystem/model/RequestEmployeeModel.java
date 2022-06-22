@@ -20,6 +20,8 @@ public abstract class RequestEmployeeModel implements Serializable {
 	private Integer supervisorActionId;
 
 	private Integer approverActionId;
+	
+	private Integer requesterActionId;
 
 	private String startDate;
 
@@ -39,8 +41,9 @@ public abstract class RequestEmployeeModel implements Serializable {
 
 	private String updatedAt;
 
-	public RequestEmployeeModel(Integer supervisorActionId, Integer approverActionId, String requestStatus,
+	public RequestEmployeeModel(Integer requesterActionId ,Integer supervisorActionId, Integer approverActionId, String requestStatus,
 			String updatedAt) {
+		this.requesterActionId = requesterActionId;
 		this.supervisorActionId = supervisorActionId;
 		this.approverActionId = approverActionId;
 		this.requestStatus = requestStatus;

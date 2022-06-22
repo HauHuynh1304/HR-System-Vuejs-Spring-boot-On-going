@@ -1,6 +1,6 @@
 package com.company.hrsystem.dto;
 
-import com.company.hrsystem.model.ApproverActionModel;
+import com.company.hrsystem.model.RequesterActionModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -12,14 +12,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class ApproverActionDto extends ApproverActionModel {
+public class RequesterActionDto extends RequesterActionModel {
 
 	private static final long serialVersionUID = 1L;
-
-	public ApproverActionDto(Integer approverActionId, String actionType, String updatedAt) {
-		super(approverActionId, actionType, updatedAt);
-	}
-
-	private String approverEmail;
-
+	
+	private String requesterEmail;
 }

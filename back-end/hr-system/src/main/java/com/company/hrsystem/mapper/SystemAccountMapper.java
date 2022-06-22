@@ -59,4 +59,6 @@ public interface SystemAccountMapper {
 	
 	List<SystemAccountDto> findAvailbleAccounts();
 	
+	List<SystemAccountDto> findAccountByRole(String role);
+	
 }

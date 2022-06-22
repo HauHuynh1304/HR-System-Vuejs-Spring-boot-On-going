@@ -51,4 +51,30 @@ export const FE_ROUTER_PROP = {
       },
     },
   },
+  REQUEST_TICKET: {
+    ROOT_PATH: "/business",
+    ROOT_NAME: "Request Ticket",
+    CHILDREN: {
+      CREATE_REQUEST_TICKET: {
+        PATH: "new-ticket",
+        NAME: "New ticket",
+      },
+      LIST_REQUESTED_TICKET: {
+        PATH: "list-requested-ticket",
+        NAME: "Requested Ticket",
+      },
+      REQUESTED_TICKET: {
+        PATH: "requested-ticket/:id",
+        NAME: "Requested Ticket",
+      },
+      LIST_RECEIVED_REQUEST_TICKET: {
+        PATH: "list-received-ticket",
+        NAME: "Received Ticket",
+      },
+      RECEIVED_REQUEST_TICKET: {
+        PATH: "received-ticket/:id",
+        NAME: "received Ticket",
+      },
+    },
+  },
 };

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.hrsystem.mapper.RequesterActionMapper">
+	<insert id="insertRequesterAction"
+		parameterType="com.company.hrsystem.dto.RequesterActionDto"
+		useGeneratedKeys="true" keyColumn="requester_action_id"
+		keyProperty="requesterActionId">
+		INSERT INTO
+			requester_action (requester_id)
+		VALUES
+			(
+				#{requesterId, jdbcType=INTEGER}
+			)
+	</insert>
+	
+	<update id="updateRequesterAction"
+		parameterType="com.company.hrsystem.dto.RequesterActionDto">
+		UPDATE requester_action
+		<set>
+			action_type = #{actionType, jdbcType=VARCHAR},
+			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+		</set>
+		WHERE
+			requester_action_id = #{requesterActionId, jdbcType=INTEGER}
+				AND action_type = "WAITING"
+	</update>
+</mapper>

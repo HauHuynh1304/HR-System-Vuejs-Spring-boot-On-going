@@ -250,6 +250,29 @@
 		ORDER BY 
 			sa.system_account_id DESC
 	</select>
+  <select id="findAccountByRole" resultMap="findAllAccount"  parameterType="java.lang.String">
+		SELECT DISTINCT
+			e.employee_id AS system_account_id,
+			sa.system_email
+		FROM 
+			system_account sa
+			LEFT JOIN system_account_role sar
+				ON sa.system_account_id = sar.system_account_id
+			LEFT JOIN system_role sr
+				ON sar.system_role_id = sr.system_role_id
+			LEFT JOIN employee e
+				ON e.system_account_id = sa.system_account_id
+		WHERE 
+			<if test="role == 'ROLE_SUPERVISOR'">
+				sr.role_name = #{role, jdbcType=VARCHAR}
+			</if>
+			<if test="role == 'ROLE_MANAGER'">
+				sr.role_name = #{role, jdbcType=VARCHAR}
+			</if>
+			AND e.employee_id IS NOT NULL
+		ORDER BY 
+			sa.system_account_id DESC
+	</select>
   
 	<select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT

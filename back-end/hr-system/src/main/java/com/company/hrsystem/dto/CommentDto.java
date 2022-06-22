@@ -15,5 +15,11 @@ import lombok.Setter;
 public class CommentDto extends CommentModel {
 
 	private static final long serialVersionUID = 1L;
-	
+
+	private String requesterEmail;
+
+	private String approverEmail;
+
+	private String supervisorEmail;
+
 }

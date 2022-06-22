@@ -19,9 +19,13 @@ import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.ApproverActionDto;
 import com.company.hrsystem.dto.CommentDto;
+import com.company.hrsystem.dto.ReasonDto;
 import com.company.hrsystem.dto.RequestDto;
 import com.company.hrsystem.dto.RequestEmployeeDto;
+import com.company.hrsystem.dto.RequestTypeDto;
+import com.company.hrsystem.dto.RequesterActionDto;
 import com.company.hrsystem.dto.SupervisorActionDto;
+import com.company.hrsystem.dto.SystemAccountDto;
 import com.company.hrsystem.enums.BusinessRequestStatusEnum;
 import com.company.hrsystem.enums.PartialDateEnum;
 import com.company.hrsystem.mapper.ApproverActionMapper;
@@ -30,13 +34,18 @@ import com.company.hrsystem.mapper.EmployeeDocumentMapper;
 import com.company.hrsystem.mapper.EmployeeMapper;
 import com.company.hrsystem.mapper.EmployeePositionMapper;
 import com.company.hrsystem.mapper.HistoryActionMapper;
+import com.company.hrsystem.mapper.ReasonMapper;
 import com.company.hrsystem.mapper.RequestEmployeeMapper;
 import com.company.hrsystem.mapper.RequestMapper;
+import com.company.hrsystem.mapper.RequestTypeMapper;
+import com.company.hrsystem.mapper.RequesterActionMapper;
 import com.company.hrsystem.mapper.SupervisorAcctionMapper;
+import com.company.hrsystem.mapper.SystemAccountMapper;
 import com.company.hrsystem.request.ApproverActionRequest;
 import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
 import com.company.hrsystem.request.FindListTicketRequest;
+import com.company.hrsystem.request.RequesterActionRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
 import com.company.hrsystem.response.FindEmployeeResponse;
 import com.company.hrsystem.response.FindListTicketResponse;
@@ -79,6 +88,15 @@ public class BusinessRequestService {
 	private CommentMapper commentMapper;
 
 	@Autowired
+	private ReasonMapper reasonMapper;
+
+	@Autowired
+	private SystemAccountMapper systemAccountMapper;
+
+	@Autowired
+	private RequestTypeMapper requestTypeMapper;
+
+	@Autowired
 	private MessageUtil messageUtil;
 
 	@Autowired
@@ -99,6 +117,9 @@ public class BusinessRequestService {
 	@Autowired
 	private HistoryActionMapper historyActionMapper;
 
+	@Autowired
+	private RequesterActionMapper requesterActionMapper;
+
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate insertBusinessRequest(BusinessRequest request, HttpServletRequest httpServletRequest) {
 		if (ObjectUtils.isEmpty(request.getData())) {
@@ -113,6 +134,10 @@ public class BusinessRequestService {
 		RequestEmployeeDto requestEmployee = request.getData().getRequestEmployee();
 		String startDate = request.getData().getRequestEmployee().getStartDate();
 		String endDate = request.getData().getRequestEmployee().getEndDate();
+		if (DateUtil.isPreviousMonth(startDate) || DateUtil.isPreviousMonth(endDate)) {
+			LogUtil.warn(messageUtil.getMessagelangUS("Partial.date.not.correct"));
+			throw new GlobalException(system, version, messageUtil.getMessagelangUS("previous.month"));
+		}
 		try {
 			int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 			RequestDto requestDto = request.getData().getRequest();
@@ -125,6 +150,13 @@ public class BusinessRequestService {
 			historyActionService.saveHistoryAction(requestDto, employeeId, CommonConstant.INSERT_ACTION,
 					requestDto.getRequestId(), CommonConstant.TABLE_REQUEST_TICKET, httpServletRequest);
 
+			RequesterActionDto requesterActionDto = new RequesterActionDto();
+			requesterActionDto.setRequesterId(employeeId);
+			requesterActionMapper.insertRequesterAction(requesterActionDto);
+			historyActionService.saveHistoryAction(requesterActionDto, employeeId, CommonConstant.INSERT_ACTION,
+					requesterActionDto.getRequesterActionId(), CommonConstant.TABLE_REQUESTER_ACTION,
+					httpServletRequest);
+
 			supervisorAcctionMapper.insertSupervisorAction(supervisorActionDto);
 			historyActionService.saveHistoryAction(supervisorActionDto, employeeId, CommonConstant.INSERT_ACTION,
 					supervisorActionDto.getSupervisorActionId(), CommonConstant.TABLE_SUPERVISOR_ACTION,
@@ -135,7 +167,7 @@ public class BusinessRequestService {
 					approverActionDto.getApproverActionId(), CommonConstant.TABLE_APPROVER_ACTION, httpServletRequest);
 
 			insertRows = requestEmployeeMapper.insertRequestEmployee(requestDto, supervisorActionDto, approverActionDto,
-					requestEmployee);
+					requestEmployee, requesterActionDto);
 			historyActionService.saveHistoryAction(requestEmployee, employeeId, CommonConstant.INSERT_ACTION,
 					requestDto.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
 
@@ -148,40 +180,40 @@ public class BusinessRequestService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-	public ResponseTemplate updateBusinessRequest(BusinessRequest request, HttpServletRequest httpServletRequest) {
-		String requestStatus = request.getData().getRequestEmployee().getRequestStatus();
+	public ResponseTemplate updateRequesterAction(RequesterActionRequest request,
+			HttpServletRequest httpServletRequest) {
+		RequesterActionDto requesterActionDto = request.getData().getRequesterAction();
+		String requestStatus = requesterActionDto.getActionType();
+		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
+		requesterActionDto.setUpdatedAt(currentDayHourSecond);
+
+		// Check valid status from Client, ONLY CANCEL STATUS can be apply
 		if (requestStatus.isBlank() || BusinessRequestStatusEnum.isForbidentEmployee(requestStatus)
 				|| !BusinessRequestStatusEnum.isExists(requestStatus)) {
 			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
 			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
 		}
+
+		// Check current request status
+		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
+		paramRequestEmployee.setRequesterActionId(requesterActionDto.getRequesterActionId());
+		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
+				.findCurrentRequestEmployee(paramRequestEmployee);
+		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
+
+		// Update requester action
 		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
-		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
-		RequestEmployeeDto obj = request.getData().getRequestEmployee();
-		obj.setUpdatedAt(currentDayHourSecond);
+		requesterActionMapper.updateRequesterAction(requesterActionDto);
+		historyActionService.saveHistoryAction(requesterActionDto, employeeId, CommonConstant.UPDATE_ACTION,
+				requesterActionDto.getRequesterActionId(), CommonConstant.TABLE_REQUESTER_ACTION, httpServletRequest);
 
+		// Force update request status
+		RequestEmployeeDto obj = new RequestEmployeeDto(requesterActionDto.getRequesterActionId(), null, null,
+				requestStatus, currentDayHourSecond);
 		requestEmployeeMapper.updateRequestEmployee(obj);
-		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION, obj.getRequestId(),
-				CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
+				resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
 
-		// update action type of supervisor and approver to CANCEL when
-		// employee cancel request
-		if (requestStatus.toLowerCase().equals(BusinessRequestStatusEnum.CANCEL.toString().toLowerCase())) {
-			SupervisorActionDto supervisorActionDto = new SupervisorActionDto(
-					request.getData().getSupervisorAcction().getSupervisorActionId(),
-					BusinessRequestStatusEnum.CANCEL.toString(), currentDayHourSecond);
-			supervisorAcctionMapper.updateActionByEmployee(supervisorActionDto);
-			historyActionService.saveHistoryAction(supervisorActionDto, employeeId, CommonConstant.UPDATE_ACTION,
-					supervisorActionDto.getSupervisorActionId(), CommonConstant.TABLE_SUPERVISOR_ACTION,
-					httpServletRequest);
-
-			ApproverActionDto approverActionDto = new ApproverActionDto(
-					request.getData().getApproverAction().getApproverActionId(),
-					BusinessRequestStatusEnum.CANCEL.toString(), currentDayHourSecond);
-			approverActionMapper.updateActionByEmployee(approverActionDto);
-			historyActionService.saveHistoryAction(approverActionDto, employeeId, CommonConstant.UPDATE_ACTION,
-					approverActionDto.getApproverActionId(), CommonConstant.TABLE_APPROVER_ACTION, httpServletRequest);
-		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
@@ -190,28 +222,37 @@ public class BusinessRequestService {
 	public ResponseTemplate updateSupervisorAction(SupervisorActionRequest request,
 			HttpServletRequest httpServletRequest) {
 		SupervisorActionDto supervisorActionDto = request.getData().getSupervisorAction();
-		String requestStatus = supervisorActionDto.getActionType();
-		isErrorRequestManager(requestStatus);
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
+		String requestStatus = supervisorActionDto.getActionType();
 		supervisorActionDto.setUpdatedAt(currentDayHourSecond);
 
+		// Check valid status from Client
+		isErrorRequestManager(requestStatus);
+
+		// Check current request status
+		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
+		paramRequestEmployee.setSupervisorActionId(supervisorActionDto.getSupervisorActionId());
+		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
+				.findCurrentRequestEmployee(paramRequestEmployee);
+		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
+
+		// Update Supervisor Action
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		int numberRecord = supervisorAcctionMapper.updateActionBySupervisor(supervisorActionDto);
 		historyActionService.saveHistoryAction(supervisorActionDto, employeeId, CommonConstant.UPDATE_ACTION,
 				supervisorActionDto.getSupervisorActionId(), CommonConstant.TABLE_SUPERVISOR_ACTION,
 				httpServletRequest);
-
 		isInsertUpdateSucess(numberRecord);
+
 		// update request status of employee to REJECT when
 		// supervisor reject request from employee
 		if (requestStatus.toLowerCase().equals(BusinessRequestStatusEnum.REJECT.toString().toLowerCase())) {
-			RequestEmployeeDto obj = new RequestEmployeeDto(supervisorActionDto.getSupervisorActionId(), null,
+			RequestEmployeeDto obj = new RequestEmployeeDto(null, supervisorActionDto.getSupervisorActionId(), null,
 					requestStatus, currentDayHourSecond);
 			numberRecord = requestEmployeeMapper.updateRequestBySupervisor(obj);
 			isInsertUpdateSucess(numberRecord);
 			historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
-					requestEmployeeMapper.findRequestIdBySupervisorActionId(obj.getSupervisorActionId()),
-					CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+					resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("update.request.success"), null, null);
@@ -221,25 +262,33 @@ public class BusinessRequestService {
 	public ResponseTemplate updateApproverAction(ApproverActionRequest request, HttpServletRequest httpServletRequest) {
 		ApproverActionDto approverActionDto = request.getData().getApproverAction();
 		String requestStatus = approverActionDto.getActionType();
-		isErrorRequestManager(requestStatus);
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
 		approverActionDto.setUpdatedAt(currentDayHourSecond);
 
+		// Check valid status from Client
+		isErrorRequestManager(requestStatus);
+
+		// Check current request status
+		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
+		paramRequestEmployee.setApproverActionId(approverActionDto.getApproverActionId());
+		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
+				.findCurrentRequestEmployee(paramRequestEmployee);
+		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
+
+		// Update Approver Action
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		int numberRecord = approverActionMapper.updateActionByApprover(approverActionDto);
 		historyActionService.saveHistoryAction(approverActionDto, employeeId, CommonConstant.UPDATE_ACTION,
 				approverActionDto.getApproverActionId(), CommonConstant.TABLE_APPROVER_ACTION, httpServletRequest);
-
 		isInsertUpdateSucess(numberRecord);
-		// force update request status of employee to REJECT when
-		// approver reject request from employee
-		RequestEmployeeDto obj = new RequestEmployeeDto(null, approverActionDto.getApproverActionId(), requestStatus,
-				currentDayHourSecond);
+
+		// force update request status
+		RequestEmployeeDto obj = new RequestEmployeeDto(null, null, approverActionDto.getApproverActionId(),
+				requestStatus, currentDayHourSecond);
 		numberRecord = requestEmployeeMapper.updateRequestByApprover(obj);
 		isInsertUpdateSucess(numberRecord);
 		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
-				requestEmployeeMapper.findRequestIdBySupervisorActionId(obj.getApproverActionId()),
-				CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+				resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
@@ -269,7 +318,8 @@ public class BusinessRequestService {
 	}
 
 	public ResponseTemplate findRequestTicketById(String id) {
-		FindTicketRequestByIdResponse obj = requestEmployeeMapper.findRequestTicketById(id);
+		FindTicketRequestByIdResponse obj = requestEmployeeMapper.findRequestTicketById(id,
+				employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
 		if (ObjectUtils.isEmpty(obj)) {
 			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 					messageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
@@ -298,6 +348,41 @@ public class BusinessRequestService {
 				messageUtil.getMessagelangUS("get.data.success"), null, obj);
 	}
 
+	public ResponseTemplate findAccountByRole(String role) {
+		List<SystemAccountDto> listObj = systemAccountMapper.findAccountByRole(role);
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+	}
+
+	public ResponseTemplate findAllReason() {
+		List<ReasonDto> listObj = reasonMapper.findAllReason();
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+	}
+
+	public ResponseTemplate findAllRequestType() {
+		List<RequestTypeDto> listObj = requestTypeMapper.findAllRequestType();
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+	}
+
+	public ResponseTemplate findEmployeeId() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null,
+				employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+	}
+
+	public ResponseTemplate findListComment(Integer id) {
+		List<CommentDto> listComment = commentMapper.findListComment(id,
+				employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+		if (ObjectUtils.isEmpty(listComment)) {
+			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+					messageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
+		}
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, listComment);
+	}
+
 	public void isErrorRequestManager(String status) {
 		if (status.isBlank() || BusinessRequestStatusEnum.isForbidenManager(status)
 				|| !BusinessRequestStatusEnum.isExists(status)) {
@@ -308,6 +393,13 @@ public class BusinessRequestService {
 
 	public void isInsertUpdateSucess(Integer number) {
 		if (number == 0) {
+			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
+			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
+		}
+	}
+
+	public void isForbidenByRequestStatus(String status) {
+		if (BusinessRequestStatusEnum.isForbidenByRequestStatus(status)) {
 			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
 			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
 		}
