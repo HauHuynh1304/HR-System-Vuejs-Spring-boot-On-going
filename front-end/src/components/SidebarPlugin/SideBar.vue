@@ -8,15 +8,20 @@
     <div class="sidebar-wrapper" id="style-3">
       <div class="logo">
         <a
-          href="http://www.creative-tim.com"
+          href="https://github.com/HauHuynh1304"
           aria-label="sidebar mini logo"
+          target="_blank"
           class="simple-text logo-mini"
         >
           <div class="logo-img" :class="{ 'logo-img-rtl': $rtl.isRTL }">
             <img src="/img/laravel-vue.svg" alt="" />
           </div>
         </a>
-        <a href="http://www.creative-tim.com" class="simple-text logo-normal">
+        <a
+          href="https://github.com/HauHuynh1304"
+          target="_blank"
+          class="simple-text logo-normal"
+        >
           {{ title }}
         </a>
       </div>

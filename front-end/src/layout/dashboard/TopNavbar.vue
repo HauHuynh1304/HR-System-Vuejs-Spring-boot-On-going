@@ -39,38 +39,6 @@
       <collapse-transition>
         <div class="collapse navbar-collapse show" v-show="showMenu">
           <ul class="navbar-nav ml-auto">
-            <div
-              class="search-bar input-group"
-              @click="searchModalVisible = true"
-            >
-              <!-- <input type="text" class="form-control" placeholder="Search...">
-              <div class="input-group-addon"><i class="tim-icons icon-zoom-split"></i></div> -->
-              <button
-                class="btn btn-link"
-                id="search-button"
-                data-toggle="modal"
-                data-target="#searchModal"
-              >
-                <i class="tim-icons icon-zoom-split"></i>
-              </button>
-              <!-- You can choose types of search input -->
-            </div>
-            <modal
-              :show.sync="searchModalVisible"
-              class="modal-search"
-              id="searchModal"
-              :centered="false"
-              :show-close="true"
-            >
-              <input
-                slot="header"
-                v-model="searchQuery"
-                type="text"
-                class="form-control"
-                id="inlineFormInputGroup"
-                placeholder="SEARCH"
-              />
-            </modal>
             <base-dropdown
               tag="li"
               menu-on-right
@@ -80,7 +48,7 @@
               <a
                 slot="title"
                 href="#"
-                class="dropdown-toggle nav-link"
+                class="nav-link"
                 data-toggle="dropdown"
                 aria-expanded="true"
               >
@@ -123,7 +91,7 @@
             >
               <a
                 slot="title"
-                class="dropdown-toggle nav-link"
+                class="nav-link"
                 data-toggle="dropdown"
                 aria-expanded="true"
               >
@@ -136,12 +104,20 @@
                   Log out
                 </p>
               </a>
-              <li class="nav-link">
-                <sidebar-link to="/user/profile" name="Profile" />
+              <li class="nav-item">
+                <div class="text-left">
+                  <a href="/user/profile" aria-current="page" class="nav-link">
+                    <p>Profile</p>
+                  </a>
+                </div>
               </li>
               <div class="dropdown-divider"></div>
-              <li class="nav-link">
-                <p @click="logout" class="ml-4">Log out</p>
+              <li class="nav-item">
+                <div class="text-left">
+                  <a href="#" class="nav-link">
+                    <p @click="logout">Log out</p>
+                  </a>
+                </div>
               </li>
             </base-dropdown>
           </ul>
