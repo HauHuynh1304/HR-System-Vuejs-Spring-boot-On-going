@@ -57,6 +57,6 @@ public class CommonConstant {
 	public static final String TABLE_APPROVER_ACTION = "approver_action";
 	public static final String TABLE_REQUESTER_ACTION = "requester_action";
 	public static final String TABLE_REQUEST_EMPLOYEE = "request_employee";
-	public static final String TABLE_COMMENT ="comment";
+	public static final String TABLE_COMMENT = "comment";
 
 }

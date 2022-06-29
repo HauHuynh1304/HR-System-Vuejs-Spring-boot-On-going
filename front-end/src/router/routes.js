@@ -11,10 +11,6 @@ import { FE_ROUTER_PROP } from "../constant/routerProps";
 
 const Login = () => import(/* webpackChunkName: "pages" */ "@/pages/Login.vue");
 
-// Admin pages
-const Dashboard = () =>
-  import(/* webpackChunkName: "dashboard" */ "@/pages/Dashboard.vue");
-
 // Example pages
 const UserProfile = () => import("@/pages/Examples/UserProfile.vue");
 // User Management
@@ -140,14 +136,7 @@ const routes = [
   {
     path: FE_ROUTER_PROP.DASHBOARD.ROOT_PATH,
     component: DashboardLayout,
-    redirect: FE_ROUTER_PROP.DASHBOARD.REDIRECT,
     children: [
-      {
-        path: FE_ROUTER_PROP.DASHBOARD.CHILDREN.DASHBOARD.PATH,
-        name: FE_ROUTER_PROP.DASHBOARD.CHILDREN.DASHBOARD.NAME,
-        component: Dashboard,
-        meta: { middleware: auth },
-      },
       {
         path: FE_ROUTER_PROP.USER.PATH,
         name: FE_ROUTER_PROP.USER.NAME,
