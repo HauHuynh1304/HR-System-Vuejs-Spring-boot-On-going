@@ -84,8 +84,6 @@
               icon="tim-icons icon-bullet-list-67"
               class="ml-3"
             />
-          </b-collapse>
-          <b-collapse id="request-ticket" v-model="rqVisible">
             <sidebar-link
               :to="
                 routerProps.REQUEST_TICKET.ROOT_PATH.concat(
@@ -101,8 +99,6 @@
               icon="tim-icons icon-bus-front-12"
               class="ml-3"
             />
-          </b-collapse>
-          <b-collapse id="request-ticket" v-model="rqVisible">
             <sidebar-link
               :to="
                 routerProps.REQUEST_TICKET.ROOT_PATH.concat(
@@ -118,35 +114,8 @@
             />
           </b-collapse>
         </li>
-        <sidebar-link
-          to="/icons"
-          :name="$t('sidebar.icons')"
-          icon="tim-icons icon-atom"
-        />
-        <sidebar-link
-          to="/maps"
-          :name="$t('sidebar.maps')"
-          icon="tim-icons icon-pin"
-        />
-        <sidebar-link
-          to="/notifications"
-          :name="$t('sidebar.notifications')"
-          icon="tim-icons icon-bell-55"
-        />
-        <sidebar-link
-          to="/table-list"
-          :name="$t('sidebar.tableList')"
-          icon="tim-icons icon-puzzle-10"
-        />
-        <sidebar-link
-          to="/typography"
-          :name="$t('sidebar.typography')"
-          icon="tim-icons icon-align-center"
-        />
-        >
       </template>
     </side-bar>
-    <!-- <sidebar-share :background-color.sync="backgroundColor"> </sidebar-share> -->
     <div class="main-panel" :data="backgroundColor">
       <top-navbar></top-navbar>
 
@@ -160,7 +129,6 @@
 import TopNavbar from "./TopNavbar.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
-import SidebarShare from "./SidebarSharePlugin";
 import ContentFooter from "./ContentFooter";
 import jwt_decode from "jwt-decode";
 import { getAccessToken } from "../../utils/cookies";
@@ -174,7 +142,6 @@ export default {
     DashboardContent,
     ContentFooter,
     MobileMenu,
-    SidebarShare,
   },
   data() {
     return {
