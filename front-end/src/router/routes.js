@@ -10,27 +10,10 @@ import guest from "@/middleware/guest";
 import { FE_ROUTER_PROP } from "../constant/routerProps";
 
 const Login = () => import(/* webpackChunkName: "pages" */ "@/pages/Login.vue");
-const Register = () =>
-  import(/* webpackChunkName: "pages" */ "@/pages/Register.vue");
-const PasswordReset = () =>
-  import(/* webpackChunkName: "password" */ "@/pages/Password/Reset.vue");
-const PasswordEmail = () =>
-  import(/* webpackChunkName: "password" */ "@/pages/Password/Email.vue");
 
 // Admin pages
 const Dashboard = () =>
   import(/* webpackChunkName: "dashboard" */ "@/pages/Dashboard.vue");
-const Profile = () =>
-  import(/* webpackChunkName: "common" */ "@/pages/Profile.vue");
-const Notifications = () =>
-  import(/* webpackChunkName: "common" */ "@/pages/Notifications.vue");
-const Icons = () =>
-  import(/* webpackChunkName: "common" */ "@/pages/Icons.vue");
-const Maps = () => import(/* webpackChunkName: "common" */ "@/pages/Maps.vue");
-const Typography = () =>
-  import(/* webpackChunkName: "common" */ "@/pages/Typography.vue");
-const TableList = () =>
-  import(/* webpackChunkName: "common" */ "@/pages/TableList.vue");
 
 // Example pages
 const UserProfile = () => import("@/pages/Examples/UserProfile.vue");
@@ -64,18 +47,6 @@ let authPages = {
       component: Login,
       meta: { middleware: guest },
     },
-    // {
-    //   path: "/register",
-    //   name: "Register",
-    //   component: Register,
-    //   meta: { middleware: guest },
-    // },
-    // {
-    //   path: "/password/reset",
-    //   name: "Password Reset",
-    //   component: PasswordReset,
-    //   meta: { middleware: guest },
-    // },
   ],
 };
 
@@ -182,31 +153,6 @@ const routes = [
         name: FE_ROUTER_PROP.USER.NAME,
         components: { default: UserProfile },
         meta: { middleware: auth },
-      },
-      {
-        path: "notifications",
-        name: "notifications",
-        component: Notifications,
-      },
-      {
-        path: "icons",
-        name: "icons",
-        component: Icons,
-      },
-      {
-        path: "maps",
-        name: "maps",
-        component: Maps,
-      },
-      {
-        path: "typography",
-        name: "typography",
-        component: Typography,
-      },
-      {
-        path: "table-list",
-        name: "table-list",
-        component: TableList,
       },
     ],
   },

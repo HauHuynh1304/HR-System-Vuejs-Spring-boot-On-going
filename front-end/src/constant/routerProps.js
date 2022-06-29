@@ -61,7 +61,7 @@ export const FE_ROUTER_PROP = {
       },
       LIST_REQUESTED_TICKET: {
         PATH: "list-requested-ticket",
-        NAME: "Requested Ticket",
+        NAME: "Requested ticket",
       },
       REQUESTED_TICKET: {
         PATH: "requested-ticket/:id",
@@ -69,7 +69,7 @@ export const FE_ROUTER_PROP = {
       },
       LIST_RECEIVED_REQUEST_TICKET: {
         PATH: "list-received-ticket",
-        NAME: "Received Ticket",
+        NAME: "Received ticket",
       },
       RECEIVED_REQUEST_TICKET: {
         PATH: "received-ticket/:id",
