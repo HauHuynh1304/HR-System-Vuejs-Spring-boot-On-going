@@ -26,7 +26,7 @@ public class ApiUrlConstant {
 	public static final String MASTER_INSERT_ROOM = "/master/insert-room";
 	public static final String MASTER_UPDATE_ROOM = "/master/update-room";
 	public static final String MASTER_FIND_ROLES = "/master/find-roles";
-	public static final String MASTER_FIND_ALL_ACCOUNTS ="/master/find-all-accounts";
+	public static final String MASTER_FIND_ALL_ACCOUNTS = "/master/find-all-accounts";
 	public static final String MASTER_FIND_AVAILABLE_ACCOUNTS = "/master/find-available-accounts";
 	public static final String MASTER_FIND_ALL_ROOM = "/master/find-all-rooms";
 	public static final String MASTER_FIND_ALL_POSITIONS = "/master/find-all-positions";
@@ -36,15 +36,20 @@ public class ApiUrlConstant {
 	public static final String HUMAN_RESOURCE_UPDATE_EMPLOYEE = "/human-resources/update-employee";
 	public static final String HUMAN_RESOURCE_SEARCH_ALL_EMPLOYEES = "/human-resources/search-all-employees";
 	public static final String HUMAN_RESOURCE_SEARCH_EMPLOYEE = "/human-resources/search-employee/{id}";
-	
+
 	public static final String BUSINESS_INSERT_REQUEST = "/business/insert-request";
 	public static final String BUSINESS_SEARCH_LIST_CREATED_REQUEST = "/business/search-list-created-request-ticket";
 	public static final String BUSINESS_SEARCH_LIST_RECEIVED_REQUEST = "/business/search-list-received-request-ticket";
 	public static final String BUSINESS_SEARCH_REQUEST_BY_ID = "/business/find-request/{id}";
-	public static final String BUSINESS_UPDATE_REQUEST = "/business/update-request";
-	public static final String BUSINESS_UPDATE_SUPERVISOR_ACTION = "/business/supervisor";
-	public static final String BUSINESS_UPDATE_APPROVER_ACTION = "/business/approver";
+	public static final String BUSINESS_UPDATE_REQUESTER_ACTION = "/business/requester-action";
+	public static final String BUSINESS_UPDATE_SUPERVISOR_ACTION = "/business/supervisor-action";
+	public static final String BUSINESS_UPDATE_APPROVER_ACTION = "/business/approver-action";
 	public static final String BUSINESS_INSERT_COMMENT = "/business/insert-comment";
 	public static final String BUSINESS_FIND_CURRENT_USER = "/business/find-current-user";
-	
+	public static final String BUSINSES_FIND_ACCOUNT_BY_ROLE = "/business/find-account-by-role/{role}";
+	public static final String BUSINESS_FIND_ALL_REASON = "/business/find-all-reason";
+	public static final String BUSINESS_FIND_ALL_REQUEST_TYPE = "/business/find-all-request-type";
+	public static final String BUSINESS_FIND_EMPLOYEE_ID = "/business/find-employee-id";
+	public static final String BUSINESS_FIND_LIST_COMMENT = "/business/find-list-comment/{id}";
+
 }

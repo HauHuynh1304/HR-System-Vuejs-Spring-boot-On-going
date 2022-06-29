@@ -42,6 +42,17 @@ const NewUserPage = () => import("@/pages/Examples/UserManagement/NewUser.vue");
 const UpdateUserPage = () =>
   import("@/pages/Examples/UserManagement/UpdateUserPage.vue");
 
+// Request Ticket
+const NewTicket = () => import("@/pages/RequestTicket/NewTicket.vue");
+const ListTicket = () =>
+  import("@/pages/RequestTicket/RequestedTicket/ListRequestedTicket.vue");
+const RequestedTicket = () =>
+  import("@/pages/RequestTicket/RequestedTicket/RequestedTicket.vue");
+const ListReceivedRequestTicket = () =>
+  import(
+    "@/pages/RequestTicket/ReceivedRequestTicket/ListReceivedRequestTicket.vue"
+  );
+
 let authPages = {
   path: FE_ROUTER_PROP.LOGIN.ROOT_PATH,
   redirect: FE_ROUTER_PROP.LOGIN.REDIRECT,
@@ -108,10 +119,53 @@ let humanManagementMenu = {
   ],
 };
 
+let employeeMenu = {
+  path: FE_ROUTER_PROP.REQUEST_TICKET.ROOT_PATH,
+  component: DashboardLayout,
+  name: FE_ROUTER_PROP.REQUEST_TICKET.ROOT_NAME,
+  children: [
+    {
+      path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.PATH,
+      name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.NAME,
+      components: { default: ListTicket },
+      meta: { middleware: auth },
+    },
+    {
+      path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.CREATE_REQUEST_TICKET.PATH,
+      name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.CREATE_REQUEST_TICKET.NAME,
+      components: { default: NewTicket },
+      meta: { middleware: auth },
+    },
+    {
+      path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.PATH,
+      name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.NAME,
+      components: { default: RequestedTicket },
+      meta: { middleware: auth },
+    },
+    {
+      path:
+        FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
+          .PATH,
+      name:
+        FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
+          .NAME,
+      components: { default: ListReceivedRequestTicket },
+      meta: { middleware: auth },
+    },
+    {
+      path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH,
+      name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.NAME,
+      components: { default: RequestedTicket },
+      meta: { middleware: auth },
+    },
+  ],
+};
+
 const routes = [
   adminMenu,
   authPages,
   humanManagementMenu,
+  employeeMenu,
   {
     path: FE_ROUTER_PROP.DASHBOARD.ROOT_PATH,
     component: DashboardLayout,

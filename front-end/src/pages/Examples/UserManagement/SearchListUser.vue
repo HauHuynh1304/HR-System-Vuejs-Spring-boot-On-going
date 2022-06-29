@@ -24,7 +24,6 @@
             label="Start Date"
             v-model="data.employee.employeeStartDate"
             type="date"
-            placeholder="Start Date"
           />
         </div>
         <div class="col-md-2 p-auto">
@@ -33,7 +32,6 @@
             label="End Date"
             type="date"
             v-model="data.employee.employeeEndDate"
-            placeholder="End Date"
           />
         </div>
         <div class="col-md-2 p-auto">

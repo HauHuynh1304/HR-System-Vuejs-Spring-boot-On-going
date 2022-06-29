@@ -27,4 +27,13 @@ export const MESSAGE = {
     ERR_INSERT: "Nothing to insert!",
     ERR_UPDATE_EMPLOYEE: "Have some empty value, please check again!",
   },
+  DATE_TIME: {
+    ERR: "Datetime not correct!",
+    ERR_MONTH_LESS: "Can't create Request Ticket in previous month!",
+  },
+  INSERT_REQUEST_TICKET: {
+    SUCCESS: "Your ticket was submited successfully!",
+    ERR_EMPTY: "Only Detail can be empty!",
+    ERR_DURATION: "Start date or End date was not correctly!",
+  },
 };

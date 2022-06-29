@@ -16,9 +16,15 @@ public class RequestEmployeeDto extends RequestEmployeeModel {
 
 	private static final long serialVersionUID = 1L;
 
-	public RequestEmployeeDto(Integer supervisorActionId, Integer approverActionId, String requestStatus,
-			String updatedAt) {
-		super(supervisorActionId, approverActionId, requestStatus, updatedAt);
+	public RequestEmployeeDto(Integer requesterActionId, Integer supervisorActionId, Integer approverActionId,
+			String requestStatus, String updatedAt) {
+		super(requesterActionId, supervisorActionId, approverActionId, requestStatus, updatedAt);
 	}
+
+	private Integer requestId;
+
+	private String requestType;
+
+	private String reason;
 
 }

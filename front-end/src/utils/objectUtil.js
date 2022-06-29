@@ -35,3 +35,11 @@ export function diff(obj1, obj2) {
     }
   });
 }
+
+export function isContainNullExceptProps(obj, ...props) {
+  let copyObj = Object.assign({}, obj);
+  props.forEach((el) => {
+    delete copyObj[el];
+  });
+  return isContainNullValue(copyObj);
+}

@@ -20,4 +20,6 @@ public class SupervisorActionDto extends SupervisorActionModel {
 		super(supervisorActionId, actionType, updatedAt);
 	}
 
+	private String supervisorEmail;
+
 }

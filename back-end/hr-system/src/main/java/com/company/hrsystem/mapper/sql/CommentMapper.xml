@@ -5,26 +5,103 @@
 		useGeneratedKeys="true" keyColumn="comment_id" keyProperty="commentId">
 		INSERT INTO comment
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="supervisorActionId != null">
+			<if test="supervisorActionId != null and supervisorActionId != '' ">
 				supervisor_action_id,
 			</if>
-			<if test="approverActionId != null">
+			<if test="approverActionId != null and approverActionId != '' ">
 				approver_action_id,
 			</if>
-			<if test="commentDetail != null">
+			<if test="requesterActionId != null and requesterActionId != '' ">
+				requester_action_id,
+			</if>
+			<if test="commentDetail != null and commentDetail != '' ">
 				comment_detail,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="supervisorActionId != null">
+			<if test="supervisorActionId != null and supervisorActionId != '' ">
 				#{supervisorActionId, jdbcType=INTEGER},
 			</if>
-			<if test="approverActionId != null">
+			<if test="approverActionId != null and approverActionId != '' ">
 				#{approverActionId, jdbcType=INTEGER},
 			</if>
-			<if test="commentDetail != null">
+			<if test="requesterActionId != null and requesterActionId != '' ">
+				#{requesterActionId, jdbcType=INTEGER},
+			</if>
+			<if test="commentDetail != null and commentDetail != '' ">
 				#{commentDetail, jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
+	
+	<resultMap type="com.company.hrsystem.dto.CommentDto" id="findListComment">
+		<id column="comment_id" jdbcType="INTEGER" property="commentId"/>
+		<result column="supervisor_email" jdbcType="VARCHAR" property="supervisorEmail"/>
+		<result column="approver_email" jdbcType="VARCHAR" property="approverEmail"/>
+		<result column="requester_email" jdbcType="VARCHAR" property="requesterEmail"/>
+		<result column="comment_detail" jdbcType="VARCHAR" property="commentDetail"/>
+		<result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+	</resultMap>
+	<select id="findListComment" resultMap="findListComment">
+		SELECT
+			 com.comment_id,
+			 (<include refid="getSupervisorEmail" />) as supervisor_email,
+			 (<include refid="getApproverEmail" />) as approver_email,
+			 (<include refid="getRequesterEmail" />) as requester_email,
+			 com.comment_detail,
+			 com.created_at
+		FROM request_employee re
+			LEFT JOIN requester_action rec
+				ON rec.requester_action_id = re.requester_action_id
+			LEFT JOIN supervisor_action sua
+				ON sua.supervisor_action_id = re.supervisor_action_id
+			LEFT JOIN approver_action apa
+				ON apa.approver_action_id = re.approver_action_id
+			LEFT JOIN comment com
+				ON re.approver_action_id = com.approver_action_id
+					OR re.supervisor_action_id = com.supervisor_action_id
+					OR re.requester_action_id = com.requester_action_id
+		WHERE
+			re.request_id = #{requestId, jdbcType=VARCHAR}
+			AND 
+			(
+				rec.requester_id = #{employeeId, jdbcType=INTEGER}
+				OR sua.supervisor_id = #{employeeId, jdbcType=INTEGER}
+				OR apa.approver_id = #{employeeId, jdbcType=INTEGER}
+			)
+		ORDER BY
+			com.comment_id ASC
+	</select>
+	
+	<sql id="getRequesterEmail">
+		SELECT 
+			sa.system_email
+		FROM 
+			system_account sa 
+		LEFT JOIN employee e 
+			ON sa.system_account_id = e.system_account_id
+		WHERE rec.requester_id = e.employee_id
+			AND re.requester_action_id = com.requester_action_id
+	</sql>
+	<sql id="getApproverEmail">
+		SELECT 
+			sa.system_email
+		FROM 
+			system_account sa 
+		LEFT JOIN employee e
+			ON sa.system_account_id = e.system_account_id
+		WHERE apa.approver_id = e.employee_id
+			AND re.approver_action_id = com.approver_action_id
+				
+	</sql>
+	<sql id="getSupervisorEmail">
+		SELECT 
+			sa.system_email
+		FROM 
+			system_account sa 
+		LEFT JOIN employee e
+			ON sa.system_account_id = e.system_account_id
+		WHERE sua.supervisor_id = e.employee_id
+			AND re.supervisor_action_id = com.supervisor_action_id
+	</sql>
 </mapper>

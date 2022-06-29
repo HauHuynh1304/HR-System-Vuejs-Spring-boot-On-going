@@ -32,4 +32,12 @@ public class DateUtil {
 		return ratio * duration;
 	}
 
+	public static boolean isPreviousMonth(String date) {
+		LocalDate coverDate = LocalDate.parse(date);
+		LocalDate currentDate = LocalDate.now();
+		if (coverDate.getMonthValue() < currentDate.getMonthValue()) {
+			return true;
+		}
+		return false;
+	}
 }

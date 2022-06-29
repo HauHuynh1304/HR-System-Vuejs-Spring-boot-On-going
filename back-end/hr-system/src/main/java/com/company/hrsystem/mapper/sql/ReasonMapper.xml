@@ -33,4 +33,16 @@
 		</set>
 		where reason_id = #{reasonId, jdbcType=INTEGER}
 	</update>
+	
+	<resultMap type="com.company.hrsystem.dto.ReasonDto" id="findAllReason">
+		<id column="reason_id" jdbcType="INTEGER" property="reasonId"/>
+		<result  column="reason_name" jdbcType="VARCHAR" property="reasonName"/>
+	</resultMap>
+	<select id="findAllReason" resultMap="findAllReason">
+		SELECT
+			reason_id, 
+			reason_name
+		FROM reason
+		WHERE deleted_flag = false
+	</select>
 </mapper>

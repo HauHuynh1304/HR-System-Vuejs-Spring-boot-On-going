@@ -58,6 +58,66 @@
             />
           </b-collapse>
         </li>
+        <li class="nav-item" v-if="roles.includes(ACCOUNT_ROLES.EMPLOYEE)">
+          <a class="nav-link">
+            <i class="tim-icons icon-minimal-down"></i>
+            <p
+              aria-controls="request-ticket"
+              @click="rqVisible = !rqVisible"
+              :aria-expanded="rqVisible ? true : false"
+              :class="rqVisible ? null : 'collapsed'"
+            >
+              {{ routerProps.REQUEST_TICKET.ROOT_NAME }}
+            </p>
+          </a>
+          <b-collapse id="request-ticket" v-model="rqVisible">
+            <sidebar-link
+              :to="
+                routerProps.REQUEST_TICKET.ROOT_PATH.concat(
+                  '/',
+                  routerProps.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.PATH
+                )
+              "
+              :name="
+                routerProps.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.NAME
+              "
+              icon="tim-icons icon-bullet-list-67"
+              class="ml-3"
+            />
+          </b-collapse>
+          <b-collapse id="request-ticket" v-model="rqVisible">
+            <sidebar-link
+              :to="
+                routerProps.REQUEST_TICKET.ROOT_PATH.concat(
+                  '/',
+                  routerProps.REQUEST_TICKET.CHILDREN
+                    .LIST_RECEIVED_REQUEST_TICKET.PATH
+                )
+              "
+              :name="
+                routerProps.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
+                  .NAME
+              "
+              icon="tim-icons icon-bus-front-12"
+              class="ml-3"
+            />
+          </b-collapse>
+          <b-collapse id="request-ticket" v-model="rqVisible">
+            <sidebar-link
+              :to="
+                routerProps.REQUEST_TICKET.ROOT_PATH.concat(
+                  '/',
+                  routerProps.REQUEST_TICKET.CHILDREN.CREATE_REQUEST_TICKET.PATH
+                )
+              "
+              :name="
+                routerProps.REQUEST_TICKET.CHILDREN.CREATE_REQUEST_TICKET.NAME
+              "
+              icon="tim-icons icon-simple-add"
+              class="ml-3"
+            />
+          </b-collapse>
+        </li>
         <sidebar-link
           to="/icons"
           :name="$t('sidebar.icons')"
@@ -118,6 +178,7 @@ export default {
   },
   data() {
     return {
+      rqVisible: true,
       hrVisible: true,
       routerProps: FE_ROUTER_PROP,
       backgroundColor: "primary",
