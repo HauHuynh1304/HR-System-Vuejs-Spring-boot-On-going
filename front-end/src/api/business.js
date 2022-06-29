@@ -62,3 +62,9 @@ export function updateApproverAction(data) {
     (res) => res
   );
 }
+
+export function mutipleUpdateRequestTicketStatus(data) {
+  return post(API.BUSINESS.MUTIPLE_UPDATE_REQUEST_TICKET_STATUS, {
+    data: data,
+  }).then((res) => res);
+}

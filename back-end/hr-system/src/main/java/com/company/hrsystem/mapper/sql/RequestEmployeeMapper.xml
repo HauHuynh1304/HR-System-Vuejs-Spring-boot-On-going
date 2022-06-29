@@ -140,6 +140,7 @@
 		<result column="request_type_name" jdbcType="VARCHAR" property="requestType"/>
 		<result column="reason_name" jdbcType="VARCHAR" property="reason"/>
 		<result column="requester" jdbcType="VARCHAR" property="requester"/>
+		<result column="supervisor" jdbcType="VARCHAR" property="supervisor" />
 		<collection property="requestEmployee" ofType="com.company.hrsystem.dto.RequestEmployeeDto">
 			<id column="request_id" jdbcType="INTEGER"/>
 			<result column="start_date" jdbcType="VARCHAR" property="startDate"/>
@@ -147,6 +148,8 @@
 			<result column="duration" jdbcType="DOUBLE" property="duration"/>
 			<result column="request_status" jdbcType="VARCHAR" property="requestStatus"/>
 			<result column="expected_approve_date" jdbcType="VARCHAR" property="expectedApproveDate"/>
+			<result column="approver_action_id" jdbcType="INTEGER" property="approverActionId"/>
+			<result column="supervisor_action_id" jdbcType="INTEGER" property="supervisorActionId"/>
 		</collection>
 	</resultMap>
 	<select id="findListCreatedRequestTicket" 
@@ -288,7 +291,11 @@
 			 re.request_status,
 			 re.request_description,
 			 re.expected_approve_date,
-			 rs.reason_name
+			 rs.reason_name,
+			 (<include refid="getApproverEmail" />) AS approver,
+			 (<include refid="getSuppervisorEmail" />) AS supervisor,
+			 re.approver_action_id,
+			 re.supervisor_action_id
 		FROM request_employee re
 				LEFT JOIN request rq 
 					ON rq.request_id = re.request_id

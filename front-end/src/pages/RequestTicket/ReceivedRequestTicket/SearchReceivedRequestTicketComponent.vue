@@ -96,6 +96,11 @@ export default {
       resetObject(this.submitObj.requestEmployee);
     },
   },
+  created() {
+    this.$bus.on(EVENT_BUS.REFRESH_RECEIVED_TICKET, () => {
+      this.onSearch();
+    });
+  },
 };
 </script>
 

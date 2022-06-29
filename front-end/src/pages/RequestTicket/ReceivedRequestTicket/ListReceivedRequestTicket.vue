@@ -27,7 +27,7 @@
               ></b-form-select>
             </b-form-group>
           </div>
-          <div class="col-md-4 p-auto">
+          <div class="col-md-3 p-auto">
             <b-form-input
               id="filter-input"
               v-model="filter"
@@ -36,7 +36,18 @@
               placeholder="Filter"
             />
           </div>
-          <div class="col-md-6 p-auto">
+          <div
+            id="mutiple-request-area"
+            class="col-md-3 p-auto text-right d-flex justify-content-around align-items-start"
+          >
+            <base-button size="sm" type="info" @click="approveAll">
+              APPROVE ALL
+            </base-button>
+            <base-button size="sm" type="warning" @click="rejectAll">
+              REJECT ALL
+            </base-button>
+          </div>
+          <div class="col-md-4 p-auto">
             <b-pagination
               id="pagination"
               v-model="currentPage"
@@ -105,11 +116,21 @@ import Card from "../../../components/Cards/Card.vue";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import { EVENT_BUS } from "@/constant/common";
 import { RECEIVED_TIKCET_TABLE } from "@/constant/requestedTicketTable";
-import { TICKET_STATUS } from "@/constant/requestTicket";
+import {
+  TICKET_STATUS,
+  MUTIPLE_UPDATE_DATA,
+  ACTION,
+} from "@/constant/requestTicket";
+import jwt_decode from "jwt-decode";
+import { getAccessToken } from "@/utils/cookies";
+import { mutipleUpdateRequestTicketStatus } from "@/api/business";
+import { MESSAGE } from "@/constant/message";
 export default {
   components: { SearchReceivedRequestTicketComponent, Card },
   data() {
     return {
+      isApproverArea: false,
+      isSupervisorArea: false,
       ticketStatus: TICKET_STATUS,
       routerProps: FE_ROUTER_PROP,
       pageOptions: [5, 10, 15, 20],
@@ -119,6 +140,7 @@ export default {
       filter: null,
       items: null,
       fields: RECEIVED_TIKCET_TABLE.fields,
+      mutipleUpdateData: MUTIPLE_UPDATE_DATA,
     };
   },
   created() {
@@ -126,6 +148,100 @@ export default {
       this.items = data ? data : [];
       this.totalRows = this.items.length;
     });
+  },
+  methods: {
+    approveAll() {
+      if (!this.items) {
+        return;
+      }
+      this.setData(this.ticketStatus.APPROVED);
+      if (
+        !this.mutipleUpdateData.supervisorAction.length &&
+        !this.mutipleUpdateData.approverAction.length
+      ) {
+        return;
+      } else {
+        mutipleUpdateRequestTicketStatus(this.mutipleUpdateData).then((res) => {
+          if (res.status === 200) {
+            this.$notify({
+              type: "success",
+              message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.UPDATE_SUCCESS,
+              icon: "tim-icons icon-bell-55",
+              horizontalAlign: "center",
+            });
+            this.$bus.emit(EVENT_BUS.REFRESH_RECEIVED_TICKET);
+          } else {
+            this.$notify({
+              type: "warning",
+              message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.APPROVE_ALL_ERR,
+              icon: "tim-icons icon-bell-55",
+              horizontalAlign: "center",
+            });
+          }
+        });
+      }
+    },
+    rejectAll() {
+      if (!this.items) {
+        return;
+      }
+      this.setData(this.ticketStatus.REJECT);
+      if (
+        !this.mutipleUpdateData.supervisorAction.length &&
+        !this.mutipleUpdateData.approverAction.length
+      ) {
+        return;
+      } else {
+        mutipleUpdateRequestTicketStatus(this.mutipleUpdateData).then((res) => {
+          if (res.status === 200) {
+            this.$notify({
+              type: "success",
+              message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.UPDATE_SUCCESS,
+              icon: "tim-icons icon-bell-55",
+              horizontalAlign: "center",
+            });
+            this.$bus.emit(EVENT_BUS.REFRESH_RECEIVED_TICKET);
+          } else {
+            this.$notify({
+              type: "warning",
+              message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.REJECT_ALL_ERR,
+              icon: "tim-icons icon-bell-55",
+              horizontalAlign: "center",
+            });
+          }
+        });
+      }
+    },
+    setData(status) {
+      this.resetMutipleUpdateRequestTicketStatus();
+      let userEmail = jwt_decode(getAccessToken()).sub;
+      this.items.forEach((el) => {
+        if (
+          el.requestEmployee.requestStatus === TICKET_STATUS.WAITING &&
+          userEmail === el.supervisor
+        ) {
+          let supervisorAction = Object.assign({}, ACTION.supervisorAction);
+          supervisorAction.supervisorActionId =
+            el.requestEmployee.supervisorActionId;
+          supervisorAction.actionType = status;
+          this.mutipleUpdateData.supervisorAction.push(supervisorAction);
+        }
+
+        if (
+          el.requestEmployee.requestStatus === TICKET_STATUS.WAITING &&
+          userEmail === el.approver
+        ) {
+          let approverAction = Object.assign({}, ACTION.approverAction);
+          approverAction.approverActionId = el.requestEmployee.approverActionId;
+          approverAction.actionType = status;
+          this.mutipleUpdateData.approverAction.push(approverAction);
+        }
+      });
+    },
+    resetMutipleUpdateRequestTicketStatus() {
+      this.mutipleUpdateData.supervisorAction = [];
+      this.mutipleUpdateData.approverAction = [];
+    },
   },
 };
 </script>
@@ -138,5 +254,9 @@ export default {
 #pagination /deep/ .page-link {
   color: black;
   font-size: 0.75rem;
+}
+#mutiple-request-area >>> button {
+  margin: 0;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
 }
 </style>

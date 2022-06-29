@@ -104,3 +104,8 @@ export const ACTION = {
     actionType: null,
   },
 };
+
+export const MUTIPLE_UPDATE_DATA = {
+  supervisorAction: [],
+  approverAction: [],
+};

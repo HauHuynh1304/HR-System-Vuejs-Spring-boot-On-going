@@ -57,6 +57,9 @@ import {
 import { MESSAGE } from "../constant/message";
 import { getLoginUserInfo } from "../api/user";
 import { LOCAL_STORAGE } from "../constant/common";
+import jwt_decode from "jwt-decode";
+import { ROLES } from "@/constant/common";
+import { FE_ROUTER_PROP } from "@/constant/routerProps";
 
 export default {
   mixins: [formMixin],
@@ -77,17 +80,33 @@ export default {
       login(this.formLogin)
         .then(async (res) => {
           let status = res.status;
+          let accessTocken = res.data.accessToken;
+          let refreshToken = res.data.refreshToken;
           switch (status) {
             case 200:
-              await setAccessToken(res.data.accessToken);
-              await setRefreshToken(res.data.refreshToken);
+              await setAccessToken(accessTocken);
+              await setRefreshToken(refreshToken);
               this.$store.dispatch("isLogin", true);
               await getLoginUserInfo().then((res) => {
                 localStorage.setItem(
                   LOCAL_STORAGE.NAME,
                   JSON.stringify(res.data.personalInfo)
                 );
-                this.$router.push({ path: "/dashboard" });
+                let roles = jwt_decode(accessTocken).roles;
+                roles.indexOf(ROLES.ADMIN) !== -1
+                  ? this.$router.push({
+                      path: FE_ROUTER_PROP.ADMIN.ROOT_PATH.concat(
+                        "/",
+                        FE_ROUTER_PROP.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.PATH
+                      ),
+                    })
+                  : this.$router.push({
+                      path: FE_ROUTER_PROP.REQUEST_TICKET.ROOT_PATH.concat(
+                        "/",
+                        FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN
+                          .CREATE_REQUEST_TICKET.PATH
+                      ),
+                    });
               });
               break;
             case 404:
