@@ -12,9 +12,9 @@ import lombok.Setter;
 public class ApproverActionRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private ApproverActionDto approverAction;
-	
+
 	private ApproverActionRequest data;
 
 }
