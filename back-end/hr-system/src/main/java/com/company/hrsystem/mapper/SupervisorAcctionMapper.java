@@ -9,14 +9,6 @@ public interface SupervisorAcctionMapper {
 
 	int insertSupervisorAction(SupervisorActionDto supervisorActionDto);
 
-	/**
-	 * This method related to update status CANCEL by employee
-	 */
-	int updateActionByEmployee(SupervisorActionDto supervisorActionDto);
-
-	/**
-	 * This method use to update by Supervisor
-	 */
 	int updateActionBySupervisor(SupervisorActionDto supervisorActionDto);
 
 }

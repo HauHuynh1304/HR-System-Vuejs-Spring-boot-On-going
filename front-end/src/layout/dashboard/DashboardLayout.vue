@@ -3,11 +3,6 @@
     <side-bar :background-color="backgroundColor">
       <template slot="links">
         <sidebar-link
-          to="/dashboard"
-          :name="$t('sidebar.dashboard')"
-          icon="tim-icons icon-chart-pie-36"
-        />
-        <sidebar-link
           v-if="roles.includes(ACCOUNT_ROLES.ADMIN)"
           :to="
             routerProps.ADMIN.ROOT_PATH.concat(

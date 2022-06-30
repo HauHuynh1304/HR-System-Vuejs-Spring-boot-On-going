@@ -15,18 +15,22 @@ import lombok.Setter;
 public class FindListTicketResponse implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private String requestId;
-	
+
 	private String requester;
-	
+
 	private String requestType;
 
 	private String reason;
 
 	private String approver;
-	
+
 	private String supervisor;
+
+	private String supervisorActionId;
+
+	private String approverActionId;
 
 	private RequestEmployeeDto requestEmployee;
 

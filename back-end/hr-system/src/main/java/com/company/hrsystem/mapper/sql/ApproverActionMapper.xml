@@ -13,17 +13,6 @@
 			)
 	</insert>
 	
-	<update id="updateActionByEmployee"
-		parameterType="com.company.hrsystem.dto.ApproverActionDto">
-		UPDATE approver_action
-		<set>
-			action_type = #{actionType, jdbcType=VARCHAR},
-			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
-		</set>
-		WHERE
-			approver_action_id = #{approverActionId, jdbcType=INTEGER}
-	</update>
-	
 	<update id="updateActionByApprover"
 		parameterType="com.company.hrsystem.dto.ApproverActionDto">
 		UPDATE approver_action

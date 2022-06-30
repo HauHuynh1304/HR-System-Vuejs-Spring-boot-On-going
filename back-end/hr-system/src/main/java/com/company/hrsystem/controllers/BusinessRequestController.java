@@ -18,6 +18,7 @@ import com.company.hrsystem.request.ApproverActionRequest;
 import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
 import com.company.hrsystem.request.FindListTicketRequest;
+import com.company.hrsystem.request.MutipleUpdateRequestTicketStatusRequest;
 import com.company.hrsystem.request.RequesterActionRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
 import com.company.hrsystem.service.BusinessRequestService;
@@ -111,11 +112,18 @@ public class BusinessRequestController {
 	public ResponseEntity<?> findEmployeeId() {
 		return ResponseEntity.ok(businessRequestService.findEmployeeId());
 	}
-	
+
 	@GetMapping(ApiUrlConstant.BUSINESS_FIND_LIST_COMMENT)
 	@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
 	public ResponseEntity<?> findListComment(@PathVariable Integer id) {
 		return ResponseEntity.ok(businessRequestService.findListComment(id));
+	}
+
+	@PostMapping(ApiUrlConstant.BUSINESS_MUTIPLE_UPDATE_REQUEST_TICKET_STATUS)
+	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR')")
+	public ResponseEntity<?> mutipleUpdateRequestTicketStatus(
+			@RequestBody MutipleUpdateRequestTicketStatusRequest request, HttpServletRequest httpServletRequest) {
+		return ResponseEntity.ok(businessRequestService.mutipleUpdateRequestTicketStatus(request, httpServletRequest));
 	}
 
 }

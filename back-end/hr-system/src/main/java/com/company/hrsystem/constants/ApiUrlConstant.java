@@ -51,5 +51,6 @@ public class ApiUrlConstant {
 	public static final String BUSINESS_FIND_ALL_REQUEST_TYPE = "/business/find-all-request-type";
 	public static final String BUSINESS_FIND_EMPLOYEE_ID = "/business/find-employee-id";
 	public static final String BUSINESS_FIND_LIST_COMMENT = "/business/find-list-comment/{id}";
+	public static final String BUSINESS_MUTIPLE_UPDATE_REQUEST_TICKET_STATUS = "/business/mutiple-update-request-ticket-status";
 
 }

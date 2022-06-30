@@ -9,14 +9,6 @@ public interface ApproverActionMapper {
 
 	int insertApproverAction(ApproverActionDto approverActionDto);
 
-	/**
-	 * This method related to update status CANCEL by employee
-	 */
-	int updateActionByEmployee(ApproverActionDto approverActionDto);
-
-	/**
-	 * This method related to update by Approver
-	 */
 	int updateActionByApprover(ApproverActionDto approverActionDto);
 
 }
