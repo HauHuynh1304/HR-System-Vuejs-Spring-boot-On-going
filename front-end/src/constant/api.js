@@ -51,5 +51,7 @@ export const API = {
     FIND_ALL_REQUEST_TYPE: "/business/find-all-request-type",
     FIND_EMPLOYEE_ID: "/business/find-employee-id",
     FIND_LIST_COMMENT: "/business/find-list-comment/",
+    MUTIPLE_UPDATE_REQUEST_TICKET_STATUS:
+      "/business/mutiple-update-request-ticket-status",
   },
 };

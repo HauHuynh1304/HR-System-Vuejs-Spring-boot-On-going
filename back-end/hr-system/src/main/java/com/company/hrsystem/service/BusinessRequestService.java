@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.constants.CommonConstant;
@@ -45,6 +46,7 @@ import com.company.hrsystem.request.ApproverActionRequest;
 import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
 import com.company.hrsystem.request.FindListTicketRequest;
+import com.company.hrsystem.request.MutipleUpdateRequestTicketStatusRequest;
 import com.company.hrsystem.request.RequesterActionRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
 import com.company.hrsystem.response.FindEmployeeResponse;
@@ -222,38 +224,7 @@ public class BusinessRequestService {
 	public ResponseTemplate updateSupervisorAction(SupervisorActionRequest request,
 			HttpServletRequest httpServletRequest) {
 		SupervisorActionDto supervisorActionDto = request.getData().getSupervisorAction();
-		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
-		String requestStatus = supervisorActionDto.getActionType();
-		supervisorActionDto.setUpdatedAt(currentDayHourSecond);
-
-		// Check valid status from Client
-		isErrorRequestManager(requestStatus);
-
-		// Check current request status
-		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
-		paramRequestEmployee.setSupervisorActionId(supervisorActionDto.getSupervisorActionId());
-		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
-				.findCurrentRequestEmployee(paramRequestEmployee);
-		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
-
-		// Update Supervisor Action
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
-		int numberRecord = supervisorAcctionMapper.updateActionBySupervisor(supervisorActionDto);
-		historyActionService.saveHistoryAction(supervisorActionDto, employeeId, CommonConstant.UPDATE_ACTION,
-				supervisorActionDto.getSupervisorActionId(), CommonConstant.TABLE_SUPERVISOR_ACTION,
-				httpServletRequest);
-		isInsertUpdateSucess(numberRecord);
-
-		// update request status of employee to REJECT when
-		// supervisor reject request from employee
-		if (requestStatus.toLowerCase().equals(BusinessRequestStatusEnum.REJECT.toString().toLowerCase())) {
-			RequestEmployeeDto obj = new RequestEmployeeDto(null, supervisorActionDto.getSupervisorActionId(), null,
-					requestStatus, currentDayHourSecond);
-			numberRecord = requestEmployeeMapper.updateRequestBySupervisor(obj);
-			isInsertUpdateSucess(numberRecord);
-			historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
-					resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
-		}
+		updateSupervisorAction(supervisorActionDto, httpServletRequest);
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
@@ -261,34 +232,7 @@ public class BusinessRequestService {
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate updateApproverAction(ApproverActionRequest request, HttpServletRequest httpServletRequest) {
 		ApproverActionDto approverActionDto = request.getData().getApproverAction();
-		String requestStatus = approverActionDto.getActionType();
-		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
-		approverActionDto.setUpdatedAt(currentDayHourSecond);
-
-		// Check valid status from Client
-		isErrorRequestManager(requestStatus);
-
-		// Check current request status
-		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
-		paramRequestEmployee.setApproverActionId(approverActionDto.getApproverActionId());
-		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
-				.findCurrentRequestEmployee(paramRequestEmployee);
-		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
-
-		// Update Approver Action
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
-		int numberRecord = approverActionMapper.updateActionByApprover(approverActionDto);
-		historyActionService.saveHistoryAction(approverActionDto, employeeId, CommonConstant.UPDATE_ACTION,
-				approverActionDto.getApproverActionId(), CommonConstant.TABLE_APPROVER_ACTION, httpServletRequest);
-		isInsertUpdateSucess(numberRecord);
-
-		// force update request status
-		RequestEmployeeDto obj = new RequestEmployeeDto(null, null, approverActionDto.getApproverActionId(),
-				requestStatus, currentDayHourSecond);
-		numberRecord = requestEmployeeMapper.updateRequestByApprover(obj);
-		isInsertUpdateSucess(numberRecord);
-		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
-				resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+		updateApproverAction(approverActionDto, httpServletRequest);
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
@@ -383,6 +327,21 @@ public class BusinessRequestService {
 				messageUtil.getMessagelangUS("get.data.success"), null, listComment);
 	}
 
+	public ResponseTemplate mutipleUpdateRequestTicketStatus(MutipleUpdateRequestTicketStatusRequest request,
+			HttpServletRequest httpServletRequest) {
+		if (!CollectionUtils.isEmpty(request.getData().getSupervisorAction())) {
+			List<SupervisorActionDto> collection = request.getData().getSupervisorAction();
+			collection.stream().forEach(el -> updateSupervisorAction(el, httpServletRequest));
+		}
+
+		if (!CollectionUtils.isEmpty(request.getData().getApproverAction())) {
+			List<ApproverActionDto> collection = request.getData().getApproverAction();
+			collection.stream().forEach(el -> updateApproverAction(el, httpServletRequest));
+		}
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("update.request.success"), null, null);
+	}
+
 	public void isErrorRequestManager(String status) {
 		if (status.isBlank() || BusinessRequestStatusEnum.isForbidenManager(status)
 				|| !BusinessRequestStatusEnum.isExists(status)) {
@@ -403,6 +362,72 @@ public class BusinessRequestService {
 			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
 			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
 		}
+	}
+
+	public void updateSupervisorAction(SupervisorActionDto supervisorActionDto, HttpServletRequest httpServletRequest) {
+		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
+		String requestStatus = supervisorActionDto.getActionType();
+		supervisorActionDto.setUpdatedAt(currentDayHourSecond);
+
+		// Check valid status from Client
+		isErrorRequestManager(requestStatus);
+
+		// Check current request status
+		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
+		paramRequestEmployee.setSupervisorActionId(supervisorActionDto.getSupervisorActionId());
+		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
+				.findCurrentRequestEmployee(paramRequestEmployee);
+		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
+
+		// Update Supervisor Action
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int numberRecord = supervisorAcctionMapper.updateActionBySupervisor(supervisorActionDto);
+		historyActionService.saveHistoryAction(supervisorActionDto, employeeId, CommonConstant.UPDATE_ACTION,
+				supervisorActionDto.getSupervisorActionId(), CommonConstant.TABLE_SUPERVISOR_ACTION,
+				httpServletRequest);
+		isInsertUpdateSucess(numberRecord);
+
+		// update request status of employee to REJECT when
+		// supervisor reject request from employee
+		if (requestStatus.toLowerCase().equals(BusinessRequestStatusEnum.REJECT.toString().toLowerCase())) {
+			RequestEmployeeDto obj = new RequestEmployeeDto(null, supervisorActionDto.getSupervisorActionId(), null,
+					requestStatus, currentDayHourSecond);
+			numberRecord = requestEmployeeMapper.updateRequestBySupervisor(obj);
+			isInsertUpdateSucess(numberRecord);
+			historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
+					resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+		}
+	}
+
+	public void updateApproverAction(ApproverActionDto approverActionDto, HttpServletRequest httpServletRequest) {
+		String requestStatus = approverActionDto.getActionType();
+		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
+		approverActionDto.setUpdatedAt(currentDayHourSecond);
+
+		// Check valid status from Client
+		isErrorRequestManager(requestStatus);
+
+		// Check current request status
+		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
+		paramRequestEmployee.setApproverActionId(approverActionDto.getApproverActionId());
+		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
+				.findCurrentRequestEmployee(paramRequestEmployee);
+		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
+
+		// Update Approver Action
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int numberRecord = approverActionMapper.updateActionByApprover(approverActionDto);
+		historyActionService.saveHistoryAction(approverActionDto, employeeId, CommonConstant.UPDATE_ACTION,
+				approverActionDto.getApproverActionId(), CommonConstant.TABLE_APPROVER_ACTION, httpServletRequest);
+		isInsertUpdateSucess(numberRecord);
+
+		// force update request status
+		RequestEmployeeDto obj = new RequestEmployeeDto(null, null, approverActionDto.getApproverActionId(),
+				requestStatus, currentDayHourSecond);
+		numberRecord = requestEmployeeMapper.updateRequestByApprover(obj);
+		isInsertUpdateSucess(numberRecord);
+		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
+				resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
 	}
 
 }

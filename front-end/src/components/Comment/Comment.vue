@@ -12,49 +12,55 @@
               >
                 <div
                   :class="
-                    userEmail === comment.requesterEmail
-                      ? 'message-data text-right'
-                      : userEmail === comment.supervisorEmail
-                      ? 'message-data text-right'
-                      : userEmail === comment.approverEmail
-                      ? 'message-data text-right'
-                      : 'message-data'
+                    comment
+                      ? userEmail === comment.requesterEmail
+                        ? 'message-data text-right'
+                        : userEmail === comment.supervisorEmail
+                        ? 'message-data text-right'
+                        : userEmail === comment.approverEmail
+                        ? 'message-data text-right'
+                        : 'message-data'
+                      : ''
                   "
                 >
                   <span class="message-data-time">
                     <strong>
                       {{
-                        comment.requesterEmail
-                          ? comment.requesterEmail.substring(
-                              0,
-                              comment.requesterEmail.indexOf("@")
-                            )
-                          : comment.supervisorEmail
-                          ? comment.supervisorEmail.substring(
-                              0,
-                              comment.supervisorEmail.indexOf("@")
-                            )
-                          : comment.approverEmail.substring(
-                              0,
-                              comment.approverEmail.indexOf("@")
-                            )
+                        comment
+                          ? comment.requesterEmail
+                            ? comment.requesterEmail.substring(
+                                0,
+                                comment.requesterEmail.indexOf("@")
+                              )
+                            : comment.supervisorEmail
+                            ? comment.supervisorEmail.substring(
+                                0,
+                                comment.supervisorEmail.indexOf("@")
+                              )
+                            : comment.approverEmail.substring(
+                                0,
+                                comment.approverEmail.indexOf("@")
+                              )
+                          : ""
                       }}
                     </strong>
-                    at {{ comment.createdAt }}</span
+                    {{ comment ? "at " + comment.createdAt : null }}</span
                   >
                 </div>
                 <div
                   :class="
-                    userEmail === comment.requesterEmail
-                      ? 'message other-message float-right'
-                      : userEmail === comment.supervisorEmail
-                      ? 'message other-message float-right'
-                      : userEmail === comment.approverEmail
-                      ? 'message other-message float-right'
-                      : 'message my-message'
+                    comment
+                      ? userEmail === comment.requesterEmail
+                        ? 'message other-message float-right'
+                        : userEmail === comment.supervisorEmail
+                        ? 'message other-message float-right'
+                        : userEmail === comment.approverEmail
+                        ? 'message other-message float-right'
+                        : 'message my-message'
+                      : ''
                   "
                 >
-                  {{ comment.commentDetail }}
+                  {{ comment ? comment.commentDetail : null }}
                 </div>
               </li>
             </ul>
@@ -109,8 +115,8 @@ export default {
     await this.findListComment();
   },
   methods: {
-    findListComment() {
-      findListComment(this.$route.params.id).then((res) => {
+    async findListComment() {
+      await findListComment(this.$route.params.id).then((res) => {
         this.comments = res.data;
       });
       // Scroll to the last comment

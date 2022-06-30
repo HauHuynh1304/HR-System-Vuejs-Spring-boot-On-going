@@ -11,13 +11,6 @@ export const FE_ROUTER_PROP = {
   },
   DASHBOARD: {
     ROOT_PATH: "/",
-    REDIRECT: "/dashboard",
-    CHILDREN: {
-      DASHBOARD: {
-        PATH: "dashboard",
-        NAME: "dashboard",
-      },
-    },
   },
   ADMIN: {
     ROOT_PATH: "/admin",

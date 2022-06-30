@@ -36,4 +36,9 @@ export const MESSAGE = {
     ERR_EMPTY: "Only Detail can be empty!",
     ERR_DURATION: "Start date or End date was not correctly!",
   },
+  MUTIPLE_UPDATE_TICKET_STATUS: {
+    UPDATE_SUCCESS: "Target ticket(s) was update successfully!",
+    APPROVE_ALL_ERR: "Target ticket status was change by another person!",
+    REJECT_ALL_ERR: "Target ticket status was change by another person!",
+  },
 };
