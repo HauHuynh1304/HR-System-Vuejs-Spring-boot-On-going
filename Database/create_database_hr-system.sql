@@ -257,3 +257,17 @@ CREATE TABLE IF NOT EXISTS history_action (
     CONSTRAINT `fk_history_action_employee` FOREIGN KEY (employee_id)  
 		REFERENCES employee(employee_id)
 ) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS notification (
+	notification_id int(11) AUTO_INCREMENT NOT NULL,
+    request_id int(11) NOT NULL,
+    sender_id int(11) NOT NULL,
+    receiver_id int(11) NOT NULL,
+    created_at datetime NOT NULL default current_timestamp(),
+    read_flag tinyint(1) NOT NULL DEFAULT 0,
+    primary key (notification_id), 
+    CONSTRAINT `fk_notification_sender_id` FOREIGN KEY (sender_id)  
+		REFERENCES employee(employee_id),
+    CONSTRAINT `fk_notification_receiver_id` FOREIGN KEY (receiver_id)  
+		REFERENCES employee(employee_id)
+) engine = InnoDB default CHARACTER SET utf8 COLLATE utf8_unicode_ci;

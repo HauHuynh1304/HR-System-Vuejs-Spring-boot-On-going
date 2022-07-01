@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.hrsystem.mapper.NotificationMapper">
+	<insert id="insertNotification">
+		INSERT INTO notification
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="requestId != null and requestId != '' ">
+				request_id,
+			</if>
+			<if test="senderId != null and senderId != '' ">
+				sender_id,
+			</if>
+			<if test="receiverId != null and receiverId != '' ">
+				receiver_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="requestId != null and requestId != '' ">
+				#{requestId, jdbcType=INTEGER},
+			</if>
+			<if test="senderId != null and senderId != '' ">
+				#{senderId, jdbcType=INTEGER},
+			</if>
+			<if test="receiverId != null and receiverId != '' ">
+				#{receiverId, jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="markNotificationAsRead" parameterType="com.company.hrsystem.request.NotificationRequest">
+		UPDATE notification
+		SET read_flag = true
+		WHERE notification_id 
+			IN 
+				<foreach item="item" index="index" collection="notificationId"
+		             open="(" separator="," close=")">
+		        	#{item}
+        		</foreach>			
+			
+	</update>
+	
+	<delete id="deleteNotificationByReceiver" parameterType="com.company.hrsystem.request.NotificationRequest">
+		DELETE FROM notification
+		WHERE notification_id 
+			IN 
+				<foreach item="item" index="index" collection="notificationId"
+		             open="(" separator="," close=")">
+		        	#{item}
+        		</foreach>			
+			
+	</delete>
+	
+	<delete id="deleteBySchedule">
+		DELETE FROM notification
+		WHERE month(created_at) &lt; month(CURRENT_DATE()) 
+	</delete>
+	
+	<resultMap type="com.company.hrsystem.dto.NotificationDto" id="findNotification">
+		<id column="notification_id" jdbcType="INTEGER" property="notificationId"/>
+		<result column="request_id" jdbcType="INTEGER" property="requestId" />
+		<result column="sender" jdbcType="VARCHAR" property="sender" />
+		<result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+		<result column="read_flag" jdbcType="BIT" property="readFlag" />
+	</resultMap>
+	<select id="findNotificationByReceiverId" resultMap="findNotification">
+		SELECT
+			n.notification_id,
+			n.request_id,
+			n.created_at,
+			n.read_flag,
+			(
+				SELECT
+					sa.system_email
+				FROM 
+					system_account sa
+						LEFT JOIN employee emp
+							ON sa.system_account_id = emp.system_account_id
+				WHERE
+					emp.employee_id = n.sender_id
+			) AS sender
+		FROM 
+			notification n
+		WHERE
+			n.receiver_id = #{receiverId, jdbcType=INTEGER}
+		ORDER BY
+			n.notification_id DESC
+	</select>
+</mapper>

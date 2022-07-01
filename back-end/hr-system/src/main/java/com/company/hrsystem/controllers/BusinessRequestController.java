@@ -19,6 +19,7 @@ import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
 import com.company.hrsystem.request.FindListTicketRequest;
 import com.company.hrsystem.request.MutipleUpdateRequestTicketStatusRequest;
+import com.company.hrsystem.request.NotificationRequest;
 import com.company.hrsystem.request.RequesterActionRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
 import com.company.hrsystem.service.BusinessRequestService;
@@ -124,6 +125,24 @@ public class BusinessRequestController {
 	public ResponseEntity<?> mutipleUpdateRequestTicketStatus(
 			@RequestBody MutipleUpdateRequestTicketStatusRequest request, HttpServletRequest httpServletRequest) {
 		return ResponseEntity.ok(businessRequestService.mutipleUpdateRequestTicketStatus(request, httpServletRequest));
+	}
+	
+	@PostMapping(ApiUrlConstant.BUSINESS_FIND_NOTIFICATION_BY_RECEIVER_ID)
+	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR')")
+	public ResponseEntity<?> findNotificationByReceiverId() {
+		return ResponseEntity.ok(businessRequestService.findNotificationByReceiverId());
+	}
+	
+	@PostMapping(ApiUrlConstant.BUSINESS_MARK_NOTIFICATION_AS_READ)
+	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR', 'ROLE_EMPLOYEE')")
+	public ResponseEntity<?> markNotificationAsRead(@RequestBody NotificationRequest request) {
+		return ResponseEntity.ok(businessRequestService.markNotificationAsRead(request));
+	}
+	
+	@PostMapping(ApiUrlConstant.BUSINESS_DELETE_NOTIFICATION_BY_RECEIVER)
+	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR', 'ROLE_EMPLOYEE')")
+	public ResponseEntity<?> deleteNotificationByReceiver(@RequestBody NotificationRequest request) {
+		return ResponseEntity.ok(businessRequestService.deleteNotificationByReceiver(request));
 	}
 
 }

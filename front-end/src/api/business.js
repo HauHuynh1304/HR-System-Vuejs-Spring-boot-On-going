@@ -68,3 +68,19 @@ export function mutipleUpdateRequestTicketStatus(data) {
     data: data,
   }).then((res) => res);
 }
+
+export function findNotificationByReceiverId() {
+  return post(API.BUSINESS.FIND_NOTIFICATION_BY_RECEIVER_ID).then((res) => res);
+}
+
+export function markNotificationAsRead(data) {
+  return post(API.BUSINESS.MARK_NOTIFICATION_AS_READ, { data: data }).then(
+    (res) => res
+  );
+}
+
+export function deleteNotificationByReceiver(data) {
+  return post(API.BUSINESS.DELETE_NOTIFICATION_BY_RECEIVER, {
+    data: data,
+  }).then((res) => res);
+}
