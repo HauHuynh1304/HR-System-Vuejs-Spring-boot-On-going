@@ -53,5 +53,10 @@ export const API = {
     FIND_LIST_COMMENT: "/business/find-list-comment/",
     MUTIPLE_UPDATE_REQUEST_TICKET_STATUS:
       "/business/mutiple-update-request-ticket-status",
+    FIND_NOTIFICATION_BY_RECEIVER_ID:
+      "/business/find-notification-by-receiver-id",
+    MARK_NOTIFICATION_AS_READ: "/business/mark-notification-as-read",
+    DELETE_NOTIFICATION_BY_RECEIVER:
+      "/businsess/delete-notification-by-receiver",
   },
 };

@@ -35,7 +35,7 @@ public class DateUtil {
 	public static boolean isPreviousMonth(String date) {
 		LocalDate coverDate = LocalDate.parse(date);
 		LocalDate currentDate = LocalDate.now();
-		if (coverDate.getMonthValue() < currentDate.getMonthValue()) {
+		if (coverDate.getMonthValue() < currentDate.getMonthValue() || coverDate.getYear() < currentDate.getYear()) {
 			return true;
 		}
 		return false;

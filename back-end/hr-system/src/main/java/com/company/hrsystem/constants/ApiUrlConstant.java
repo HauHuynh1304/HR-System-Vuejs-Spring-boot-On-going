@@ -52,5 +52,8 @@ public class ApiUrlConstant {
 	public static final String BUSINESS_FIND_EMPLOYEE_ID = "/business/find-employee-id";
 	public static final String BUSINESS_FIND_LIST_COMMENT = "/business/find-list-comment/{id}";
 	public static final String BUSINESS_MUTIPLE_UPDATE_REQUEST_TICKET_STATUS = "/business/mutiple-update-request-ticket-status";
+	public static final String BUSINESS_FIND_NOTIFICATION_BY_RECEIVER_ID = "/business/find-notification-by-receiver-id";
+	public static final String BUSINESS_MARK_NOTIFICATION_AS_READ = "/business/mark-notification-as-read";
+	public static final String BUSINESS_DELETE_NOTIFICATION_BY_RECEIVER = "/businsess/delete-notification-by-receiver";
 
 }

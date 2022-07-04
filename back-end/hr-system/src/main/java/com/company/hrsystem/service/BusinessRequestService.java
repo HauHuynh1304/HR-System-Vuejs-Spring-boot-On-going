@@ -20,6 +20,7 @@ import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.ApproverActionDto;
 import com.company.hrsystem.dto.CommentDto;
+import com.company.hrsystem.dto.NotificationDto;
 import com.company.hrsystem.dto.ReasonDto;
 import com.company.hrsystem.dto.RequestDto;
 import com.company.hrsystem.dto.RequestEmployeeDto;
@@ -35,6 +36,7 @@ import com.company.hrsystem.mapper.EmployeeDocumentMapper;
 import com.company.hrsystem.mapper.EmployeeMapper;
 import com.company.hrsystem.mapper.EmployeePositionMapper;
 import com.company.hrsystem.mapper.HistoryActionMapper;
+import com.company.hrsystem.mapper.NotificationMapper;
 import com.company.hrsystem.mapper.ReasonMapper;
 import com.company.hrsystem.mapper.RequestEmployeeMapper;
 import com.company.hrsystem.mapper.RequestMapper;
@@ -47,6 +49,7 @@ import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
 import com.company.hrsystem.request.FindListTicketRequest;
 import com.company.hrsystem.request.MutipleUpdateRequestTicketStatusRequest;
+import com.company.hrsystem.request.NotificationRequest;
 import com.company.hrsystem.request.RequesterActionRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
 import com.company.hrsystem.response.FindEmployeeResponse;
@@ -97,6 +100,9 @@ public class BusinessRequestService {
 
 	@Autowired
 	private RequestTypeMapper requestTypeMapper;
+
+	@Autowired
+	private NotificationMapper notificationMapper;
 
 	@Autowired
 	private MessageUtil messageUtil;
@@ -172,6 +178,11 @@ public class BusinessRequestService {
 					requestEmployee, requesterActionDto);
 			historyActionService.saveHistoryAction(requestEmployee, employeeId, CommonConstant.INSERT_ACTION,
 					requestDto.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+
+			notificationMapper.insertNotification(
+					new NotificationDto(requestDto.getRequestId(), employeeId, supervisorActionDto.getSupervisorId()));
+			notificationMapper.insertNotification(
+					new NotificationDto(requestDto.getRequestId(), employeeId, approverActionDto.getApproverId()));
 
 			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 					messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
@@ -340,6 +351,34 @@ public class BusinessRequestService {
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("update.request.success"), null, null);
+	}
+
+	public ResponseTemplate findNotificationByReceiverId() {
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null,
+				notificationMapper.findNotificationByReceiverId(employeeId));
+	}
+
+	public ResponseTemplate markNotificationAsRead(NotificationRequest request) {
+		if (request.getData().getNotificationId().length > 0) {
+			notificationMapper.markNotificationAsRead(request.getData());
+			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+					messageUtil.getMessagelangUS("update.success"), null, null);
+		}
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("value.not.correct"), null, null);
+
+	}
+
+	public ResponseTemplate deleteNotificationByReceiver(NotificationRequest request) {
+		if (request.getData().getNotificationId().length > 0) {
+			notificationMapper.deleteNotificationByReceiver(request.getData());
+			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+					messageUtil.getMessagelangUS("update.success"), null, null);
+		}
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("value.not.correct"), null, null);
 	}
 
 	public void isErrorRequestManager(String status) {

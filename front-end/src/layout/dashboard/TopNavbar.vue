@@ -52,35 +52,79 @@
                 data-toggle="dropdown"
                 aria-expanded="true"
               >
-                <div class="notification d-none d-lg-block d-xl-block"></div>
+                <div
+                  :class="
+                    isShowSysbolNewNotification
+                      ? 'notification '
+                      : 'd-none d-lg-block d-xl-block'
+                  "
+                />
                 <i class="tim-icons icon-sound-wave"></i>
-                <p class="d-lg-none">
-                  New Notifications
-                </p>
               </a>
-              <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item"
-                  >Mike John responded to your email</a
+              <div class="notification-box">
+                <div v-if="!notificationData.length" class="text-center">
+                  <span>Waiting for new Notification</span>
+                </div>
+                <div
+                  v-for="(notification, index) in notificationData"
+                  :key="index"
                 >
-              </li>
-              <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item"
-                  >You have 5 more tasks</a
+                  <li class="nav-link">
+                    <a
+                      :href="
+                        routerProps.REQUEST_TICKET.ROOT_PATH.concat(
+                          '/',
+                          routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH.replace(
+                            ':id',
+                            notification.requestId
+                          )
+                        )
+                      "
+                      class=" nav-item dropdown-item "
+                      target="_blank"
+                      @click="
+                        markAsReadOneNotification(notification.notificationId)
+                      "
+                    >
+                      <div class="d-flex justify-content-between">
+                        <span
+                          :class="
+                            notification.readFlag
+                              ? 'd-none d-lg-block d-xl-block'
+                              : 'notification-symbol d-none d-lg-block d-xl-block'
+                          "
+                        >
+                        </span>
+                        <span> Ticket from {{ notification.sender }} </span>
+                      </div>
+                    </a>
+                  </li>
+                </div>
+                <div class="dropdown-divider" />
+                <div
+                  class="d-flex justify-content-around"
+                  id="notification-button"
                 >
-              </li>
-              <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item"
-                  >Your friend Michael is in town</a
-                >
-              </li>
-              <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item"
-                  >Another notification</a
-                >
-              </li>
-              <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Another one</a>
-              </li>
+                  <base-button
+                    size="sm"
+                    type="success"
+                    @click="readAllNotification"
+                    class="tim-icons icon-check-2"
+                  />
+                  <base-button
+                    size="sm"
+                    type="info"
+                    @click="reloadNotification"
+                    class="tim-icons icon-refresh-02"
+                  />
+                  <base-button
+                    size="sm"
+                    type="warning"
+                    @click="cleanAllNotification"
+                    class="btn tim-icons icon-trash-simple"
+                  />
+                </div>
+              </div>
             </base-dropdown>
             <base-dropdown
               tag="li"
@@ -130,8 +174,15 @@
 import { CollapseTransition } from "vue2-transitions";
 import Modal from "@/components/Modal";
 import { LOCAL_STORAGE, EVENT_BUS } from "../../constant/common";
+import { NOTIFICATION_UPDATE_REQUEST } from "@/constant/notification";
 import { logout } from "../../api/authen";
 import { URL_IMG } from "@/utils/request";
+import {
+  findNotificationByReceiverId,
+  markNotificationAsRead,
+  deleteNotificationByReceiver,
+} from "@/api/business";
+import { FE_ROUTER_PROP } from "@/constant/routerProps";
 
 export default {
   components: {
@@ -146,6 +197,10 @@ export default {
   },
   data() {
     return {
+      notificationUpdateRequest: NOTIFICATION_UPDATE_REQUEST,
+      isShowSysbolNewNotification: false,
+      routerProps: FE_ROUTER_PROP,
+      notificationData: [],
       activeNotifications: false,
       showMenu: false,
       searchModalVisible: false,
@@ -153,17 +208,27 @@ export default {
       avatar: null,
     };
   },
-  created() {
-    this.getProfile();
+  async created() {
+    await this.getProfile();
     this.$bus.on(EVENT_BUS.REFRESH_LOCAL_STORAGE, () => {
       this.getProfile();
     });
+    await this.findNotificationByReceiverId();
   },
   methods: {
     async getProfile() {
       let user = await JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
       this.title = user.personalName;
       this.avatar = URL_IMG + user.personalImage;
+    },
+    findNotificationByReceiverId() {
+      findNotificationByReceiverId().then((res) => {
+        this.notificationData = res?.data;
+        this.notificationData?.findIndex((item) => item.readFlag === false) ===
+        -1
+          ? (this.isShowSysbolNewNotification = false)
+          : (this.isShowSysbolNewNotification = true);
+      });
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
@@ -188,7 +253,84 @@ export default {
         this.$store.dispatch("logout", false);
       });
     },
+    readAllNotification(e) {
+      e.stopPropagation();
+      this.resetNotificationUpdateRequest();
+      this.notificationData.forEach((el) =>
+        el.readFlag === false
+          ? this.notificationUpdateRequest.notificationId.push(
+              el.notificationId
+            )
+          : ""
+      );
+      if (this.notificationUpdateRequest.notificationId.length) {
+        this.markNotificationAsRead(this.notificationUpdateRequest);
+      }
+    },
+    markNotificationAsRead(data) {
+      markNotificationAsRead(data).then((res) => {
+        if (res.status === 200) {
+          this.findNotificationByReceiverId();
+        }
+      });
+    },
+    cleanAllNotification(e) {
+      e.stopPropagation();
+      this.resetNotificationUpdateRequest();
+      this.notificationData.forEach((el) =>
+        this.notificationUpdateRequest.notificationId.push(el.notificationId)
+      );
+      if (this.notificationUpdateRequest.notificationId.length) {
+        this.deleteNotificationByReceiver(this.notificationUpdateRequest);
+      }
+    },
+    deleteNotificationByReceiver(data) {
+      deleteNotificationByReceiver(data).then((res) => {
+        if (res.status === 200) {
+          this.findNotificationByReceiverId();
+        }
+      });
+    },
+    resetNotificationUpdateRequest() {
+      this.notificationUpdateRequest.notificationId = [];
+    },
+    markAsReadOneNotification(notificationId) {
+      this.resetNotificationUpdateRequest();
+      this.notificationUpdateRequest.notificationId.push(notificationId);
+      this.markNotificationAsRead(this.notificationUpdateRequest);
+    },
+    reloadNotification(e) {
+      e.stopPropagation();
+      this.findNotificationByReceiverId();
+    },
   },
 };
 </script>
-<style></style>
+<style lang="scss" scoped>
+@import "~@/assets/sass/black-dashboard/custom/variables";
+
+.notification-box {
+  max-height: 200px;
+  max-width: 500px;
+  overflow-x: auto;
+}
+
+.notification-symbol {
+  background: $danger;
+  color: $white;
+  border-radius: $border-radius-xl;
+  height: 6px;
+  width: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid $danger;
+  margin: 0.4rem 1rem 0 0;
+}
+#notification-button {
+  margin-bottom: 0.75rem;
+}
+
+#notification-button .tim-icons {
+  font-size: 12px;
+}
+</style>
