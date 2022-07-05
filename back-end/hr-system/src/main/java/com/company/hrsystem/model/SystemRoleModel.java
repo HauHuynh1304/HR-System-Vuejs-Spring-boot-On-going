@@ -27,4 +27,9 @@ public abstract class SystemRoleModel implements Serializable {
 
 	private String updatedAt;
 
+	public SystemRoleModel(Integer systemRoleId, String roleName) {
+		this.systemRoleId = systemRoleId;
+		this.roleName = roleName;
+	}
+	
 }

@@ -93,7 +93,14 @@ export default {
                   JSON.stringify(res.data.personalInfo)
                 );
                 let roles = jwt_decode(accessTocken).roles;
-                roles.indexOf(ROLES.ADMIN) !== -1
+                roles.indexOf(ROLES.ROOT_ADMIN) !== -1
+                  ? this.$router.push({
+                      path: FE_ROUTER_PROP.ADMIN.ROOT_PATH.concat(
+                        "/",
+                        FE_ROUTER_PROP.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.PATH
+                      ),
+                    })
+                  : roles.indexOf(ROLES.ADMIN) !== -1
                   ? this.$router.push({
                       path: FE_ROUTER_PROP.ADMIN.ROOT_PATH.concat(
                         "/",

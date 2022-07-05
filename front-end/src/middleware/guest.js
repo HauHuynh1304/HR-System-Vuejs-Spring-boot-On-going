@@ -7,7 +7,14 @@ export default function guest({ next, router }) {
   let accessToken = getAccessToken();
   if (accessToken) {
     let roles = jwt_decode(accessToken).roles;
-    return roles.indexOf(ROLES.ADMIN) !== -1
+    roles.indexOf(ROLES.ROOT_ADMIN) !== -1
+      ? router.push({
+          path: FE_ROUTER_PROP.ADMIN.ROOT_PATH.concat(
+            "/",
+            FE_ROUTER_PROP.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.PATH
+          ),
+        })
+      : roles.indexOf(ROLES.ADMIN) !== -1
       ? router.push({
           path: FE_ROUTER_PROP.ADMIN.ROOT_PATH.concat(
             "/",

@@ -14,3 +14,11 @@ export const DOCUMENT_TABLE_COLUMN = {
     },
   ],
 };
+
+export const OBJ = {
+  document: {
+    documentId: null,
+    documentName: null,
+    deletedFlag: null,
+  },
+};

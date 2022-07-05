@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS employee_position (
     end_date DATE,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
+    primary key (`employee_position_id`),
     CONSTRAINT `fk_position_employee_id` FOREIGN KEY (employee_id)  
 		REFERENCES employee(employee_id),
     CONSTRAINT `fk_position_id` FOREIGN KEY (position_id)  
@@ -151,6 +152,7 @@ CREATE TABLE IF NOT EXISTS employee_document (
     deleted_flag tinyint(1) NOT NULL DEFAULT 0,
     created_at datetime NOT NULL default current_timestamp(),
     updated_at datetime NOT NULL default current_timestamp(),
+    primary key (`employee_document_id`),
     CONSTRAINT `fk_document_employee_id` FOREIGN KEY (employee_id)  
 		REFERENCES employee(employee_id),
     CONSTRAINT `fk_document_id` FOREIGN KEY (document_id)  

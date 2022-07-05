@@ -15,4 +15,6 @@ public interface RoomMapper {
 
 	List<RoomDto> findAllRooms();
 
+	List<RoomDto> findRooms();
+
 }

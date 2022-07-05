@@ -271,19 +271,19 @@
 </template>
 
 <script>
-import Card from "../../../components/Cards/Card.vue";
+import Card from "@/components/Cards/Card.vue";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import { NEW_EMPLOYEE_OBJECT } from "@/constant/employeeObj";
+import { findAvailbleAccounts } from "@/api/master";
 import {
-  findAvailbleAccounts,
-  findAllRooms,
-  findAllPositions,
-  findAllDocuments,
-} from "../../../api/master";
+  findDocuments,
+  findPositions,
+  findRooms,
+  insertEmployee,
+} from "@/api/humanResources";
 import { resetObject, isContainNullValue } from "@/utils/objectUtil";
-import { insertEmployee } from "../../../api/humanResources";
-import { MESSAGE } from "../../../constant/message";
-import { SEX_SELECT } from "../../../constant/common";
+import { MESSAGE } from "@/constant/message";
+import { SEX_SELECT } from "@/constant/common";
 import { isValidEmail, isValidNumber } from "@/utils/validate";
 import { createImageFromUrl } from "@/utils/fileUtil";
 export default {
@@ -316,12 +316,12 @@ export default {
     await findAvailbleAccounts().then(
       (res) => (this.originAccounts = res?.data)
     );
-    await findAllRooms().then((res) => (this.originRooms = res?.data));
-    await findAllPositions().then((res) => {
+    await findRooms().then((res) => (this.originRooms = res?.data));
+    await findPositions().then((res) => {
       this.originPositions = res.data;
       this.originPositionOptions = res.data.map((el) => el.positionName);
     });
-    await findAllDocuments().then((res) => {
+    await findDocuments().then((res) => {
       this.originDocuments = res.data;
       this.originDocumentOptions = res.data.map((el) => el.documentName);
     });

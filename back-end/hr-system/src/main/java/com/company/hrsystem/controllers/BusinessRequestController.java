@@ -85,7 +85,7 @@ public class BusinessRequestController {
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_FIND_CURRENT_USER)
-	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
+	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE', 'ROLE_ADMIN', 'ROLE_ROOT_ADMIN')")
 	public ResponseEntity<?> findCurrentUser() {
 		return ResponseEntity.ok(businessRequestService.findCurrentUser());
 	}
@@ -96,16 +96,16 @@ public class BusinessRequestController {
 		return ResponseEntity.ok(businessRequestService.findAccountByRole(role));
 	}
 
-	@PostMapping(ApiUrlConstant.BUSINESS_FIND_ALL_REASON)
+	@PostMapping(ApiUrlConstant.BUSINESS_FIND_REASON)
 	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
 	public ResponseEntity<?> findAllReason() {
-		return ResponseEntity.ok(businessRequestService.findAllReason());
+		return ResponseEntity.ok(businessRequestService.findReason());
 	}
 
-	@PostMapping(ApiUrlConstant.BUSINESS_FIND_ALL_REQUEST_TYPE)
+	@PostMapping(ApiUrlConstant.BUSINESS_FIND_REQUEST_TYPE)
 	@PreAuthorize("hasAnyRole('ROLE_EMPLOYEE')")
-	public ResponseEntity<?> findAllRequestType() {
-		return ResponseEntity.ok(businessRequestService.findAllRequestType());
+	public ResponseEntity<?> findRequestType() {
+		return ResponseEntity.ok(businessRequestService.findRequestType());
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_FIND_EMPLOYEE_ID)
@@ -128,7 +128,7 @@ public class BusinessRequestController {
 	}
 	
 	@PostMapping(ApiUrlConstant.BUSINESS_FIND_NOTIFICATION_BY_RECEIVER_ID)
-	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR')")
+	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR','ROLE_EMPLOYEE')")
 	public ResponseEntity<?> findNotificationByReceiverId() {
 		return ResponseEntity.ok(businessRequestService.findNotificationByReceiverId());
 	}

@@ -23,4 +23,9 @@ public abstract class RoomModel implements Serializable {
 
 	private String updatedAt;
 
+	public RoomModel(Integer roomId, String roomName) {
+		this.roomId = roomId;
+		this.roomName = roomName;
+	}
+
 }

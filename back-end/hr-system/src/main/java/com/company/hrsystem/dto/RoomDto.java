@@ -16,4 +16,8 @@ public class RoomDto extends RoomModel {
 	
 	private static final long serialVersionUID = 1L;
 
+	public RoomDto(Integer roomId, String roomName) {
+		super(roomId, roomName);
+	}
+
 }

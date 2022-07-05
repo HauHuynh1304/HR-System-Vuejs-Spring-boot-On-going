@@ -44,6 +44,7 @@
               menu-on-right
               title-tag="a"
               class="nav-item"
+              v-if="!isAdminArea"
             >
               <a
                 slot="title"
@@ -183,6 +184,9 @@ import {
   deleteNotificationByReceiver,
 } from "@/api/business";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
+import jwt_decode from "jwt-decode";
+import { getAccessToken } from "@/utils/cookies";
+import { ROLES } from "@/constant/common";
 
 export default {
   components: {
@@ -197,6 +201,7 @@ export default {
   },
   data() {
     return {
+      isAdminArea: false,
       notificationUpdateRequest: NOTIFICATION_UPDATE_REQUEST,
       isShowSysbolNewNotification: false,
       routerProps: FE_ROUTER_PROP,
@@ -219,9 +224,18 @@ export default {
     async getProfile() {
       let user = await JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
       this.title = user.personalName;
-      this.avatar = URL_IMG + user.personalImage;
+      if (user.personalImage.includes(null)) {
+        this.avatar = require("@/assets/image/1024px-User-avatar.png");
+      } else {
+        this.avatar = URL_IMG + user.personalImage;
+      }
     },
     findNotificationByReceiverId() {
+      let roles = jwt_decode(getAccessToken()).roles;
+      if (roles.includes(ROLES.ROOT_ADMIN) || roles.includes(ROLES.ADMIN)) {
+        this.isAdminArea = true;
+        return;
+      }
       findNotificationByReceiverId().then((res) => {
         this.notificationData = res?.data;
         this.notificationData?.findIndex((item) => item.readFlag === false) ===

@@ -14,5 +14,7 @@ public interface RequestTypeMapper {
 	int updateRequestType(RequestTypeDto request);
 	
 	List<RequestTypeDto> findAllRequestType();
+	
+	List<RequestTypeDto> findRequestType();
 
 }

@@ -32,11 +32,11 @@
 		where position_id= #{positionId, jdbcType=INTEGER}
 	</update>
 	
-	<resultMap type="com.company.hrsystem.dto.PositionDto" id="findAllPositions">
+	<resultMap type="com.company.hrsystem.dto.PositionDto" id="findPositions">
 		<id column="position_id" jdbcType="INTEGER" property="positionId"/>
 		<result column="position_name" jdbcType="VARCHAR" property="positionName"/>
 	</resultMap>
-	<select id="findAllPositions" resultMap="findAllPositions">
+	<select id="findPositions" resultMap="findPositions">
 		SELECT
 			position_name,
 			position_id
@@ -44,6 +44,22 @@
 			position
 		WHERE
 			deleted_flag = false
+		ORDER BY
+			position_id DESC
+	</select>
+	
+	<resultMap type="com.company.hrsystem.dto.PositionDto" id="findAllPositions">
+		<id column="position_id" jdbcType="INTEGER" property="positionId"/>
+		<result column="position_name" jdbcType="VARCHAR" property="positionName"/>
+		<result column="deleted_flag" jdbcType="VARCHAR" property="deletedFlag"/>
+	</resultMap>
+	<select id="findAllPositions" resultMap="findAllPositions">
+		SELECT
+			position_name,
+			position_id,
+			deleted_flag
+		FROM 
+			position
 		ORDER BY
 			position_id DESC
 	</select>

@@ -32,5 +32,14 @@ public abstract class EmployeeModel implements Serializable {
 	private String createdAt;
 
 	private String updatedAt;
+
+	public EmployeeModel(Integer employeeId, String employeeProfileId, Integer roomId, Integer systemAccountId,
+			String employeeStartDate) {
+		this.employeeId = employeeId;
+		this.employeeProfileId = employeeProfileId;
+		this.roomId = roomId;
+		this.systemAccountId = systemAccountId;
+		this.employeeStartDate = employeeStartDate;
+	}
 	
 }

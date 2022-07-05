@@ -21,9 +21,6 @@
 		parameterType="com.company.hrsystem.dto.RequestTypeDto">
 		update request_type
 		<set>
-			<if test="requestTypeName != null">
-				request_type_name = #{requestTypeName, jdbcType=VARCHAR},
-			</if>
 			<if test="deletedFlag != null">
 				deleted_flag = #{deletedFlag, jdbcType=BIT},
 			</if>
@@ -37,8 +34,9 @@
 	<resultMap type="com.company.hrsystem.dto.RequestTypeDto" id="findAllRequestType">
 		<id column="request_type_id" jdbcType="INTEGER" property="requestTypeId"/>
 		<result column="request_type_name" jdbcType="VARCHAR" property="requestTypeName"/>
+		<result column="deleted_flag" jdbcType="VARCHAR" property="deletedFlag"/>
 	</resultMap>
-	<select id="findAllRequestType" resultMap="findAllRequestType">
+	<select id="findRequestType" resultMap="findAllRequestType">
 		SELECT
 			request_type_id,
 			request_type_name
@@ -46,5 +44,14 @@
 			request_type
 		WHERE
 			deleted_flag = false
+	</select>
+	<select id="findAllRequestType" resultMap="findAllRequestType">
+		SELECT
+			request_type_id,
+			request_type_name,
+			deleted_flag
+		FROM 
+			request_type
+		ORDER BY request_type_id DESC
 	</select>
 </mapper>

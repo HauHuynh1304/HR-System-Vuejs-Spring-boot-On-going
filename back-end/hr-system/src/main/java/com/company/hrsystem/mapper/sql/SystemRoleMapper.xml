@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.company.hrsystem.mapper.SytemRoleMapper">
+<mapper namespace="com.company.hrsystem.mapper.SystemRoleMapper">
 	<insert id="insertSystemRoleSelected"
 		parameterType="com.company.hrsystem.dto.SystemRoleDto"
 		useGeneratedKeys="true" keyProperty="systemRoleId"
@@ -29,23 +29,30 @@
 			</if>
 		</trim>
 	</insert>
+	
+	<insert id="insertListSystemRole"
+		parameterType="java.util.List">
+		INSERT INTO system_role (system_role_id, role_name)
+		VALUES
+		<foreach collection="list" item="item" open="("
+			separator="),(" close=")">
+			#{item.systemRoleId}, #{item.roleName}
+		</foreach>
+	</insert>
 
 	<update id="updateSystemRoleSelected">
 		update system_role
 		<set>
-			<if test="roleName != null">
-				role_name = #{roleName, jdbcType=VARCHAR},
-			</if>
-			<if test="roleDescription != null">
+			<if test="roleDescription != null and roleDescription != '' ">
 				role_description = #{roleDescription, jdbcType=VARCHAR},
 			</if>
 			<if test="deletedFlag != null">
 				deleted_flag = #{deletedFlag, jdbcType=BIT},
 			</if>
-			<if test="applyScope != null">
+			<if test="applyScope != null and applyScope != '' ">
 				apply_scope = #{applyScope, jdbcType=VARCHAR},
 			</if>
-			<if test="updatedAt != null">
+			<if test="updatedAt != null and updatedAt != '' ">
 				updated_at = #{updatedAt,jdbcType=TIMESTAMP},
 			</if>
 		</set>
@@ -62,7 +69,24 @@
 			 sr.system_role_id
 		FROM system_role sr
 		WHERE sr.deleted_flag = false
-		ORDER BY sr.system_role_id
+		ORDER BY sr.system_role_id DESC
 	</select>
 	
+	<resultMap type="com.company.hrsystem.dto.SystemRoleDto" id="findAllRoles">
+		<id column="system_role_id" jdbcType="INTEGER" property="systemRoleId"/>
+		<result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+		<result column="role_description" jdbcType="VARCHAR" property="roleDescription"/>
+		<result column="deleted_flag" jdbcType="VARCHAR" property="deletedFlag"/>
+		<result column="apply_scope" jdbcType="VARCHAR" property="applyScope"/>
+	</resultMap>
+	<select id="findAllRoles" resultMap="findAllRoles">
+		SELECT
+			system_role_id,
+			role_name,
+			role_description,
+			deleted_flag,
+			apply_scope
+		FROM system_role
+		ORDER BY system_role_id DESC
+	</select>
 </mapper>

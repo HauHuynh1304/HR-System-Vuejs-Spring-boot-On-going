@@ -290,6 +290,7 @@
 		
 		<!-- map to list property in java class -->
 		<collection property="roles" ofType="com.company.hrsystem.dto.AuthenRoleDto">
+			<id jdbcType="INTEGER" column="system_role_id"/>
 			<result property="roleName" jdbcType="VARCHAR" column="role_name"/>
 		</collection>
 	</resultMap>
@@ -298,6 +299,7 @@
 			sa.system_account_id,
 			sa.system_email,
 			sa.system_password,
+			sr.system_role_id,
 			sr.role_name
 		FROM system_account sa
 			LEFT JOIN system_account_role sar
@@ -306,6 +308,22 @@
 				ON sar.system_role_id = sr.system_role_id
 		WHERE 
 			sa.system_email = #{accEmail, jdbcType = VARCHAR}
+			AND sa.deleted_flag = false
+			AND sar.deleted_flag = false
+			AND sr.deleted_flag = false
+	</select>
+	<select id="findAuthenAccountById" resultMap="authenResult" parameterType="INTEGER">
+		SELECT
+			sa.system_account_id,
+			sr.system_role_id,
+			sr.role_name
+		FROM system_account sa
+			LEFT JOIN system_account_role sar
+				ON sa.system_account_id = sar.system_account_id
+			LEFT JOIN system_role sr
+				ON sar.system_role_id = sr.system_role_id
+		WHERE 
+			sa.system_account_id = #{id, jdbcType=INTEGER}
 			AND sa.deleted_flag = false
 			AND sar.deleted_flag = false
 			AND sr.deleted_flag = false

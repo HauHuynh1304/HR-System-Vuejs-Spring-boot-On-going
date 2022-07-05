@@ -9,5 +9,7 @@ public interface PersonnalInfoMapper {
 	int insertPersonalInfo(PersonalInfoDto personalInfo);
 	
 	int updatePersonalInfo(PersonalInfoDto personalInfo);
+	
+	Boolean isExistPersonInfo(String personalEmail);
 
 }

@@ -50,6 +50,8 @@ public interface SystemAccountMapper {
 	int findSystemAccountIdByEmail(String email);
 	
 	AuthenAccountDto findAuthenAccountByEmail(String email);
+	
+	AuthenAccountDto findAuthenAccountById(Integer id);
 
 	List<AuthenAccountDto> findAccounts();
 	

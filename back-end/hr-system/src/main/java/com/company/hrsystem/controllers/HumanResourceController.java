@@ -30,7 +30,7 @@ public class HumanResourceController {
 	HumanResourceService humanResourceService;
 
 	@PostMapping(value = ApiUrlConstant.HUMAN_RESOURCE_INSERT_EMPLOYEE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@PreAuthorize("hasRole('ROLE_HR')")
+	@PreAuthorize("hasAnyRole('ROLE_HR', 'ROLE_ROOT_ADMIN')")
 	public ResponseEntity<?> insertEmployee(@RequestPart("formEmployee") String request,
 			@RequestPart(name = "image", required = false) MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
@@ -38,7 +38,7 @@ public class HumanResourceController {
 	}
 
 	@PostMapping(ApiUrlConstant.HUMAN_RESOURCE_SEARCH_ALL_EMPLOYEES)
-	@PreAuthorize("hasRole('ROLE_HR')")
+	@PreAuthorize("hasAnyRole('ROLE_HR', 'ROLE_ROOT_ADMIN')")
 	public ResponseEntity<?> findListEmployees(@RequestBody FindListEmployeesRequest request) {
 		return ResponseEntity.ok(humanResourceService.findListEmployees(request));
 	}
@@ -55,6 +55,24 @@ public class HumanResourceController {
 			@RequestPart(name = "image", required = false) MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(humanResourceService.updateEmployee(request, multipartFile, servletRequest));
+	}
+
+	@PostMapping(ApiUrlConstant.HUMAN_RESOURCE_FIND_POSITIONS)
+	@PreAuthorize("hasAnyRole('ROLE_ROOT_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findPositions() {
+		return ResponseEntity.ok(humanResourceService.findPositions());
+	}
+
+	@PostMapping(ApiUrlConstant.HUMAN_RESOURCE_FIND_DOCUMENTS)
+	@PreAuthorize("hasAnyRole('ROLE_ROOT_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findDocuments() {
+		return ResponseEntity.ok(humanResourceService.findDocuments());
+	}
+
+	@PostMapping(ApiUrlConstant.HUMAN_RESOURCE_FIND_ROOM)
+	@PreAuthorize("hasAnyRole('ROLE_ROOT_ADMIN', 'ROLE_HR')")
+	public ResponseEntity<?> findRooms() {
+		return ResponseEntity.ok(humanResourceService.findRooms());
 	}
 
 }

@@ -34,15 +34,30 @@
 		where reason_id = #{reasonId, jdbcType=INTEGER}
 	</update>
 	
-	<resultMap type="com.company.hrsystem.dto.ReasonDto" id="findAllReason">
+	<resultMap type="com.company.hrsystem.dto.ReasonDto" id="findReason">
 		<id column="reason_id" jdbcType="INTEGER" property="reasonId"/>
 		<result  column="reason_name" jdbcType="VARCHAR" property="reasonName"/>
 	</resultMap>
-	<select id="findAllReason" resultMap="findAllReason">
+	<select id="findReason" resultMap="findReason">
 		SELECT
 			reason_id, 
 			reason_name
 		FROM reason
 		WHERE deleted_flag = false
+		ORDER BY reason_id DESC
+	</select>
+	
+	<resultMap type="com.company.hrsystem.dto.ReasonDto" id="findAllReason">
+		<id column="reason_id" jdbcType="INTEGER" property="reasonId"/>
+		<result  column="reason_name" jdbcType="VARCHAR" property="reasonName"/>
+		<result  column="deleted_flag" jdbcType="VARCHAR" property="deletedFlag"/>
+	</resultMap>
+	<select id="findAllReason" resultMap="findAllReason">
+		SELECT
+			reason_id, 
+			reason_name,
+			deleted_flag
+		FROM reason
+		ORDER BY reason_id DESC
 	</select>
 </mapper>

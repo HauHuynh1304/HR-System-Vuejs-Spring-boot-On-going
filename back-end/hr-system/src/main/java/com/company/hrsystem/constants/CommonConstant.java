@@ -2,10 +2,8 @@ package com.company.hrsystem.constants;
 
 public class CommonConstant {
 
-	public static final String ROOT_ROLE = "ROLE_ADMIN";
-
 	public static final String ROLE_INSERT_NOT_NULL = "[roleName]";
-	public static final String ROLE_UPDATE_NOT_NULL = "[roleId]";
+	public static final String ROLE_UPDATE_NOT_NULL = "[systemRoleId]";
 
 	public static final String DOCUMENT_INSERT_NOT_NULL = "[documentName]";
 	public static final String DOCUMENT_UPDATE_NOT_NULL = "[documentId]";

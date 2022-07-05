@@ -163,9 +163,8 @@
 <script>
 import { DOCUMENT_TABLE_COLUMN } from "@/constant/documentTable";
 import { UPDATE_EMPLOYEE_OBJECT } from "@/constant/employeeObj";
-import { updateEmployee } from "../../../../api/humanResources";
-import { ACTION, EVENT_BUS } from "../../../../constant/common";
-import { findAllDocuments } from "../../../../api/master";
+import { updateEmployee, findDocuments } from "@/api/humanResources";
+import { ACTION, EVENT_BUS } from "@/constant/common";
 import { MESSAGE } from "@/constant/message";
 
 export default {
@@ -217,7 +216,7 @@ export default {
   },
   methods: {
     openInsertDocumentModal() {
-      findAllDocuments().then((res) => {
+      findDocuments().then((res) => {
         this.originDocumentObj = res.data;
         this.tagDocumentValue = this.documentObj.map((el) => el.documentName);
         this.documentOption = res.data.map((el) => el.documentName);

@@ -21,6 +21,8 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.constants.CommonConstant;
+import com.company.hrsystem.dto.AuthenAccountDto;
+import com.company.hrsystem.dto.AuthenRoleDto;
 import com.company.hrsystem.dto.JwtDto;
 import com.company.hrsystem.dto.SystemAccountDto;
 import com.company.hrsystem.dto.SystemAccountRoleDto;
@@ -50,6 +52,12 @@ public class AuthenticationService {
 
 	@Value("${token.store}")
 	private String tokenStore;
+
+	@Value("${root.admin}")
+	private String roleRootAmin;
+
+	@Value("${admin}")
+	private String roleAdmin;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -142,7 +150,8 @@ public class AuthenticationService {
 			ChangePasswordRequest ChangePwRequest) {
 		String emailFromToken = tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(servletRequest));
 		String emailFromRequest = ChangePwRequest.getData().getAccount().getSystemEmail();
-		if (emailFromToken.equals(emailFromRequest) || authenUtil.isAuthen(CommonConstant.ROOT_ROLE)) {
+		if (emailFromToken.equals(emailFromRequest) || authenUtil.isAuthen(roleAdmin)
+				|| authenUtil.isAuthen(roleRootAmin)) {
 			String password = passwordEncoder.encode(ChangePwRequest.getData().getAccount().getSystemPassword());
 			SystemAccountDto account = new SystemAccountDto(null, emailFromRequest, password, null, null,
 					DateUtil.getCurrentDayHourSecond());
@@ -152,7 +161,7 @@ public class AuthenticationService {
 			if (emailFromToken.equals(emailFromRequest)) {
 				targetRowId = authenUtil.getAccountId();
 			}
-			if (authenUtil.isAuthen(CommonConstant.ROOT_ROLE)) {
+			if (authenUtil.isAuthen(roleAdmin) || authenUtil.isAuthen(roleRootAmin)) {
 				targetRowId = systemAccountMapper.findSystemAccountIdByEmail(emailFromRequest);
 			}
 			historyActionService.saveHistoryAction(account, CommonConstant.ZERO_VALUE, CommonConstant.CHANGE_PW_ACTION,
@@ -173,6 +182,14 @@ public class AuthenticationService {
 	public ResponseTemplate updateAccount(UpdateAccountRequest accountRequest, HttpServletRequest servletRequest) {
 		int updaterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		SystemAccountDto account = accountRequest.getData().getAccount();
+		// Only root_admin account can update root_admin account
+		AuthenAccountDto targetAccount = systemAccountMapper.findAuthenAccountById(account.getSystemAccountId());
+		Set<AuthenRoleDto> roles = targetAccount.getRoles();
+		Boolean isRootAdminTargetAccount = roles.stream().anyMatch(r -> r.getRoleName().equals(roleRootAmin));
+		if (isRootAdminTargetAccount && !authenUtil.isAuthen(roleRootAmin)) {
+			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.root.account.err"));
+		}
+
 		if (objectUtil.countNotNullParamater(account) > 1) {
 			if (ObjectUtils.isNotEmpty(account.getSystemPassword())) {
 				account.setSystemPassword(passwordEncoder.encode(account.getSystemPassword()));

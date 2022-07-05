@@ -2,11 +2,16 @@ import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
 import AuthLayout from "@/layout/dashboard/AuthLayout.vue";
 
 // GeneralViews
-import NotFound from "@/pages/NotFoundPage.vue";
+import ErrorPage from "@/pages/ErrorPage.vue";
 
 //import middleware
-import auth from "@/middleware/auth";
 import guest from "@/middleware/guest";
+import auth from "@/middleware/auth";
+import admin from "@/middleware/admin";
+import humanManagement from "@/middleware/humanManagement";
+import employee from "@/middleware/employee";
+import masterManagement from "@/middleware/masterManagement";
+
 import { FE_ROUTER_PROP } from "../constant/routerProps";
 
 const Login = () => import(/* webpackChunkName: "pages" */ "@/pages/Login.vue");
@@ -32,6 +37,10 @@ const ListReceivedRequestTicket = () =>
     "@/pages/RequestTicket/ReceivedRequestTicket/ListReceivedRequestTicket.vue"
   );
 
+// Master Management Data
+const MasterManagement = () =>
+  import("@/pages/MasterManagement/MasterManagement.vue");
+
 let authPages = {
   path: FE_ROUTER_PROP.LOGIN.ROOT_PATH,
   redirect: FE_ROUTER_PROP.LOGIN.REDIRECT,
@@ -55,7 +64,13 @@ let adminMenu = {
       path: FE_ROUTER_PROP.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.PATH,
       name: FE_ROUTER_PROP.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.NAME,
       components: { default: ListAccountsPage },
-      meta: { middleware: auth },
+      meta: { middleware: admin },
+    },
+    {
+      path: FE_ROUTER_PROP.ADMIN.CHILDREN.MASTER_MANAGEMENT.PATH,
+      name: FE_ROUTER_PROP.ADMIN.CHILDREN.MASTER_MANAGEMENT.NAME,
+      components: { default: MasterManagement },
+      meta: { middleware: masterManagement },
     },
   ],
 };
@@ -69,19 +84,19 @@ let humanManagementMenu = {
       path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.PATH,
       name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.NAME,
       components: { default: ListUserPage },
-      meta: { middleware: auth },
+      meta: { middleware: humanManagement },
     },
     {
       path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.ADD_EMPLOYEE.PATH,
       name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.ADD_EMPLOYEE.NAME,
       components: { default: NewUserPage },
-      meta: { middleware: auth },
+      meta: { middleware: humanManagement },
     },
     {
       path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.PATH,
       name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.NAME,
       components: { default: UpdateUserPage },
-      meta: { middleware: auth },
+      meta: { middleware: humanManagement },
     },
   ],
 };
@@ -95,19 +110,19 @@ let employeeMenu = {
       path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.PATH,
       name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.NAME,
       components: { default: ListTicket },
-      meta: { middleware: auth },
+      meta: { middleware: employee },
     },
     {
       path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.CREATE_REQUEST_TICKET.PATH,
       name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.CREATE_REQUEST_TICKET.NAME,
       components: { default: NewTicket },
-      meta: { middleware: auth },
+      meta: { middleware: employee },
     },
     {
       path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.PATH,
       name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.NAME,
       components: { default: RequestedTicket },
-      meta: { middleware: auth },
+      meta: { middleware: employee },
     },
     {
       path:
@@ -117,13 +132,13 @@ let employeeMenu = {
         FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
           .NAME,
       components: { default: ListReceivedRequestTicket },
-      meta: { middleware: auth },
+      meta: { middleware: employee },
     },
     {
       path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH,
       name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.NAME,
       components: { default: RequestedTicket },
-      meta: { middleware: auth },
+      meta: { middleware: employee },
     },
   ],
 };
@@ -145,7 +160,8 @@ const routes = [
       },
     ],
   },
-  { path: "*", component: NotFound },
+  { path: "*", component: ErrorPage },
+  { path: "forbident", component: ErrorPage },
 ];
 
 /**

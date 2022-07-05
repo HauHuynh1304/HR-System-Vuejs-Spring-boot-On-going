@@ -26,3 +26,28 @@ export const POSITION_TABLE_COLUMN = {
     },
   ],
 };
+
+export const POSITION_MASTER_TABLE_COLUMN = {
+  fields: [
+    {
+      key: "positionName",
+      label: "position",
+      thClass: "text-center text-info",
+      tdClass: "text-center",
+    },
+    {
+      key: "edit",
+      label: "",
+      thClass: "text-center text-info",
+      tdClass: "text-center",
+    },
+  ],
+};
+
+export const OBJ = {
+  position: {
+    positionId: null,
+    positionName: null,
+    deletedFlag: null,
+  },
+};

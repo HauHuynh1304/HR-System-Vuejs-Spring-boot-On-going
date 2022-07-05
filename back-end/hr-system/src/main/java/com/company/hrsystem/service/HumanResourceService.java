@@ -25,10 +25,13 @@ import com.company.hrsystem.dto.EmployeeDocumentDto;
 import com.company.hrsystem.dto.EmployeeDto;
 import com.company.hrsystem.dto.EmployeePositionDto;
 import com.company.hrsystem.dto.PersonalInfoDto;
+import com.company.hrsystem.mapper.DocumentMapper;
 import com.company.hrsystem.mapper.EmployeeDocumentMapper;
 import com.company.hrsystem.mapper.EmployeeMapper;
 import com.company.hrsystem.mapper.EmployeePositionMapper;
 import com.company.hrsystem.mapper.PersonnalInfoMapper;
+import com.company.hrsystem.mapper.PositionMapper;
+import com.company.hrsystem.mapper.RoomMapper;
 import com.company.hrsystem.request.EmployeeRequest;
 import com.company.hrsystem.request.FindListEmployeesRequest;
 import com.company.hrsystem.response.FindEmployeeResponse;
@@ -65,6 +68,15 @@ public class HumanResourceService {
 
 	@Autowired
 	private EmployeePositionMapper employeePositionMapper;
+
+	@Autowired
+	private PositionMapper positionMapper;
+
+	@Autowired
+	private DocumentMapper documentMapper;
+	
+	@Autowired
+	private RoomMapper roomMapper;
 
 	@Autowired
 	private MessageUtil messageUtil;
@@ -269,6 +281,21 @@ public class HumanResourceService {
 		info.setPositions(employeePositionMapper.findEmployeePositionsByEmployeeId(id));
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, info);
+	}
+
+	public ResponseTemplate findPositions() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, positionMapper.findPositions());
+	}
+
+	public ResponseTemplate findDocuments() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, documentMapper.findDocuments());
+	}
+
+	public ResponseTemplate findRooms() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findRooms());
 	}
 
 	public void saveHistoryLastInsertPositons(Integer inserterId, Integer employeeId,

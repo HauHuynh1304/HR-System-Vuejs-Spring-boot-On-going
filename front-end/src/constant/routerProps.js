@@ -20,6 +20,10 @@ export const FE_ROUTER_PROP = {
         PATH: "account-management",
         NAME: "account management",
       },
+      MASTER_MANAGEMENT: {
+        PATH: "master-management",
+        NAME: "Master data",
+      },
     },
   },
   USER: {

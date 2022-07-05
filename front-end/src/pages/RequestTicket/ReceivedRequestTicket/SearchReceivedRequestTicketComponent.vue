@@ -65,7 +65,7 @@
 
 <script>
 import Card from "../../../components/Cards/Card.vue";
-import { findAllRequestType, findReceivedTicket } from "@/api/business";
+import { findRequestType, findReceivedTicket } from "@/api/business";
 import { FIX_SELECT, SEARCH_REQUESTED_TICKET } from "@/constant/requestTicket";
 import { resetObject } from "@/utils/objectUtil";
 import { EVENT_BUS } from "@/constant/common";
@@ -80,7 +80,7 @@ export default {
     };
   },
   async beforeCreate() {
-    await findAllRequestType().then((res) => (this.requestOptions = res.data));
+    await findRequestType().then((res) => (this.requestOptions = res.data));
   },
   methods: {
     onSubmit() {
