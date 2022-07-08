@@ -35,11 +35,11 @@
 		where document_id = #{documentId, jdbcType=INTEGER}
 	</update>
 	
-	<resultMap type="com.company.hrsystem.dto.DocumentDto" id="findAllDocuments">
+	<resultMap type="com.company.hrsystem.dto.DocumentDto" id="findDocuments">
 		<id column="document_id" jdbcType="INTEGER" property="documentId"/>
 		<result column="document_name" jdbcType="VARCHAR" property="documentName"/>
 	</resultMap>
-	<select id="findAllDocuments" resultMap="findAllDocuments">
+	<select id="findDocuments" resultMap="findDocuments">
 		SELECT
 			document_id,
 			document_name
@@ -47,6 +47,22 @@
 			document
 		WHERE
 			deleted_flag = false
+		ORDER BY
+			document_id DESC
+	</select>
+	
+	<resultMap type="com.company.hrsystem.dto.DocumentDto" id="findAllDocuments">
+		<id column="document_id" jdbcType="INTEGER" property="documentId"/>
+		<result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+		<result column="deleted_flag" jdbcType="VARCHAR" property="deletedFlag"/>
+	</resultMap>
+	<select id="findAllDocuments" resultMap="findAllDocuments">
+		SELECT
+			document_id,
+			document_name,
+			deleted_flag
+		FROM
+			document
 		ORDER BY
 			document_id DESC
 	</select>

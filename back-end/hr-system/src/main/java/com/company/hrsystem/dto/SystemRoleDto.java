@@ -16,4 +16,8 @@ public class SystemRoleDto extends SystemRoleModel {
 
 	private static final long serialVersionUID = 1L;
 
+	public SystemRoleDto(Integer systemRoleId, String roleName) {
+		super(systemRoleId, roleName);
+	}
+
 }

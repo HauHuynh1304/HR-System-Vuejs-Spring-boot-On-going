@@ -37,8 +37,24 @@
 	<resultMap type="com.company.hrsystem.dto.RoomDto" id="findAllRooms">
 		<id column="room_id" jdbcType="INTEGER" property="roomId"/>
 		<result column="room_name" jdbcType="VARCHAR" property="roomName"/>
+		<result column="deleted_flag" jdbcType="VARCHAR" property="deletedFlag"/>
 	</resultMap>
 	<select id="findAllRooms" resultMap="findAllRooms">
+		SELECT 
+			r.room_id,
+			r.room_name,
+			r.deleted_flag
+		FROM 
+			room r
+		ORDER BY 
+			r.room_id DESC
+	</select>
+	
+	<resultMap type="com.company.hrsystem.dto.RoomDto" id="findRooms">
+		<id column="room_id" jdbcType="INTEGER" property="roomId"/>
+		<result column="room_name" jdbcType="VARCHAR" property="roomName"/>
+	</resultMap>
+	<select id="findRooms" resultMap="findRooms">
 		SELECT 
 			r.room_id,
 			r.room_name

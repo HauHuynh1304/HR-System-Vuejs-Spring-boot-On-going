@@ -28,8 +28,15 @@ export default {
   },
   data() {
     return {
-      urlImg: URL_IMG + this.user.personalInfo.personalImage,
+      urlImg: null,
     };
+  },
+  created() {
+    if (this.user.personalInfo.personalImage.includes(null)) {
+      this.urlImg = require("@/assets/image/1024px-User-avatar.png");
+    } else {
+      this.urlImg = URL_IMG + this.user.personalInfo.personalImage;
+    }
   },
   methods: {},
 };

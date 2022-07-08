@@ -35,4 +35,17 @@ public abstract class PersonalInfoModel implements Serializable {
 
 	private String updatedAt;
 
+	public PersonalInfoModel(Integer personalInfoId, String personalName, String personalBirthday,
+			String personalAddress, String personalPhoneNumber, String personalSex, String personalIdCard,
+			String personalEmail) {
+		this.personalInfoId = personalInfoId;
+		this.personalName = personalName;
+		this.personalBirthday = personalBirthday;
+		this.personalAddress = personalAddress;
+		this.personalPhoneNumber = personalPhoneNumber;
+		this.personalSex = personalSex;
+		this.personalIdCard = personalIdCard;
+		this.personalEmail = personalEmail;
+	}
+
 }

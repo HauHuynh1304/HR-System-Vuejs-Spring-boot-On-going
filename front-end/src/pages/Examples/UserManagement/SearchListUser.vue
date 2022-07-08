@@ -109,19 +109,19 @@
   </card>
 </template>
 <script>
+import { findAllAccounts } from "@/api/master";
 import {
-  findAllAccounts,
-  findAllRooms,
-  findAllPositions,
-} from "../../../api/master";
+  findPositions,
+  findRooms,
+  findListEmployee,
+} from "@/api/humanResources";
 import {
   DOCUMENT_STATUS,
   OBJECT_SEARCH,
   ACTIVED_STATUS,
 } from "@/constant/searchListUserForm";
 import { resetObject } from "@/utils/objectUtil";
-import { findListEmployee } from "../../../api/humanResources";
-import { EVENT_BUS } from "../../../constant/common";
+import { EVENT_BUS } from "@/constant/common";
 export default {
   name: "Search-list-user",
   data() {
@@ -153,8 +153,8 @@ export default {
   },
   async created() {
     await findAllAccounts().then((res) => (this.listAccounts = res?.data));
-    await findAllPositions().then((res) => (this.listPositions = res?.data));
-    await findAllRooms().then((res) => (this.listRooms = res?.data));
+    await findPositions().then((res) => (this.listPositions = res?.data));
+    await findRooms().then((res) => (this.listRooms = res?.data));
   },
 };
 </script>

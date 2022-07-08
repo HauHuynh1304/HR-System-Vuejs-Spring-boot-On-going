@@ -97,4 +97,17 @@
 		</set>
 		WHERE personal_info_id = #{personalInfoId, jdbcType=INTEGER}
 	</update>
+	
+	<select id="isExistPersonInfo" parameterType="STRING" resultType="BOOLEAN">
+		SELECT
+			CASE
+				WHEN EXISTS (
+						SELECT sa.personal_email
+						FROM personal_info sa
+						WHERE sa.personal_email = #{personalEmail, jdbcType=VARCHAR}
+					)
+				THEN true
+				ELSE false
+			END	
+	</select>
 </mapper>

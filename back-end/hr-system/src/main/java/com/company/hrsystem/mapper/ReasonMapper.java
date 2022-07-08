@@ -15,4 +15,6 @@ public interface ReasonMapper {
 	
 	List<ReasonDto> findAllReason();
 	
+	List<ReasonDto> findReason();
+	
 }

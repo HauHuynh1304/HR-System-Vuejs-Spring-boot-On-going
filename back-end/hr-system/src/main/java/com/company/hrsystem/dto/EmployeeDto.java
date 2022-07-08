@@ -16,4 +16,9 @@ public class EmployeeDto extends EmployeeModel {
 
 	private static final long serialVersionUID = 1L;
 
+	public EmployeeDto(Integer employeeId, String employeeProfileId, Integer roomId, Integer systemAccountId,
+			String employeeStartDate) {
+		super(employeeId, employeeProfileId, roomId, systemAccountId, employeeStartDate);
+	}
+
 }

@@ -198,8 +198,7 @@
 import { UPDATE_EMPLOYEE_OBJECT } from "@/constant/employeeObj";
 import { POSITION_TABLE_COLUMN } from "@/constant/positionTable";
 import { ACTION, EVENT_BUS } from "../../../../constant/common";
-import { updateEmployee } from "../../../../api/humanResources";
-import { findAllPositions } from "../../../../api/master";
+import { updateEmployee, findPositions } from "@/api/humanResources";
 import { MESSAGE } from "@/constant/message";
 
 export default {
@@ -263,7 +262,7 @@ export default {
   },
   methods: {
     openInsertPositionsModal() {
-      findAllPositions().then((res) => {
+      findPositions().then((res) => {
         this.originPositionObj = res.data;
         this.tagPositionValue = this.positionObj.map((el) => el.positionName);
         this.positionOption = res.data.map((el) => el.positionName);

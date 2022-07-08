@@ -7,12 +7,16 @@ import org.apache.ibatis.annotations.Mapper;
 import com.company.hrsystem.dto.SystemRoleDto;
 
 @Mapper
-public interface SytemRoleMapper {
+public interface SystemRoleMapper {
 
 	int insertSystemRoleSelected(SystemRoleDto request);
+	
+	int insertListSystemRole(List<SystemRoleDto> dtos);
 
 	int updateSystemRoleSelected(SystemRoleDto request);
 
 	List<SystemRoleDto> findRoles();
+
+	List<SystemRoleDto> findAllRoles();
 
 }

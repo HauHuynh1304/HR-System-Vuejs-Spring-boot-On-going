@@ -45,7 +45,7 @@ public class AuthenticationController {
 	}
 
 	@PostMapping(ApiUrlConstant.AUTHEN_SIGN_UP)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ROOT_ADMIN')")
 	public ResponseEntity<?> signUp(@RequestBody SignUpRequest request, HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(authenService.handleSignUp(request, servletRequest));
 	}
@@ -62,20 +62,20 @@ public class AuthenticationController {
 	}
 
 	@PostMapping(ApiUrlConstant.AUTHEN_FIND_ACCOUNTS)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ROOT_ADMIN')")
 	public ResponseEntity<?> findAccounts(HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(authenService.findAccounts(servletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.AUTHEN_UPDATE_ACCOUNT)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ROOT_ADMIN')")
 	public ResponseEntity<?> updateAccount(@RequestBody UpdateAccountRequest accountRequest,
 			HttpServletRequest servletRequest) {
 		return ResponseEntity.ok(authenService.updateAccount(accountRequest, servletRequest));
 	}
-	
+
 	@PostMapping(ApiUrlConstant.AUTHEN_IS_EMAIL_IN_DB)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ROOT_ADMIN')")
 	public ResponseEntity<?> isEmailInDb(@RequestBody IsEmailInDbRequest request) {
 		return ResponseEntity.ok(authenService.isEmailInDb(request));
 	}

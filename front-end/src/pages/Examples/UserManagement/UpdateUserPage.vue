@@ -177,14 +177,17 @@
 </template>
 
 <script>
-import Card from "../../../components/Cards/Card.vue";
+import Card from "@/components/Cards/Card.vue";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import { UPDATE_EMPLOYEE_OBJECT } from "@/constant/employeeObj";
-import { findAllRooms } from "../../../api/master";
 import { isAllNullValue, diff, isContainNullValue } from "@/utils/objectUtil";
-import { findEmployeeById, updateEmployee } from "../../../api/humanResources";
-import { MESSAGE } from "../../../constant/message";
-import { EVENT_BUS, SEX_SELECT, LOCAL_STORAGE } from "../../../constant/common";
+import {
+  findEmployeeById,
+  updateEmployee,
+  findRooms,
+} from "@/api/humanResources";
+import { MESSAGE } from "@/constant/message";
+import { EVENT_BUS, SEX_SELECT, LOCAL_STORAGE } from "@/constant/common";
 import { isValidEmail, isValidNumber } from "@/utils/validate";
 import { URL_IMG } from "@/utils/request";
 import { ACTIVED_STATUS } from "@/constant/searchListUserForm";
@@ -214,7 +217,7 @@ export default {
     };
   },
   async beforeCreate() {
-    await findAllRooms().then((res) => (this.initRooms = res?.data));
+    await findRooms().then((res) => (this.initRooms = res?.data));
     await findEmployeeById(this.$route.params.id).then((res) => {
       this.employeeObj = res.data;
       this.originRoom = Object.assign({}, res.data.room);

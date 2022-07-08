@@ -168,8 +168,8 @@ import {
 } from "@/constant/requestTicket";
 import {
   findAccountByRole,
-  findAllReason,
-  findAllRequestType,
+  findReason,
+  findRequestType,
   insertRequestTicket,
 } from "@/api/business";
 import { ROLES, DATE_FORMAT } from "@/constant/common";
@@ -208,8 +208,8 @@ export default {
     await findAccountByRole(ROLES.MANAGER).then(
       (res) => (this.approverOptions = res.data)
     );
-    await findAllReason().then((res) => (this.reasonOptions = res.data));
-    await findAllRequestType().then((res) => (this.requestOptions = res.data));
+    await findReason().then((res) => (this.reasonOptions = res.data));
+    await findRequestType().then((res) => (this.requestOptions = res.data));
   },
   created() {
     this.initTimeObj();

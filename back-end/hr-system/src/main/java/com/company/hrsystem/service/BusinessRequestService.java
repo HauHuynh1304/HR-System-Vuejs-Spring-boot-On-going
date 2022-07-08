@@ -309,14 +309,14 @@ public class BusinessRequestService {
 				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
 	}
 
-	public ResponseTemplate findAllReason() {
-		List<ReasonDto> listObj = reasonMapper.findAllReason();
+	public ResponseTemplate findReason() {
+		List<ReasonDto> listObj = reasonMapper.findReason();
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
 	}
 
-	public ResponseTemplate findAllRequestType() {
-		List<RequestTypeDto> listObj = requestTypeMapper.findAllRequestType();
+	public ResponseTemplate findRequestType() {
+		List<RequestTypeDto> listObj = requestTypeMapper.findRequestType();
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
 	}

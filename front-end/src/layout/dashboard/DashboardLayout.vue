@@ -3,7 +3,10 @@
     <side-bar :background-color="backgroundColor">
       <template slot="links">
         <sidebar-link
-          v-if="roles.includes(ACCOUNT_ROLES.ADMIN)"
+          v-if="
+            roles.includes(ACCOUNT_ROLES.ADMIN) ||
+              roles.includes(ACCOUNT_ROLES.ROOT_ADMIN)
+          "
           :to="
             routerProps.ADMIN.ROOT_PATH.concat(
               '/',
@@ -13,9 +16,23 @@
           :name="routerProps.ADMIN.CHILDREN.ACCOUNT_MANAGEMENT.NAME"
           icon="tim-icons icon-notes"
         />
+        <sidebar-link
+          v-if="roles.includes(ACCOUNT_ROLES.ROOT_ADMIN)"
+          :to="
+            routerProps.ADMIN.ROOT_PATH.concat(
+              '/',
+              routerProps.ADMIN.CHILDREN.MASTER_MANAGEMENT.PATH
+            )
+          "
+          :name="routerProps.ADMIN.CHILDREN.MASTER_MANAGEMENT.NAME"
+          icon="tim-icons icon-trophy"
+        />
         <li
           class="nav-item"
-          v-if="roles.includes(ACCOUNT_ROLES.HUMAN_RESOURCES)"
+          v-if="
+            roles.includes(ACCOUNT_ROLES.HUMAN_RESOURCES) ||
+              roles.includes(ACCOUNT_ROLES.ROOT_ADMIN)
+          "
         >
           <a class="nav-link">
             <i class="tim-icons icon-minimal-down"></i>

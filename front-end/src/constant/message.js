@@ -13,6 +13,10 @@ export const MESSAGE = {
   },
   ROLE: {
     ERR: "Role can't be null",
+    DUPLICATE: "Role was used",
+  },
+  REQUEST_TYPE: {
+    ERR: "Request Type can't be null",
   },
   CALL_API_ERR: {
     ERR: "Something wrong, please try again later!",

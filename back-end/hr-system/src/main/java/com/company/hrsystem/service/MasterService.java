@@ -26,7 +26,7 @@ import com.company.hrsystem.mapper.ReasonMapper;
 import com.company.hrsystem.mapper.RequestTypeMapper;
 import com.company.hrsystem.mapper.RoomMapper;
 import com.company.hrsystem.mapper.SystemAccountMapper;
-import com.company.hrsystem.mapper.SytemRoleMapper;
+import com.company.hrsystem.mapper.SystemRoleMapper;
 import com.company.hrsystem.request.DocumentRequest;
 import com.company.hrsystem.request.PositionRequest;
 import com.company.hrsystem.request.ReasonRequest;
@@ -48,7 +48,7 @@ public class MasterService {
 	private String version;
 
 	@Autowired
-	private SytemRoleMapper roleMapper;
+	private SystemRoleMapper roleMapper;
 
 	@Autowired
 	private DocumentMapper documentMapper;
@@ -283,7 +283,7 @@ public class MasterService {
 					CommonConstant.REQUEST_TYPE_UPDATE_NOT_NULL));
 		}
 		try {
-			updateRows = requestTypeMapper.insertRequestType(obj);
+			updateRows = requestTypeMapper.updateRequestType(obj);
 			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.UPDATE_ACTION,
 					obj.getRequestTypeId(), CommonConstant.TABLE_REQUEST_TYPE, servletRequest);
 		} catch (Exception e) {
@@ -291,7 +291,7 @@ public class MasterService {
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("udpate.row", String.valueOf(updateRows)), null, null);
+				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
 	}
 
 	@Transactional
@@ -326,7 +326,7 @@ public class MasterService {
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_UPDATE_NOT_NULL));
 		}
 		try {
-			updateRows = roomMapper.insertRoom(obj);
+			updateRows = roomMapper.updateRoom(obj);
 			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.UPDATE_ACTION,
 					obj.getRoomId(), CommonConstant.TABLE_ROOM, servletRequest);
 		} catch (Exception e) {
@@ -334,12 +334,17 @@ public class MasterService {
 			throw new GlobalException(system, version, e.getCause().getMessage());
 		}
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("udpate.row", String.valueOf(updateRows)), null, null);
+				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
 	}
 
 	public ResponseTemplate findRoles() {
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, roleMapper.findRoles());
+	}
+
+	public ResponseTemplate findAllRoles() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, roleMapper.findAllRoles());
 	}
 
 	public ResponseTemplate findAllAccounts() {
@@ -352,19 +357,29 @@ public class MasterService {
 				messageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findAllRooms());
 	}
 
+	public ResponseTemplate findAllDocuments() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, documentMapper.findAllDocuments());
+	}
+
+	public ResponseTemplate findAvailbleAccounts() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, systemAccountMapper.findAvailbleAccounts());
+	}
+
+	public ResponseTemplate findAllRequestType() {
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getMessagelangUS("get.data.success"), null, requestTypeMapper.findAllRequestType());
+	}
+
 	public ResponseTemplate findAllPositions() {
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, positionMapper.findAllPositions());
 	}
 
-	public ResponseTemplate findAllDocuments() {
+	public ResponseTemplate findAllReason() {
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, documentMapper.findAllDocuments());
-	}
-	
-	public ResponseTemplate findAvailbleAccounts() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, systemAccountMapper.findAvailbleAccounts());
+				messageUtil.getMessagelangUS("get.data.success"), null, reasonMapper.findAllReason());
 	}
 
 }

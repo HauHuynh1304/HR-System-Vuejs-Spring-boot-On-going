@@ -13,6 +13,8 @@ public interface PositionMapper {
 
 	int updatePosition(PositionDto request);
 	
+	List<PositionDto> findPositions();
+	
 	List<PositionDto> findAllPositions();
 
 }

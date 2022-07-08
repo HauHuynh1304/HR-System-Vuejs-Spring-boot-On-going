@@ -5,12 +5,12 @@ export function findAccountByRole(data) {
   return get(API.BUSINESS.FIND_ACCOUNT_BY_ROLE, data).then((res) => res);
 }
 
-export function findAllReason() {
-  return post(API.BUSINESS.FIND_ALL_REASON).then((res) => res);
+export function findReason() {
+  return post(API.BUSINESS.FIND_REASON).then((res) => res);
 }
 
-export function findAllRequestType() {
-  return post(API.BUSINESS.FIND_ALL_REQUEST_TYPE).then((res) => res);
+export function findRequestType() {
+  return post(API.BUSINESS.FIND_REQUEST_TYPE).then((res) => res);
 }
 
 export function insertRequestTicket(data) {

@@ -22,3 +22,15 @@ export function findEmployeeById(data) {
 export function updateEmployee(data) {
   return post(API.HUMAN_RESOURCE.UPDATE_EMPLOYEE, data).then((res) => res);
 }
+
+export function findPositions() {
+  return post(API.HUMAN_RESOURCE.FIND_POSITIONS).then((res) => res);
+}
+
+export function findDocuments() {
+  return post(API.HUMAN_RESOURCE.FIND_DOCUMENTS).then((res) => res);
+}
+
+export function findRooms() {
+  return post(API.HUMAN_RESOURCE.FIND_ROOMS).then((res) => res);
+}

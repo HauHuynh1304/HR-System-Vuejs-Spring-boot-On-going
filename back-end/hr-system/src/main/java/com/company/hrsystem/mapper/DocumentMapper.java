@@ -13,6 +13,8 @@ public interface DocumentMapper {
 	
 	int updateDocument(DocumentDto request);
 	
+	List<DocumentDto> findDocuments();
+	
 	List<DocumentDto> findAllDocuments();
 	
 }
