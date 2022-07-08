@@ -2,7 +2,7 @@ export const POSITION_TABLE_COLUMN = {
   fields: [
     {
       key: "positionName",
-      label: "position",
+      label: "Position Name",
       thClass: "text-center text-info",
       tdClass: "text-center",
     },
@@ -31,7 +31,7 @@ export const POSITION_MASTER_TABLE_COLUMN = {
   fields: [
     {
       key: "positionName",
-      label: "position",
+      label: "Position Name",
       thClass: "text-center text-info",
       tdClass: "text-center",
     },

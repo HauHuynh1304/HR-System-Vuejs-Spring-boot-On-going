@@ -321,4 +321,7 @@ export default {
     margin-right: 1em;
   }
 }
+/deep/ .modal .modal-header .close {
+  display: none;
+}
 </style>

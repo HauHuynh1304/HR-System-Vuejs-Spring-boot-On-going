@@ -5,6 +5,7 @@
         <div class="title">
           <div class="row">
             <b-button
+              id="document-button"
               class="btn btn-link "
               v-b-toggle.document
               variant="primary"
@@ -163,6 +164,7 @@ import { findAllDocuments, updateDocument, insertDocument } from "@/api/master";
 import { ACTION } from "@/constant/common";
 import { resetObject, diff, isAllNullValue } from "@/utils/objectUtil";
 import { MESSAGE } from "@/constant/message";
+import { fexibleMesage } from "@/utils/message";
 export default {
   name: "document",
   data() {
@@ -227,7 +229,10 @@ export default {
       if (!this.modal.newObj.document.documentName) {
         this.$notify({
           type: "warning",
-          message: MESSAGE.REQUEST_TYPE.ERR,
+          message: fexibleMesage(
+            MESSAGE.FLEXIBLE_MESSAGE.ERR,
+            DOCUMENT_TABLE_COLUMN.fields[0].label
+          ),
           icon: "tim-icons icon-bell-55",
           horizontalAlign: "center",
         });
@@ -243,7 +248,10 @@ export default {
       if (isDuplicateRole) {
         this.$notify({
           type: "warning",
-          message: MESSAGE.ROLE.DUPLICATE,
+          message: fexibleMesage(
+            MESSAGE.FLEXIBLE_MESSAGE.DUPLICATE,
+            this.modal.newObj.document.documentName
+          ),
           icon: "tim-icons icon-bell-55",
           horizontalAlign: "center",
         });
@@ -274,7 +282,7 @@ export default {
         .catch((err) => {
           this.$notify({
             type: "warning",
-            message: MESSAGE.CALL_API_ERR.DUPLICATE,
+            message: MESSAGE.CALL_API_ERR.ERR,
             icon: "tim-icons icon-bell-55",
             horizontalAlign: "center",
           });
@@ -290,7 +298,7 @@ export default {
         .catch((err) => {
           this.$notify({
             type: "warning",
-            message: MESSAGE.CALL_API_ERR.DUPLICATE,
+            message: MESSAGE.CALL_API_ERR.ERR,
             icon: "tim-icons icon-bell-55",
             horizontalAlign: "center",
           });
@@ -343,5 +351,11 @@ export default {
   button {
     margin-right: 1em;
   }
+}
+/deep/ .modal .modal-header .close {
+  display: none;
+}
+#document-button {
+  padding-top: 0;
 }
 </style>

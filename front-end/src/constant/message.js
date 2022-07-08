@@ -13,10 +13,6 @@ export const MESSAGE = {
   },
   ROLE: {
     ERR: "Role can't be null",
-    DUPLICATE: "Role was used",
-  },
-  REQUEST_TYPE: {
-    ERR: "Request Type can't be null",
   },
   CALL_API_ERR: {
     ERR: "Something wrong, please try again later!",
@@ -44,5 +40,9 @@ export const MESSAGE = {
     UPDATE_SUCCESS: "Target ticket(s) was update successfully!",
     APPROVE_ALL_ERR: "Target ticket status was change by another person!",
     REJECT_ALL_ERR: "Target ticket status was change by another person!",
+  },
+  FLEXIBLE_MESSAGE: {
+    ERR: "{0} can't be null",
+    DUPLICATE: "{0} was used",
   },
 };

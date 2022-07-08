@@ -229,7 +229,6 @@ public class AuthenticationService {
 	}
 
 	public ResponseTemplate isEmailInDb(IsEmailInDbRequest request) {
-		System.err.println(request.getData().getEmail());
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null,
 				accountMapper.isEmailInDb(request.getData().getEmail()));

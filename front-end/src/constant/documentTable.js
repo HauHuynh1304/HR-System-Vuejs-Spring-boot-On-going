@@ -2,7 +2,7 @@ export const DOCUMENT_TABLE_COLUMN = {
   fields: [
     {
       key: "documentName",
-      label: "Type",
+      label: "Document Type",
       thClass: "text-center text-info",
       tdClass: "text-center",
     },
