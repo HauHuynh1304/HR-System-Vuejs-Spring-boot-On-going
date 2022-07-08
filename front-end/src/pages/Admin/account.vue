@@ -251,6 +251,7 @@ export default {
     toggleDropDown() {
       this.isOpen = !this.isOpen;
       if (this.isOpen) {
+        this.options = [];
         getRoles()
           .then((res) => {
             this.originRoleObj = res.data;
@@ -261,6 +262,7 @@ export default {
     },
     closeDropDown() {
       this.isOpen = false;
+      this.reset();
     },
     toggleList(list, itemToActivate) {
       list.forEach((listItem) => {
