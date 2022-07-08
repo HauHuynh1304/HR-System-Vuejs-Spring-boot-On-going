@@ -5,6 +5,7 @@
         <div class="title">
           <div class="row">
             <b-button
+              id="request-type-button"
               class="btn btn-link "
               v-b-toggle.requestType
               variant="primary"
@@ -356,5 +357,11 @@ export default {
   button {
     margin-right: 1em;
   }
+}
+/deep/ .modal .modal-header .close {
+  display: none;
+}
+#request-type-button {
+  padding-top: 0;
 }
 </style>

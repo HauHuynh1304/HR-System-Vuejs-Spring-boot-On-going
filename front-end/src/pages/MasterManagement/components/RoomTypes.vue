@@ -5,6 +5,7 @@
         <div class="title">
           <div class="row">
             <b-button
+              id="room-button"
               class="btn btn-link "
               v-b-toggle.room
               variant="primary"
@@ -344,5 +345,11 @@ export default {
   button {
     margin-right: 1em;
   }
+}
+/deep/ .modal .modal-header .close {
+  display: none;
+}
+#room-button {
+  padding-top: 0;
 }
 </style>

@@ -5,6 +5,7 @@
         <div class="title">
           <div class="row">
             <b-button
+              id="document-button"
               class="btn btn-link "
               v-b-toggle.document
               variant="primary"
@@ -350,5 +351,11 @@ export default {
   button {
     margin-right: 1em;
   }
+}
+/deep/ .modal .modal-header .close {
+  display: none;
+}
+#document-button {
+  padding-top: 0;
 }
 </style>
