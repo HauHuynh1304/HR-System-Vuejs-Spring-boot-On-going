@@ -247,6 +247,7 @@
 						SELECT e.system_account_id
 						FROM employee e
 					)
+			AND sa.deleted_flag = false
 		ORDER BY 
 			sa.system_account_id DESC
 	</select>
