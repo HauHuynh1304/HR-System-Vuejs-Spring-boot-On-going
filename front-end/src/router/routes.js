@@ -11,6 +11,7 @@ import admin from "@/middleware/admin";
 import humanManagement from "@/middleware/humanManagement";
 import employee from "@/middleware/employee";
 import masterManagement from "@/middleware/masterManagement";
+import humanManagementOnly from "@/middleware/humanManagementOnly";
 
 import { FE_ROUTER_PROP } from "../constant/routerProps";
 
@@ -84,7 +85,7 @@ let humanManagementMenu = {
       path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.PATH,
       name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.NAME,
       components: { default: ListUserPage },
-      meta: { middleware: humanManagement },
+      meta: { middleware: humanManagementOnly },
     },
     {
       path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.ADD_EMPLOYEE.PATH,
@@ -96,7 +97,7 @@ let humanManagementMenu = {
       path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.PATH,
       name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.NAME,
       components: { default: UpdateUserPage },
-      meta: { middleware: humanManagement },
+      meta: { middleware: humanManagementOnly },
     },
   ],
 };

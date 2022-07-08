@@ -2,7 +2,7 @@ import { getAccessToken } from "../utils/cookies";
 import jwt_decode from "jwt-decode";
 import { ROLES } from "@/constant/common";
 
-export default function admin({ next, router }) {
+export default function humanManagement({ next, router }) {
   if (!getAccessToken()) {
     return router.push({ name: "Login" });
   }

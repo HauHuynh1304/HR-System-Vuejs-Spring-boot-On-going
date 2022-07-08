@@ -56,6 +56,7 @@
               :name="routerProps.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.NAME"
               icon="tim-icons icon-bullet-list-67"
               class="ml-3"
+              v-if="roles.includes(ACCOUNT_ROLES.HUMAN_RESOURCES)"
             />
             <sidebar-link
               :to="
