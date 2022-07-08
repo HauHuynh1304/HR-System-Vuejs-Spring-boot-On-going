@@ -2,7 +2,7 @@ export const REASON_TABLE_COLUMN = {
   fields: [
     {
       key: "reasonName",
-      label: "Type",
+      label: "Reason Name",
       thClass: "text-center text-info",
       tdClass: "text-center",
     },

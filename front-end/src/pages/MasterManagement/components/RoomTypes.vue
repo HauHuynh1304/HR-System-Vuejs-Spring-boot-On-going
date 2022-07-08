@@ -157,6 +157,7 @@ import { findAllRooms, updateRoom, insertRoom } from "@/api/master";
 import { ACTION } from "@/constant/common";
 import { resetObject, diff, isAllNullValue } from "@/utils/objectUtil";
 import { MESSAGE } from "@/constant/message";
+import { fexibleMesage } from "@/utils/message";
 export default {
   name: "positon",
   data() {
@@ -221,7 +222,10 @@ export default {
       if (!this.modal.newObj.room.roomName) {
         this.$notify({
           type: "warning",
-          message: MESSAGE.REQUEST_TYPE.ERR,
+          message: fexibleMesage(
+            MESSAGE.FLEXIBLE_MESSAGE.ERR,
+            ROOM_TABLE_COLUMN.fields[0].label
+          ),
           icon: "tim-icons icon-bell-55",
           horizontalAlign: "center",
         });
@@ -237,7 +241,10 @@ export default {
       if (isDuplicateRole) {
         this.$notify({
           type: "warning",
-          message: MESSAGE.ROLE.DUPLICATE,
+          message: fexibleMesage(
+            MESSAGE.FLEXIBLE_MESSAGE.DUPLICATE,
+            this.modal.newObj.room.roomName
+          ),
           icon: "tim-icons icon-bell-55",
           horizontalAlign: "center",
         });
@@ -268,7 +275,7 @@ export default {
         .catch((err) => {
           this.$notify({
             type: "warning",
-            message: MESSAGE.CALL_API_ERR.DUPLICATE,
+            message: MESSAGE.CALL_API_ERR.ERR,
             icon: "tim-icons icon-bell-55",
             horizontalAlign: "center",
           });
@@ -284,7 +291,7 @@ export default {
         .catch((err) => {
           this.$notify({
             type: "warning",
-            message: MESSAGE.CALL_API_ERR.DUPLICATE,
+            message: MESSAGE.CALL_API_ERR.ERR,
             icon: "tim-icons icon-bell-55",
             horizontalAlign: "center",
           });

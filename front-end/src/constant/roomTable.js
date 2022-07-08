@@ -2,7 +2,7 @@ export const ROOM_TABLE_COLUMN = {
   fields: [
     {
       key: "roomName",
-      label: "request type",
+      label: "Room Name",
       thClass: "text-center text-info",
       tdClass: "text-center",
     },

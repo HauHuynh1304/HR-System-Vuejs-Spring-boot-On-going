@@ -20,12 +20,13 @@
               >
                 <base-input
                   label="New Email"
-                  v-model="data.account.systemEmail"
+                  v-model.trim="data.account.systemEmail"
                   placeholder="xxx@hrsystem.com"
                 />
                 <base-input
                   label="Password"
-                  v-model="data.account.systemPassword"
+                  v-model.trim="data.account.systemPassword"
+                  type="password"
                   placeholder="aB123@"
                 />
               </form>
@@ -107,13 +108,14 @@
               >
                 <base-input
                   label="Email"
-                  v-model="updateLogicProperties.targetEmail"
+                  v-model.trim="updateLogicProperties.targetEmail"
                   placeholder="xxx@hrsystem.com"
                   readonly
                 />
                 <base-input
                   label="New Password"
-                  v-model="dataUpdateAccount.account.systemPassword"
+                  v-model.trim="dataUpdateAccount.account.systemPassword"
+                  type="password"
                   placeholder="aB123@"
                 />
               </form>
@@ -394,11 +396,13 @@ export default {
       updateAccount(this.dataUpdateAccount)
         .then((res) => {
           this.$notify({
-            type: "success",
-            message: res.message,
+            type: res.status === 200 ? "success" : "warning",
+            message: res.status === 200 ? res.message : res.errorMessage,
             horizontalAlign: "center",
           });
-          this.$bus.emit(EVENT_BUS.REFRESH_TABLE_LIST_USER);
+          res.status === 200
+            ? this.$bus.emit(EVENT_BUS.REFRESH_TABLE_LIST_USER)
+            : null;
         })
         .catch(() => {
           this.$notify({
