@@ -325,9 +325,6 @@
 				ON sar.system_role_id = sr.system_role_id
 		WHERE 
 			sa.system_account_id = #{id, jdbcType=INTEGER}
-			AND sa.deleted_flag = false
-			AND sar.deleted_flag = false
-			AND sr.deleted_flag = false
 	</select>
 	
 	<resultMap type="com.company.hrsystem.dto.AuthenAccountDto" id="findAccounts">
@@ -368,7 +365,7 @@
 			<if test="systemPassword != null and systemPassword != ''">
 				system_password = #{systemPassword, jdbcType=VARCHAR},
 			</if>
-			<if test="deletedFlag != null and deletedFlag != ''">
+			<if test="deletedFlag != null">
 				deleted_flag = #{deletedFlag, jdbcType=BIT},
 			</if>
 		</set>
