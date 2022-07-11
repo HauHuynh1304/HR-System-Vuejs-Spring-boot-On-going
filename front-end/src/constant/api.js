@@ -40,6 +40,7 @@ export const API = {
     FIND_POSITIONS: "/human-resources/find-positions",
     FIND_DOCUMENTS: "/human-resources/find-documents",
     FIND_ROOMS: "/human-resources/find-rooms",
+    FIND_REPORT_CASE_SELECTED: "/human-resources/find-report-case-selected",
   },
   BUSINESS: {
     INSERT_REQUEST: "/business/insert-request",

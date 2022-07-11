@@ -80,13 +80,13 @@
 </template>
 
 <script>
-import { EVENT_BUS } from "../../../constant/common";
+import { EVENT_BUS } from "@/constant/common";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import { TABLE_LIST_EMPLOYEE } from "@/constant/tableListEmployee";
 import SearchListUser from "./SearchListUser.vue";
-import Card from "../../../components/Cards/Card.vue";
+import Card from "@/components/Cards/Card.vue";
 import { URL_IMG } from "@/utils/request";
-import { API } from "../../../constant/api";
+import { API } from "@/constant/api";
 
 export default {
   components: { SearchListUser, Card },

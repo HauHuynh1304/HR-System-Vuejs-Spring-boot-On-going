@@ -10,6 +10,7 @@ import com.company.hrsystem.dto.RequestEmployeeDto;
 import com.company.hrsystem.dto.RequesterActionDto;
 import com.company.hrsystem.dto.SupervisorActionDto;
 import com.company.hrsystem.response.FindListTicketResponse;
+import com.company.hrsystem.response.FindReportCaseSelectedResponse;
 import com.company.hrsystem.response.FindTicketRequestByIdResponse;
 import com.company.hrsystem.request.FindListTicketRequest;
 
@@ -33,5 +34,7 @@ public interface RequestEmployeeMapper {
 	FindTicketRequestByIdResponse findRequestTicketById(String id, Integer employeeId);
 
 	RequestEmployeeDto findCurrentRequestEmployee(RequestEmployeeDto requestEmployeeDto);
+
+	List<FindReportCaseSelectedResponse> findReportCaseSelected(FindListTicketRequest request);
 
 }

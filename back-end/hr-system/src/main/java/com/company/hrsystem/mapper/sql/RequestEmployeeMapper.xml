@@ -174,29 +174,96 @@
 					ON rs.reason_id = rq.reason_id
 				LEFT JOIN approver_action apa
 					ON apa.approver_action_id = re.approver_action_id
-				LEFT JOIN supervisor_action sua
-					ON sua.supervisor_action_id = re.supervisor_action_id
 		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
 			re.employee_id = #{requestEmployee.employeeId, jdbcType=INTEGER}
-			 <if test="requestEmployee.startDate != null">
+			 <if test="requestEmployee.startDate != null and requestEmployee.startDate != '' ">
 				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
 				jdbcType=VARCHAR},
 				"%Y-%m-%d")
 			</if>
-			<if test="requestEmployee.endDate != null">
+			<if test="requestEmployee.endDate != null and requestEmployee.endDate != '' ">
 				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
 				jdbcType=VARCHAR},
 				"%Y-%m-%d")
 			</if>
-			<if test="requestEmployee.requestStatus != null">
+			<if test="requestEmployee.requestStatus != null and requestEmployee.requestStatus != '' ">
 				AND re.request_status = #{requestEmployee.requestStatus,jdbcType=VARCHAR}
 			</if>
-			<if test="requestTypeId != null">
+			<if test="requestTypeId != null and requestTypeId != '' ">
 				AND rq.request_type_id = #{requestTypeId, jdbcType=INTEGER}
 			</if>
 		</trim>
 		ORDER BY
-			rq.request_id DESC
+			re.request_id DESC
+	</select>
+	
+	<resultMap type="com.company.hrsystem.response.FindReportCaseSelectedResponse" 
+		id="findReportCaseSelectedResponse">
+		<result column="requester" jdbcType="VARCHAR" property="requester"/>
+		<collection property="reportInfo" ofType="com.company.hrsystem.response.FindReportCaseSelectedResponse$ReportInfo">
+			<id column="request_id" jdbcType="INTEGER" />
+			<result column="approver" jdbcType="VARCHAR" property="approver" />
+			<result column="request_type_name" jdbcType="VARCHAR" property="requestType"/>
+			<result column="reason_name" jdbcType="VARCHAR" property="reason"/>
+			<result column="start_date" jdbcType="VARCHAR" property="startDate"/>
+			<result column="end_date" jdbcType="VARCHAR" property="endDate"/>
+			<result column="duration" jdbcType="DOUBLE" property="duration"/>
+		</collection>
+	</resultMap>
+	<select id="findReportCaseSelected" 
+		parameterType="com.company.hrsystem.request.FindListTicketRequest" resultMap="findReportCaseSelectedResponse">
+		SELECT
+			 rt.request_type_name,
+			 (<include refid="getRequesterEmail" />) AS requester,
+			 re.request_id,
+			 re.start_date,
+			 re.end_date,
+			 re.duration,
+			 rs.reason_name,
+			 (<include refid="getApproverEmail" />) AS approver
+		FROM request_employee re
+				LEFT JOIN request rq 
+					ON rq.request_id = re.request_id
+				LEFT JOIN request_type rt
+					ON rt.request_type_id = rq.request_type_id
+				LEFT JOIN reason rs
+					ON rs.reason_id = rq.reason_id
+				LEFT JOIN approver_action apa
+					ON apa.approver_action_id = re.approver_action_id
+		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
+			re.request_status = "APPROVED" 
+			 <if test="requestEmployee.startDate != null and requestEmployee.startDate != '' ">
+				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d")
+			</if>
+			<if test="requestEmployee.endDate != null and requestEmployee.endDate != '' ">
+				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
+				jdbcType=VARCHAR},
+				"%Y-%m-%d")
+			</if>
+			<if test="requestTypeId != null and requestTypeId != '' ">
+				AND rq.request_type_id = #{requestTypeId, jdbcType=INTEGER}
+			</if>
+			<if test="systemAccountIds.length != 0">
+				AND re.employee_id IN (
+					SELECT
+						e.employee_id
+					FROM
+						employee e.
+					WHERE
+						e.system_account_id IN 
+							<foreach item="item" index="index" collection="systemAccountIds"
+					             open="(" separator="," close=")">
+					        	#{item}
+			        		</foreach>
+				)
+			</if>
+		</trim>
+		ORDER BY
+			re.employee_id DESC,
+			rt.request_type_id DESC,
+			re.request_id DESC
 	</select>
 	
 	<resultMap type="com.company.hrsystem.response.FindTicketRequestByIdResponse" 
@@ -276,8 +343,6 @@
 				OR sua.supervisor_id = #{employeeId, jdbcType=INTEGER}
 				OR apa.approver_id = #{employeeId, jdbcType=INTEGER}
 			)
-		ORDER BY
-			rq.request_id DESC
 	</select>
 	
 	<select id="findListReceivedRequestTicket" resultMap="findListTicketResponse">
@@ -338,6 +403,8 @@
 			</if>
 		</trim>
 		ORDER BY
+			rt.request_type_name DESC,
+			requester DESC,
 			rq.request_id DESC
 	</select>
 	

@@ -69,6 +69,17 @@
               icon="tim-icons icon-simple-add"
               class="ml-3"
             />
+            <sidebar-link
+              :to="
+                routerProps.HUMAN_MANAGEMENT.ROOT_PATH.concat(
+                  '/',
+                  routerProps.HUMAN_MANAGEMENT.CHILDREN.REPORT.PATH
+                )
+              "
+              :name="routerProps.HUMAN_MANAGEMENT.CHILDREN.REPORT.NAME"
+              icon="tim-icons icon-paper"
+              class="ml-3"
+            />
           </b-collapse>
         </li>
         <li class="nav-item" v-if="roles.includes(ACCOUNT_ROLES.EMPLOYEE)">
