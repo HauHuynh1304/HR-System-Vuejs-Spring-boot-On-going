@@ -127,6 +127,13 @@ public class AuthenticationService {
 		Integer[] roleIds = request.getData().getRoleIds();
 		// Remove duplicate
 		roleIds = Arrays.stream(roleIds).distinct().toArray(Integer[]::new);
+
+		// Only root account can insert new root account
+		Boolean isIncludesRoleRootAdmin = Arrays.stream(roleIds).anyMatch(roleId -> roleId == 1);
+		if (isIncludesRoleRootAdmin && !authenUtil.isAuthen(roleRootAmin)) {
+			throw new GlobalException(system, version, messageUtil.getMessagelangUS("insert.root.account.err"));
+		}
+
 		systemAccount.setSystemPassword(passwordEncoder.encode(systemAccount.getSystemPassword()));
 		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 		accountMapper.insertSelective(systemAccount);
