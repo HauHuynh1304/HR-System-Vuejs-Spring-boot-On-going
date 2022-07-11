@@ -315,13 +315,21 @@ export default {
         } else {
           addNewAccount(this.data)
             .then((res) => {
-              this.$notify({
-                type: "success",
-                message: res.message,
-                horizontalAlign: "center",
-              });
-              this.reset();
-              this.$bus.emit(EVENT_BUS.REFRESH_TABLE_LIST_USER);
+              if (res.status === 200) {
+                this.$notify({
+                  type: "success",
+                  message: res.message,
+                  horizontalAlign: "center",
+                });
+                this.reset();
+                this.$bus.emit(EVENT_BUS.REFRESH_TABLE_LIST_USER);
+              } else {
+                this.$notify({
+                  type: "warning",
+                  message: res.errorMessage,
+                  horizontalAlign: "center",
+                });
+              }
             })
             .catch(() => {
               this.$notify({

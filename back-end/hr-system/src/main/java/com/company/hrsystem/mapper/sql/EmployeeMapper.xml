@@ -163,6 +163,7 @@
 					AND <include refid="isFullDocuments" /> = #{isFullDocuments, jdbcType=BIT}
 				</if>
 			</trim>
+		ORDER BY e.employee_id DESC
 	</select>
 	<sql id="isFullDocuments" >
 		(SELECT CASE WHEN (
@@ -193,6 +194,7 @@
 		<result column="system_email" jdbcType="VARCHAR" property="systemEmail" />
 		<collection property="employee" ofType="com.company.hrsystem.dto.EmployeeDto">
 	    	<id column="employee_id" jdbcType="INTEGER" property="employeeId" />
+	    	<result column="employee_profile_id" jdbcType="VARCHAR" property="employeeProfileId" />
 	    	<result column="employee_start_date" jdbcType="VARCHAR" property="employeeStartDate" />
 	   		<result column="employee_end_date" jdbcType="VARCHAR" property="employeeEndDate" />
 	   		<result column="deleted_flag" jdbcType="BIT" property="deletedFlag" />
@@ -217,6 +219,7 @@
 		SELECT
 			sy.system_email,
 			e.employee_id,
+			e.employee_profile_id,
 			p.personal_info_id,
 			p.personal_name,
 			p.personal_birthday,
