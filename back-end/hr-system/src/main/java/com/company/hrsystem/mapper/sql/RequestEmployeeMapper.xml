@@ -178,15 +178,21 @@
 					ON sua.supervisor_action_id = re.supervisor_action_id
 		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
 			re.employee_id = #{requestEmployee.employeeId, jdbcType=INTEGER}
-			 <if test="requestEmployee.startDate != null">
+			 <if test="requestEmployee.startDate != null and requestEmployee.endDate == null">
 				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d")
+					jdbcType=VARCHAR},
+					"%Y-%m-%d")
 			</if>
-			<if test="requestEmployee.endDate != null">
+			<if test="requestEmployee.endDate != null and requestEmployee.startDate == null">
 				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d")
+					jdbcType=VARCHAR},
+					"%Y-%m-%d")
+			</if>
+			<if test="requestEmployee.startDate != null and requestEmployee.endDate != null">
+				AND 
+				(
+					<include refid="findByBothDate" />
+				)
 			</if>
 			<if test="requestEmployee.requestStatus != null">
 				AND re.request_status = #{requestEmployee.requestStatus,jdbcType=VARCHAR}
@@ -320,15 +326,21 @@
 					WHERE approver_id = #{requestEmployee.employeeId, jdbcType=INTEGER}
 				)
 			)
-			 <if test="requestEmployee.startDate != null">
+			<if test="requestEmployee.startDate != null and requestEmployee.endDate == null">
 				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d")
+					jdbcType=VARCHAR},
+					"%Y-%m-%d")
 			</if>
-			<if test="requestEmployee.endDate != null">
+			<if test="requestEmployee.endDate != null and requestEmployee.startDate == null">
 				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d")
+					jdbcType=VARCHAR},
+					"%Y-%m-%d")
+			</if>
+			<if test="requestEmployee.startDate != null and requestEmployee.endDate != null">
+				AND 
+				(
+					<include refid="findByBothDate" />
+				)
 			</if>
 			<if test="requestEmployee.requestStatus != null">
 				AND re.request_status = #{requestEmployee.requestStatus,jdbcType=VARCHAR}
@@ -369,6 +381,39 @@
 		LEFT JOIN employee e
 			ON sa.system_account_id = e.system_account_id
 		WHERE sua.supervisor_id = e.employee_id
+	</sql>
+	<sql id="findByBothDate">
+		(
+			re.start_date 
+			BETWEEN 
+				STR_TO_DATE(#{requestEmployee.startDate, jdbcType=VARCHAR},"%Y-%m-%d")
+			AND  
+				STR_TO_DATE(#{requestEmployee.endDate, jdbcType=VARCHAR}, "%Y-%m-%d")
+		)
+		OR	
+		(
+			re.end_date 
+			BETWEEN 
+				STR_TO_DATE(#{requestEmployee.startDate, jdbcType=VARCHAR},"%Y-%m-%d")
+			AND  
+			STR_TO_DATE(#{requestEmployee.endDate, jdbcType=VARCHAR}, "%Y-%m-%d")
+		)
+		OR
+		(
+			STR_TO_DATE(#{requestEmployee.startDate, jdbcType=VARCHAR},"%Y-%m-%d")
+			BETWEEN 
+				re.start_date 
+			AND
+				re.end_date 
+		)
+		OR
+		(
+			STR_TO_DATE(#{requestEmployee.endDate, jdbcType=VARCHAR},"%Y-%m-%d")
+			BETWEEN 
+				re.start_date 
+			AND
+				re.end_date 
+		)	
 	</sql>
 	
 	<resultMap type="com.company.hrsystem.dto.RequestEmployeeDto" id="findCurrentRequestEmployee">
