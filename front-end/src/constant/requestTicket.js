@@ -54,6 +54,7 @@ export const SEARCH_REQUESTED_TICKET = {
     endDate: null,
     requestStatus: null,
   },
+  systemAccountIds: [],
 };
 
 export const REQUESTED_TICKET_RESPONSE = {

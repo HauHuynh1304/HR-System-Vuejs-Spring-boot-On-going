@@ -26,6 +26,7 @@ const ListAccountsPage = () => import("../pages/Admin/ListAccouts.vue");
 const NewUserPage = () => import("@/pages/Examples/UserManagement/NewUser.vue");
 const UpdateUserPage = () =>
   import("@/pages/Examples/UserManagement/UpdateUserPage.vue");
+const Report = () => import("@/pages/Examples/UserManagement/Report.vue");
 
 // Request Ticket
 const NewTicket = () => import("@/pages/RequestTicket/NewTicket.vue");
@@ -97,6 +98,12 @@ let humanManagementMenu = {
       path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.PATH,
       name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.NAME,
       components: { default: UpdateUserPage },
+      meta: { middleware: humanManagementOnly },
+    },
+    {
+      path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.REPORT.PATH,
+      name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.REPORT.NAME,
+      components: { default: Report },
       meta: { middleware: humanManagementOnly },
     },
   ],

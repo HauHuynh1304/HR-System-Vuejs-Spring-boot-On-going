@@ -46,6 +46,10 @@ export const FE_ROUTER_PROP = {
         PATH: "employee/:id",
         NAME: "UPDATE EMPLOYEE",
       },
+      REPORT: {
+        PATH: "report",
+        NAME: "report",
+      },
     },
   },
   REQUEST_TICKET: {

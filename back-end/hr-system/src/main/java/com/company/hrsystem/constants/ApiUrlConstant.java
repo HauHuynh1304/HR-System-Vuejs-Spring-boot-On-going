@@ -42,6 +42,7 @@ public class ApiUrlConstant {
 	public static final String HUMAN_RESOURCE_FIND_POSITIONS = "/human-resources/find-positions";
 	public static final String HUMAN_RESOURCE_FIND_DOCUMENTS = "/human-resources/find-documents";
 	public static final String HUMAN_RESOURCE_FIND_ROOM = "/human-resources/find-rooms";
+	public static final String HUMAN_RESOURCE_FIND_REPORT_CASE_SELECTED = "/human-resources/find-report-case-selected";
 	
 	public static final String BUSINESS_INSERT_REQUEST = "/business/insert-request";
 	public static final String BUSINESS_SEARCH_LIST_CREATED_REQUEST = "/business/search-list-created-request-ticket";

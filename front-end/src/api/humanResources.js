@@ -34,3 +34,9 @@ export function findDocuments() {
 export function findRooms() {
   return post(API.HUMAN_RESOURCE.FIND_ROOMS).then((res) => res);
 }
+
+export function findReportCaseSelected(data) {
+  return post(API.HUMAN_RESOURCE.FIND_REPORT_CASE_SELECTED, {
+    data: data,
+  }).then((res) => res);
+}
