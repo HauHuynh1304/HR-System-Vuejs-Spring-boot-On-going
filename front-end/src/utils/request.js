@@ -28,7 +28,7 @@ export const get = (url, params) => {
   return new Promise((resolve, reject) => {
     request.get(url + params).then(
       (obj) => {
-        resolve(obj.data);
+        resolve(obj?.data);
       },
       (err) => {
         reject(err);

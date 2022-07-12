@@ -61,7 +61,7 @@ public class BusinessRequestController {
 	}
 
 	@PostMapping(ApiUrlConstant.BUSINESS_INSERT_COMMENT)
-	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR')")
+	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR', 'ROLE_EMPLOYEE')")
 	public ResponseEntity<?> insertComment(@RequestBody CommentRequest request, HttpServletRequest httpServletRequest) {
 		return ResponseEntity.ok(businessRequestService.insertComment(request, httpServletRequest));
 	}
@@ -126,19 +126,19 @@ public class BusinessRequestController {
 			@RequestBody MutipleUpdateRequestTicketStatusRequest request, HttpServletRequest httpServletRequest) {
 		return ResponseEntity.ok(businessRequestService.mutipleUpdateRequestTicketStatus(request, httpServletRequest));
 	}
-	
+
 	@PostMapping(ApiUrlConstant.BUSINESS_FIND_NOTIFICATION_BY_RECEIVER_ID)
 	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR','ROLE_EMPLOYEE')")
 	public ResponseEntity<?> findNotificationByReceiverId() {
 		return ResponseEntity.ok(businessRequestService.findNotificationByReceiverId());
 	}
-	
+
 	@PostMapping(ApiUrlConstant.BUSINESS_MARK_NOTIFICATION_AS_READ)
 	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR', 'ROLE_EMPLOYEE')")
 	public ResponseEntity<?> markNotificationAsRead(@RequestBody NotificationRequest request) {
 		return ResponseEntity.ok(businessRequestService.markNotificationAsRead(request));
 	}
-	
+
 	@PostMapping(ApiUrlConstant.BUSINESS_DELETE_NOTIFICATION_BY_RECEIVER)
 	@PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_SUPERVISOR', 'ROLE_EMPLOYEE')")
 	public ResponseEntity<?> deleteNotificationByReceiver(@RequestBody NotificationRequest request) {

@@ -238,15 +238,21 @@
 					ON apa.approver_action_id = re.approver_action_id
 		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
 			re.request_status = "APPROVED" 
-			 <if test="requestEmployee.startDate != null and requestEmployee.startDate != '' ">
+			<if test="requestEmployee.startDate != null and requestEmployee.endDate == null">
 				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d")
+					jdbcType=VARCHAR},
+					"%Y-%m-%d")
 			</if>
-			<if test="requestEmployee.endDate != null and requestEmployee.endDate != '' ">
+			<if test="requestEmployee.endDate != null and requestEmployee.startDate == null">
 				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d")
+					jdbcType=VARCHAR},
+					"%Y-%m-%d")
+			</if>
+			<if test="requestEmployee.startDate != null and requestEmployee.endDate != null">
+				AND 
+				(
+					<include refid="findByBothDate" />
+				)
 			</if>
 			<if test="requestTypeId != null and requestTypeId != '' ">
 				AND rq.request_type_id = #{requestTypeId, jdbcType=INTEGER}
@@ -256,7 +262,7 @@
 					SELECT
 						e.employee_id
 					FROM
-						employee e.
+						employee e
 					WHERE
 						e.system_account_id IN 
 							<foreach item="item" index="index" collection="systemAccountIds"
@@ -267,8 +273,6 @@
 			</if>
 		</trim>
 		ORDER BY
-			re.employee_id DESC,
-			rt.request_type_id DESC,
 			re.request_id DESC
 	</select>
 	

@@ -19,7 +19,7 @@
             <div class="col-md-6 p-auto">
               <base-input
                 id="startDate"
-                label="Start Date"
+                label="From"
                 type="date"
                 v-model="submitObj.requestEmployee.startDate"
               />
@@ -27,7 +27,7 @@
             <div class="col-md-6 p-auto">
               <base-input
                 id="endDate"
-                label="End Date"
+                label="To"
                 type="date"
                 v-model="submitObj.requestEmployee.endDate"
               />
@@ -99,6 +99,15 @@
               SEARCH
             </base-button>
             <base-button
+              native-type="submit"
+              type="info"
+              size="sm"
+              @click="onDownload"
+              :disabled="!isEnableDownload"
+            >
+              DOWNLOAD
+            </base-button>
+            <base-button
               id="onResetButton"
               type="warning"
               size="sm"
@@ -120,6 +129,8 @@ import { findReportCaseSelected } from "@/api/humanResources";
 import { findAllAccounts } from "@/api/master";
 import { SEARCH_REQUESTED_TICKET } from "@/constant/requestTicket";
 import { resetObject } from "@/utils/objectUtil";
+import { EVENT_BUS } from "@/constant/common";
+
 export default {
   components: { Card },
   data() {
@@ -131,12 +142,15 @@ export default {
       initListAccounts: null,
       requestTypes: null,
       submitObj: SEARCH_REQUESTED_TICKET,
+      isEnableDownload: false,
     };
   },
   async created() {
     await findAllAccounts().then((res) => {
-      this.initListAccounts = res.data;
-      this.tag.orginEmailOptions = res.data.map((el) => el.systemEmail);
+      if (res.status === 200) {
+        this.initListAccounts = res.data;
+        this.tag.orginEmailOptions = res.data.map((el) => el.systemEmail);
+      }
     });
     await findRequestType().then((res) => (this.requestTypes = res.data));
   },
@@ -147,8 +161,8 @@ export default {
     onSearch() {
       this.getSystemAccountIds();
       findReportCaseSelected(this.submitObj).then((res) => {
-        console.log(res.data);
-        // this.$bus.emit(EVENT_BUS.FIND_REQUESTED_TICKET, res.data);
+        this.isEnableDownload = true;
+        this.$bus.emit(EVENT_BUS.FIND_REPORT_INFO, res.data);
       });
     },
     onReset() {
@@ -161,9 +175,12 @@ export default {
       this.submitObj.systemAccountIds = [];
       this.initListAccounts.forEach((el) => {
         this.tag.tagEmail.indexOf(el.systemEmail) !== -1
-          ? this.submitObj.systemAccountIds.push(el.systemAccountIds)
+          ? this.submitObj.systemAccountIds.push(el.systemAccountId)
           : null;
       });
+    },
+    onDownload() {
+      this.$emit(EVENT_BUS.CLICK_DOWNLOAD);
     },
   },
   computed: {

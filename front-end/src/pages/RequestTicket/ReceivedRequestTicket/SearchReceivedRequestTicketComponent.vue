@@ -15,7 +15,7 @@
         <div class="col-md-3 p-auto">
           <base-input
             id="startDate"
-            label="Start Date"
+            label="From"
             type="date"
             v-model="submitObj.requestEmployee.startDate"
           />
@@ -23,7 +23,7 @@
         <div class="col-md-3 p-auto">
           <base-input
             id="endDate"
-            label="End Date"
+            label="To"
             type="date"
             v-model="submitObj.requestEmployee.endDate"
           />
@@ -79,9 +79,6 @@ export default {
       submitObj: SEARCH_REQUESTED_TICKET,
     };
   },
-  async beforeCreate() {
-    await findRequestType().then((res) => (this.requestOptions = res.data));
-  },
   methods: {
     onSubmit() {
       this.onSearch;
@@ -96,7 +93,8 @@ export default {
       resetObject(this.submitObj.requestEmployee);
     },
   },
-  created() {
+  async created() {
+    await findRequestType().then((res) => (this.requestOptions = res.data));
     this.$bus.on(EVENT_BUS.REFRESH_RECEIVED_TICKET, () => {
       this.onSearch();
     });
