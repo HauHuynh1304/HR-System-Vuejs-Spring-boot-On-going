@@ -35,7 +35,13 @@
           "
         >
           <a class="nav-link">
-            <i class="tim-icons icon-minimal-down"></i>
+            <i
+              :class="
+                hrVisible
+                  ? 'tim-icons icon-minimal-up'
+                  : 'tim-icons icon-minimal-down'
+              "
+            ></i>
             <p
               aria-controls="hr"
               @click="hrVisible = !hrVisible"
@@ -84,7 +90,11 @@
         </li>
         <li class="nav-item" v-if="roles.includes(ACCOUNT_ROLES.EMPLOYEE)">
           <a class="nav-link">
-            <i class="tim-icons icon-minimal-down"></i>
+            <i :class="
+                rqVisible
+                  ? 'tim-icons icon-minimal-up'
+                  : 'tim-icons icon-minimal-down'
+              "></i>
             <p
               aria-controls="request-ticket"
               @click="rqVisible = !rqVisible"
