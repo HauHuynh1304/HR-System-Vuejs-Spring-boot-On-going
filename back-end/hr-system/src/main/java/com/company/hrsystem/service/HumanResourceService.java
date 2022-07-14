@@ -31,11 +31,14 @@ import com.company.hrsystem.mapper.EmployeeMapper;
 import com.company.hrsystem.mapper.EmployeePositionMapper;
 import com.company.hrsystem.mapper.PersonnalInfoMapper;
 import com.company.hrsystem.mapper.PositionMapper;
+import com.company.hrsystem.mapper.RequestEmployeeMapper;
 import com.company.hrsystem.mapper.RoomMapper;
 import com.company.hrsystem.request.EmployeeRequest;
 import com.company.hrsystem.request.FindListEmployeesRequest;
+import com.company.hrsystem.request.FindListTicketRequest;
 import com.company.hrsystem.response.FindEmployeeResponse;
 import com.company.hrsystem.response.FindListEmployeesResponse;
+import com.company.hrsystem.response.FindReportCaseSelectedResponse;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
@@ -77,6 +80,9 @@ public class HumanResourceService {
 	
 	@Autowired
 	private RoomMapper roomMapper;
+	
+	@Autowired
+	private RequestEmployeeMapper requestEmployeeMapper;
 
 	@Autowired
 	private MessageUtil messageUtil;
@@ -296,6 +302,12 @@ public class HumanResourceService {
 	public ResponseTemplate findRooms() {
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findRooms());
+	}
+	
+	public ResponseTemplate findReportCaseSelected(FindListTicketRequest request) {
+		List<FindReportCaseSelectedResponse> listObj = requestEmployeeMapper.findReportCaseSelected(request.getData());
+		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
+				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
 	}
 
 	public void saveHistoryLastInsertPositons(Integer inserterId, Integer employeeId,

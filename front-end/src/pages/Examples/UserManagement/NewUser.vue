@@ -449,4 +449,7 @@ export default {
 #tags-component-select___input__ {
   color: black;
 }
+.list-inline-item {
+  margin-bottom: 5px;
+}
 </style>

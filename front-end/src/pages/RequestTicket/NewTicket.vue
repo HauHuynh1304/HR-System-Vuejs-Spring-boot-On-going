@@ -201,7 +201,7 @@ export default {
       },
     };
   },
-  async beforeCreate() {
+  async created() {
     await findAccountByRole(ROLES.SUPERVISOR).then(
       (res) => (this.supervisorOptions = res.data)
     );
@@ -210,8 +210,6 @@ export default {
     );
     await findReason().then((res) => (this.reasonOptions = res.data));
     await findRequestType().then((res) => (this.requestOptions = res.data));
-  },
-  created() {
     this.initTimeObj();
   },
   methods: {

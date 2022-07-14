@@ -18,6 +18,8 @@ public class FindListTicketRequest implements Serializable {
 	private Integer requestTypeId;
 
 	private RequestEmployeeDto requestEmployee;
+	
+	private Integer[] systemAccountIds;
 
 	private FindListTicketRequest data;
 

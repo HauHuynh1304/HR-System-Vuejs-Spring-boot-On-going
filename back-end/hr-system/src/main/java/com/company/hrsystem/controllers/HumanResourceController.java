@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.company.hrsystem.constants.ApiUrlConstant;
 import com.company.hrsystem.request.FindListEmployeesRequest;
+import com.company.hrsystem.request.FindListTicketRequest;
 import com.company.hrsystem.service.HumanResourceService;
 
 @RestController
@@ -73,6 +74,12 @@ public class HumanResourceController {
 	@PreAuthorize("hasAnyRole('ROLE_ROOT_ADMIN', 'ROLE_HR')")
 	public ResponseEntity<?> findRooms() {
 		return ResponseEntity.ok(humanResourceService.findRooms());
+	}
+	
+	@PostMapping(ApiUrlConstant.HUMAN_RESOURCE_FIND_REPORT_CASE_SELECTED)
+	@PreAuthorize("hasRole('ROLE_HR')")
+	public ResponseEntity<?> findListCreatedRequestTicket(@RequestBody FindListTicketRequest request) {
+		return ResponseEntity.ok(humanResourceService.findReportCaseSelected(request));
 	}
 
 }

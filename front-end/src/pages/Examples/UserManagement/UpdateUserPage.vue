@@ -216,7 +216,7 @@ export default {
       },
     };
   },
-  async beforeCreate() {
+  async created() {
     await findRooms().then((res) => (this.initRooms = res?.data));
     await findEmployeeById(this.$route.params.id).then((res) => {
       this.employeeObj = res.data;
@@ -225,8 +225,6 @@ export default {
       this.originPersonalInfoObj = Object.assign({}, res.data.personalInfo);
       this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
     });
-  },
-  created() {
     this.$bus.on(EVENT_BUS.REFRESH_EMPLOYEE, () => {
       findEmployeeById(this.$route.params.id).then((res) => {
         this.employeeObj = res.data;
@@ -348,5 +346,8 @@ export default {
 <style scoped>
 #tags-component-select___input__ {
   color: black;
+}
+.list-inline-item {
+  margin-bottom: 5px;
 }
 </style>
