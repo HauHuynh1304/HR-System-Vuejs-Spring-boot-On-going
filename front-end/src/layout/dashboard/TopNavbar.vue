@@ -237,8 +237,8 @@ export default {
         return;
       }
       findNotificationByReceiverId().then((res) => {
-        this.notificationData = res?.data;
-        this.notificationData?.findIndex((item) => item.readFlag === false) ===
+        this.notificationData = res.data;
+        this.notificationData.findIndex((item) => item.readFlag === false) ===
         -1
           ? (this.isShowSysbolNewNotification = false)
           : (this.isShowSysbolNewNotification = true);

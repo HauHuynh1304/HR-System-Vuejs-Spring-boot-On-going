@@ -317,7 +317,7 @@ export default {
     },
     initData() {
       findAllReason().then((res) => {
-        this.reason = res?.data;
+        this.reason = res.data;
       });
     },
   },

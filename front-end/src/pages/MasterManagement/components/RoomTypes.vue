@@ -317,7 +317,7 @@ export default {
     },
     initData() {
       findAllRooms().then((res) => {
-        this.room = res?.data;
+        this.room = res.data;
       });
     },
   },

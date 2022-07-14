@@ -323,7 +323,7 @@ export default {
     },
     initData() {
       findAllPositions().then((res) => {
-        this.position = res?.data;
+        this.position = res.data;
       });
     },
   },

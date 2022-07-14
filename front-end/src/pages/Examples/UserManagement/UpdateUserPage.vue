@@ -217,7 +217,7 @@ export default {
     };
   },
   async created() {
-    await findRooms().then((res) => (this.initRooms = res?.data));
+    await findRooms().then((res) => (this.initRooms = res.data));
     await findEmployeeById(this.$route.params.id).then((res) => {
       this.employeeObj = res.data;
       this.originRoom = Object.assign({}, res.data.room);
