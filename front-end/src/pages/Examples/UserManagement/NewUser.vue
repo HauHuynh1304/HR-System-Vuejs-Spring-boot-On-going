@@ -383,6 +383,7 @@ export default {
           type: "application/json",
         }
       );
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       formData.append("image", this.imageObj.file);
       insertEmployee(formData)
         .then((res) => {
@@ -396,6 +397,7 @@ export default {
             (res) => (this.originAccounts = res.data)
           );
           this.resetForm();
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         })
         .catch(() => {
           this.$notify({
@@ -404,6 +406,7 @@ export default {
             icon: "tim-icons icon-bell-55",
             horizontalAlign: "center",
           });
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
     },
     getDocumentIds() {

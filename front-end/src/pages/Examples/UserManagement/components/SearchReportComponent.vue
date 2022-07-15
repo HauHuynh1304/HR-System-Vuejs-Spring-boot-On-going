@@ -159,10 +159,12 @@ export default {
       this.onSearch;
     },
     onSearch() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       this.getSystemAccountIds();
       findReportCaseSelected(this.submitObj).then((res) => {
         this.isEnableDownload = true;
         this.$bus.emit(EVENT_BUS.FIND_REPORT_INFO, res.data);
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     onReset() {

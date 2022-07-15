@@ -3,6 +3,7 @@
     class="navbar navbar-expand-lg navbar-absolute"
     :class="{ 'bg-white': showMenu, 'navbar-transparent': !showMenu }"
   >
+    <loading @[EVENT_BUS.DISABLE_ELEMENT]="disableElement" />
     <div class="container-fluid">
       <div class="navbar-wrapper">
         <div
@@ -20,7 +21,7 @@
             <span class="navbar-toggler-bar bar3"></span>
           </button>
         </div>
-        <a class="navbar-brand" href="#pablo">{{ routeName }}</a>
+        <a class="navbar-brand">{{ routeName }}</a>
       </div>
       <button
         class="navbar-toggler"
@@ -48,7 +49,6 @@
             >
               <a
                 slot="title"
-                href="#"
                 class="nav-link"
                 data-toggle="dropdown"
                 aria-expanded="true"
@@ -73,13 +73,15 @@
                   <li class="nav-link">
                     <a
                       :href="
-                        routerProps.REQUEST_TICKET.ROOT_PATH.concat(
-                          '/',
-                          routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH.replace(
-                            ':id',
-                            notification.requestId
-                          )
-                        )
+                        !isDisableElement
+                          ? routerProps.REQUEST_TICKET.ROOT_PATH.concat(
+                              '/',
+                              routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH.replace(
+                                ':id',
+                                notification.requestId
+                              )
+                            )
+                          : null
                       "
                       class=" nav-item dropdown-item "
                       target="_blank"
@@ -101,29 +103,31 @@
                     </a>
                   </li>
                 </div>
-                <div class="dropdown-divider" />
-                <div
-                  class="d-flex justify-content-around"
-                  id="notification-button"
-                >
-                  <base-button
-                    size="sm"
-                    type="success"
-                    @click="readAllNotification"
-                    class="tim-icons icon-check-2"
-                  />
-                  <base-button
-                    size="sm"
-                    type="info"
-                    @click="reloadNotification"
-                    class="tim-icons icon-refresh-02"
-                  />
-                  <base-button
-                    size="sm"
-                    type="warning"
-                    @click="cleanAllNotification"
-                    class="btn tim-icons icon-trash-simple"
-                  />
+                <div v-if="!isDisableElement">
+                  <div class="dropdown-divider" />
+                  <div
+                    class="d-flex justify-content-around"
+                    id="notification-button"
+                  >
+                    <base-button
+                      size="sm"
+                      type="success"
+                      @click="readAllNotification"
+                      class="tim-icons icon-check-2"
+                    />
+                    <base-button
+                      size="sm"
+                      type="info"
+                      @click="reloadNotification"
+                      class="tim-icons icon-refresh-02"
+                    />
+                    <base-button
+                      size="sm"
+                      type="warning"
+                      @click="cleanAllNotification"
+                      class="btn tim-icons icon-trash-simple"
+                    />
+                  </div>
                 </div>
               </div>
             </base-dropdown>
@@ -151,7 +155,11 @@
               </a>
               <li class="nav-item">
                 <div class="text-left">
-                  <a href="/user/profile" aria-current="page" class="nav-link">
+                  <a
+                    :href="!isDisableElement ? routerProps.USER.PATH : null"
+                    aria-current="page"
+                    class="nav-link"
+                  >
                     <p>Profile</p>
                   </a>
                 </div>
@@ -159,7 +167,7 @@
               <div class="dropdown-divider"></div>
               <li class="nav-item">
                 <div class="text-left">
-                  <a href="#" class="nav-link">
+                  <a class="nav-link">
                     <p @click="logout">Log out</p>
                   </a>
                 </div>
@@ -172,11 +180,12 @@
   </nav>
 </template>
 <script>
+import Loading from "@/components/Loading/Loading.vue";
 import { CollapseTransition } from "vue2-transitions";
 import Modal from "@/components/Modal";
-import { LOCAL_STORAGE, EVENT_BUS } from "../../constant/common";
+import { LOCAL_STORAGE, EVENT_BUS, ROLES } from "@/constant/common";
 import { NOTIFICATION_UPDATE_REQUEST } from "@/constant/notification";
-import { logout } from "../../api/authen";
+import { logout } from "@/api/authen";
 import { URL_IMG } from "@/utils/request";
 import {
   findNotificationByReceiverId,
@@ -186,12 +195,12 @@ import {
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import jwt_decode from "jwt-decode";
 import { getAccessToken } from "@/utils/cookies";
-import { ROLES } from "@/constant/common";
 
 export default {
   components: {
     CollapseTransition,
     Modal,
+    Loading,
   },
   computed: {
     routeName() {
@@ -211,6 +220,8 @@ export default {
       searchModalVisible: false,
       searchQuery: "",
       avatar: null,
+      EVENT_BUS: EVENT_BUS,
+      isDisableElement: false,
     };
   },
   async created() {
@@ -221,6 +232,9 @@ export default {
     await this.findNotificationByReceiverId();
   },
   methods: {
+    disableElement() {
+      this.isDisableElement = !this.isDisableElement;
+    },
     async getProfile() {
       let user = await JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
       this.title = user.personalName;
@@ -260,9 +274,15 @@ export default {
       this.$sidebar.displaySidebar(false);
     },
     toggleMenu() {
+      if (this.isDisableElement) {
+        return;
+      }
       this.showMenu = !this.showMenu;
     },
     logout() {
+      if (this.isDisableElement) {
+        return;
+      }
       logout(null).then((res) => {
         this.$store.dispatch("logout", false);
       });

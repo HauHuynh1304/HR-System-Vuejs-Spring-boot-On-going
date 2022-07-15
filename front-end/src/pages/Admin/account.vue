@@ -313,6 +313,7 @@ export default {
             horizontalAlign: "center",
           });
         } else {
+          this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
           addNewAccount(this.data)
             .then((res) => {
               if (res.status === 200) {
@@ -330,6 +331,7 @@ export default {
                   horizontalAlign: "center",
                 });
               }
+              this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
             })
             .catch(() => {
               this.$notify({
@@ -338,6 +340,7 @@ export default {
                 horizontalAlign: "center",
               });
               this.reset();
+              this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
             });
         }
       });
