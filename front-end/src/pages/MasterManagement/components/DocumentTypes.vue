@@ -323,7 +323,7 @@ export default {
     },
     initData() {
       findAllDocuments().then((res) => {
-        this.document = res?.data;
+        this.document = res.data;
       });
     },
   },

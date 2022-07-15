@@ -152,9 +152,9 @@ export default {
     },
   },
   async created() {
-    await findAllAccounts().then((res) => (this.listAccounts = res?.data));
-    await findPositions().then((res) => (this.listPositions = res?.data));
-    await findRooms().then((res) => (this.listRooms = res?.data));
+    await findAllAccounts().then((res) => (this.listAccounts = res.data));
+    await findPositions().then((res) => (this.listPositions = res.data));
+    await findRooms().then((res) => (this.listRooms = res.data));
   },
 };
 </script>

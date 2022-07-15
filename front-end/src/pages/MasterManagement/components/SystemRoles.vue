@@ -358,7 +358,7 @@ export default {
     },
     initData() {
       findAllRoles().then((res) => {
-        this.systemRoles = res?.data;
+        this.systemRoles = res.data;
       });
     },
   },

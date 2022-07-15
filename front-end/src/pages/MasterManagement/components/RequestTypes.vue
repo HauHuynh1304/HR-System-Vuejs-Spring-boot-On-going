@@ -329,7 +329,7 @@ export default {
     },
     initData() {
       findAllRequestType().then((res) => {
-        this.requestType = res?.data;
+        this.requestType = res.data;
       });
     },
   },

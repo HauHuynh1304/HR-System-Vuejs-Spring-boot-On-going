@@ -28,7 +28,7 @@ export const get = (url, params) => {
   return new Promise((resolve, reject) => {
     request.get(url + params).then(
       (obj) => {
-        resolve(obj?.data);
+        if (obj !== undefined && obj.data) resolve(obj.data);
       },
       (err) => {
         reject(err);
@@ -41,7 +41,7 @@ export const post = (url, params, config) => {
   return new Promise((resolve, reject) => {
     request.post(url, params, config).then(
       (obj) => {
-        resolve(obj?.data);
+        if (obj !== undefined && obj.data) resolve(obj.data);
       },
       (err) => {
         reject(err);
@@ -52,8 +52,9 @@ export const post = (url, params, config) => {
 
 request.interceptors.request.use(
   async (config) => {
-    if (getAccessToken()) {
-      config.headers["Authorization"] = "Bearer " + (await getAccessToken());
+    let accessToken = await getAccessToken();
+    if (accessToken) {
+      config.headers["Authorization"] = "Bearer " + accessToken;
     }
     return config;
   },
@@ -62,22 +63,27 @@ request.interceptors.request.use(
   }
 );
 
-request.interceptors.response.use(async (response) => {
+request.interceptors.response.use((response) => {
   const originalRequest = response.config;
   let status = response?.data.status;
   switch (status) {
     case 511:
       if (!originalRequest._retry) {
         originalRequest._retry = true;
-        const res = await post(API.AUTHEN.REFRESH_TOKEN, {
-          data: {
-            refreshTokenName: getRefreshToken(),
-          },
+        return new Promise((resolve, reject) => {
+          post(API.AUTHEN.REFRESH_TOKEN, {
+            data: {
+              refreshTokenName: getRefreshToken(),
+            },
+          }).then((res) => {
+            if (res !== undefined && res.data) {
+              originalRequest.headers["Authorization"] =
+                "Bearer " + res.data.accessToken;
+              setAccessToken(res.data.accessToken);
+            }
+            resolve(request(originalRequest));
+          });
         });
-        originalRequest.headers["Authorization"] =
-          "Bearer " + res?.data.accessToken;
-        await setAccessToken(res?.data.accessToken);
-        return request(originalRequest);
       } else {
         // when restart project
         store.dispatch("logout", false);
@@ -87,9 +93,6 @@ request.interceptors.response.use(async (response) => {
       if (originalRequest.url === API.AUTHEN.REFRESH_TOKEN) {
         store.dispatch("logout", false);
       }
-      break;
-    case 499:
-      store.dispatch("logout", false);
       break;
     default:
       return response;

@@ -316,7 +316,7 @@ export default {
     await findAvailbleAccounts().then(
       (res) => (this.originAccounts = res?.data)
     );
-    await findRooms().then((res) => (this.originRooms = res?.data));
+    await findRooms().then((res) => (this.originRooms = res.data));
     await findPositions().then((res) => {
       this.originPositions = res.data;
       this.originPositionOptions = res.data.map((el) => el.positionName);
@@ -393,7 +393,7 @@ export default {
             horizontalAlign: "center",
           });
           findAvailbleAccounts().then(
-            (res) => (this.originAccounts = res?.data)
+            (res) => (this.originAccounts = res.data)
           );
           this.resetForm();
         })
