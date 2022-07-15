@@ -161,6 +161,7 @@ export default {
       ) {
         return;
       } else {
+        this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
         mutipleUpdateRequestTicketStatus(this.mutipleUpdateData).then((res) => {
           if (res.status === 200) {
             this.$notify({
@@ -178,6 +179,7 @@ export default {
               horizontalAlign: "center",
             });
           }
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
       }
     },
@@ -192,6 +194,7 @@ export default {
       ) {
         return;
       } else {
+        this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
         mutipleUpdateRequestTicketStatus(this.mutipleUpdateData).then((res) => {
           if (res.status === 200) {
             this.$notify({
@@ -209,6 +212,7 @@ export default {
               horizontalAlign: "center",
             });
           }
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
       }
     },

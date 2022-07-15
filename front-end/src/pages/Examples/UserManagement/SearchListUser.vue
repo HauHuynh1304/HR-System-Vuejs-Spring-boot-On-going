@@ -139,8 +139,10 @@ export default {
       this.onSearch;
     },
     onSearch() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findListEmployee(this.data).then((res) => {
         this.$bus.emit(EVENT_BUS.FETCH_DATA_LIST_EMPLOYEE, res.data);
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     onResetSearch() {

@@ -87,8 +87,10 @@ export default {
       this.onSearch;
     },
     onSearch() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findListRequestedTicket(this.submitObj).then((res) => {
         this.$bus.emit(EVENT_BUS.FIND_REQUESTED_TICKET, res.data);
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     onReset() {
