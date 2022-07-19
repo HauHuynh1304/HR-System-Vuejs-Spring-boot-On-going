@@ -47,18 +47,31 @@
 			<level>ERROR</level>
 		</filter>
 	</appender>
-
-	<logger name="com.company.hrsystem">
-		<appender-ref ref="SAVE-TO-NOMAL-FILE" level="debug" />
-		<appender-ref ref="SAVE-TO-ERROR-FILE" level="error" />
-	</logger>
 	
-	<logger name="com.zaxxer.hikari.pool.PoolBase" level="ERROR"/>
-    <logger name="com.zaxxer.hikari.pool.HikariPool" level="ERROR"/>
-    <logger name="com.zaxxer.hikari.HikariDataSource" level="ERROR"/>
+	<springProfile name="dev">
+		<logger name="com.company.hrsystem">
+			<appender-ref ref="SAVE-TO-NOMAL-FILE" level="debug" />
+			<appender-ref ref="SAVE-TO-ERROR-FILE" level="error" />
+		</logger>
+	
+		<logger name="com.zaxxer.hikari.pool.PoolBase" level="ERROR"/>
+	    <logger name="com.zaxxer.hikari.pool.HikariPool" level="ERROR"/>
+	    <logger name="com.zaxxer.hikari.HikariDataSource" level="ERROR"/>
 
-	<root level="debug" additivity="false">
-		<appender-ref ref="stdout" />
-	</root>
+		<root level="debug" additivity="false">
+			<appender-ref ref="stdout" />
+		</root>
+  	</springProfile>
 
+	<springProfile name="prod">
+		<logger name="com.company.hrsystem">
+			<appender-ref ref="SAVE-TO-NOMAL-FILE" level="info" />
+			<appender-ref ref="SAVE-TO-ERROR-FILE" level="error" />
+		</logger>
+
+		<root level="info" additivity="false">
+			<appender-ref ref="stdout" />
+		</root>
+  	</springProfile>
+  	
 </configuration>
