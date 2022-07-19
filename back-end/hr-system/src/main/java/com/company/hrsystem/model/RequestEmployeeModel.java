@@ -1,6 +1,7 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +24,9 @@ public abstract class RequestEmployeeModel implements Serializable {
 	
 	private Integer requesterActionId;
 
-	private String startDate;
+	private Date startDate;
 
-	private String endDate;
+	private Date endDate;
 
 	private String partialDate;
 

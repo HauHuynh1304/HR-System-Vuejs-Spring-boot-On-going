@@ -3,7 +3,7 @@
 <mapper
 	namespace="com.company.hrsystem.mapper.SystemAccountRoleMapper">
 	<insert id="insertAccountRole">
-		INSERT IGNORE INTO System_account_role (system_account_id, system_role_id)
+		INSERT INTO System_account_role (system_account_id, system_role_id)
 		VALUES
 		<foreach collection="roleIds" item="item" open="("
 			separator="),(" close=")">

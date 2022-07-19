@@ -11,7 +11,7 @@
 			<if test="personalName != null and personalName != '' ">
 				personal_name,
 			</if>
-			<if test="personalBirthday != null and personalBirthday != '' ">
+			<if test="personalBirthday != null ">
 				personal_birthday,
 			</if>
 			<if test="personalAddress != null and personalAddress != '' ">
@@ -37,9 +37,8 @@
 			<if test="personalName != null and personalName != '' ">
 				#{personalName, jdbcType=VARCHAR},
 			</if>
-			<if test="personalBirthday != null and personalBirthday != '' ">
-				STR_TO_DATE(#{personalBirthday, jdbcType=VARCHAR},
-				"%Y-%m-%d"),
+			<if test="personalBirthday != null ">
+				#{personalBirthday, jdbcType=DATE},
 			</if>
 			<if test="personalAddress != null and personalAddress != '' ">
 				#{personalAddress, jdbcType=VARCHAR},
@@ -69,9 +68,8 @@
 			<if test="personalName != null and personalName != '' ">
 				personal_name = #{personalName, jdbcType=VARCHAR},
 			</if>
-			<if test="personalBirthday != null and personalBirthday != '' ">
-				personal_birthday = STR_TO_DATE(#{personalBirthday, jdbcType=VARCHAR},
-				"%Y-%m-%d"),
+			<if test="personalBirthday != null ">
+				personal_birthday = #{personalBirthday, jdbcType=DATE},
 			</if>
 			<if test="personalAddress != null and personalAddress != '' ">
 				personal_address = #{personalAddress, jdbcType=VARCHAR},

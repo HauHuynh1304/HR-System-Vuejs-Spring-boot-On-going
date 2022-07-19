@@ -1,6 +1,7 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,16 +26,16 @@ public abstract class EmployeeModel implements Serializable {
 
 	private Boolean deletedFlag;
 
-	private String employeeStartDate;
+	private Date employeeStartDate;
 
-	private String employeeEndDate;
+	private Date employeeEndDate;
 
 	private String createdAt;
 
 	private String updatedAt;
 
 	public EmployeeModel(Integer employeeId, String employeeProfileId, Integer roomId, Integer systemAccountId,
-			String employeeStartDate) {
+			Date employeeStartDate) {
 		this.employeeId = employeeId;
 		this.employeeProfileId = employeeProfileId;
 		this.roomId = roomId;

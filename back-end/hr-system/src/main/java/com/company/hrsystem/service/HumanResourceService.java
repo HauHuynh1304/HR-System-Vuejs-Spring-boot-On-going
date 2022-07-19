@@ -47,6 +47,7 @@ import com.company.hrsystem.utils.LogUtil;
 import com.company.hrsystem.utils.MessageUtil;
 import com.company.hrsystem.utils.ObjectUtil;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Service
 public class HumanResourceService {
@@ -102,7 +103,7 @@ public class HumanResourceService {
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate insertEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
-		Gson gson = new Gson();
+		Gson gson=  new GsonBuilder().setDateFormat(DateUtil.DAY).create();
 		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
 		String fileName = null;
 		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
@@ -153,7 +154,7 @@ public class HumanResourceService {
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate updateEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
-		Gson gson = new Gson();
+		Gson gson=  new GsonBuilder().setDateFormat(DateUtil.DAY).create();
 		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
 		EmployeeDto employee = request.getEmployee();
 		PersonalInfoDto personalInfo = request.getPersonalInfo();

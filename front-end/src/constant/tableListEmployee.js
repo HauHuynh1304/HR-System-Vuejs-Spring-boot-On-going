@@ -1,3 +1,6 @@
+import moment from "moment";
+import { DATE_FORMAT } from "./common";
+
 export const TABLE_LIST_EMPLOYEE = {
   fields: [
     {
@@ -11,6 +14,9 @@ export const TABLE_LIST_EMPLOYEE = {
       label: "Birthday",
       thClass: "text-center text-info",
       tdClass: "text-center",
+      formatter: (value) => {
+        return moment(value).format(DATE_FORMAT);
+      },
     },
     {
       key: "personalInfo.personalPhoneNumber",
@@ -29,12 +35,21 @@ export const TABLE_LIST_EMPLOYEE = {
       label: "Start date",
       thClass: "text-center text-info",
       tdClass: "text-center",
+      formatter: (value) => {
+        return moment(value).format(DATE_FORMAT);
+      },
     },
     {
       key: "employee.employeeEndDate",
       label: "End date",
       thClass: "text-center text-info",
       tdClass: "text-center",
+      formatter: (value) => {
+        if (value) {
+          return moment(value).format(DATE_FORMAT);
+        }
+        return null;
+      },
     },
     {
       key: "position",

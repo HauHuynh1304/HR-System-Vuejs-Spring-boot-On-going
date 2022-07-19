@@ -122,6 +122,7 @@ import {
 } from "@/constant/searchListUserForm";
 import { resetObject } from "@/utils/objectUtil";
 import { EVENT_BUS } from "@/constant/common";
+import { MESSAGE } from "@/constant/message";
 export default {
   name: "Search-list-user",
   data() {
@@ -140,10 +141,20 @@ export default {
     },
     onSearch() {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      findListEmployee(this.data).then((res) => {
-        this.$bus.emit(EVENT_BUS.FETCH_DATA_LIST_EMPLOYEE, res.data);
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-      });
+      findListEmployee(this.data)
+        .then((res) => {
+          this.$bus.emit(EVENT_BUS.FETCH_DATA_LIST_EMPLOYEE, res.data);
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+        })
+        .catch((err) => {
+          this.$notify({
+            type: "warning",
+            message: MESSAGE.CALL_API_ERR.ERR,
+            icon: "tim-icons icon-bell-55",
+            horizontalAlign: "center",
+          });
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+        });
     },
     onResetSearch() {
       resetObject(this.data.personalInfo);

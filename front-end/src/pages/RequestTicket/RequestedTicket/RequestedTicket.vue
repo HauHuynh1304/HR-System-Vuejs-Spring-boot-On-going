@@ -7,7 +7,7 @@
             <div class="col-md-6 title">
               {{
                 isRequesterArea
-                  ? routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.NAME.toUpperCase()
+                  ? routerProps.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.NAME.toUpperCase()
                   : routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.NAME.toUpperCase()
               }}
             </div>
@@ -223,6 +223,8 @@ import { updateRequesterAction } from "@/api/business";
 import { resetObject } from "@/utils/objectUtil";
 import jwt_decode from "jwt-decode";
 import { getAccessToken } from "@/utils/cookies";
+import { DATE_FORMAT } from "@/constant/common";
+import moment from "moment";
 
 export default {
   components: { Comment },
@@ -234,6 +236,7 @@ export default {
       routerProps: FE_ROUTER_PROP,
       action: ACTION,
       userEmail: null,
+      DATE_FORMAT: DATE_FORMAT,
     };
   },
   async created() {
@@ -246,6 +249,12 @@ export default {
   methods: {
     getRequestedTicketData() {
       findRequestedTicket(this.$route.params.id).then((res) => {
+        res.data.requestEmployee.startDate = moment(
+          res.data.requestEmployee.startDate
+        ).format(DATE_FORMAT);
+        res.data.requestEmployee.endDate = moment(
+          res.data.requestEmployee.endDate
+        ).format(DATE_FORMAT);
         this.requestTicket = res.data;
       });
     },

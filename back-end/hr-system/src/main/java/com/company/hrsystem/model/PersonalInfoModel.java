@@ -1,6 +1,7 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public abstract class PersonalInfoModel implements Serializable {
 
 	private String personalName;
 
-	private String personalBirthday;
+	private Date personalBirthday;
 
 	private String personalAddress;
 
@@ -35,7 +36,7 @@ public abstract class PersonalInfoModel implements Serializable {
 
 	private String updatedAt;
 
-	public PersonalInfoModel(Integer personalInfoId, String personalName, String personalBirthday,
+	public PersonalInfoModel(Integer personalInfoId, String personalName, Date personalBirthday,
 			String personalAddress, String personalPhoneNumber, String personalSex, String personalIdCard,
 			String personalEmail) {
 		this.personalInfoId = personalInfoId;

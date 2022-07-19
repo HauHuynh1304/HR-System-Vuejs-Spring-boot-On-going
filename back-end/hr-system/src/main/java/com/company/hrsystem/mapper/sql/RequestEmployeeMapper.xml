@@ -20,10 +20,10 @@
 			<if test="requesterActionDto.requesterActionId != null and requesterActionDto.requesterActionId != '' ">
 				requester_action_id,
 			</if>
-			<if test="requestEmployeeDto.startDate != null and requestEmployeeDto.startDate != '' ">
+			<if test="requestEmployeeDto.startDate != null ">
 				start_date,
 			</if>
-			<if test="requestEmployeeDto.endDate != null and requestEmployeeDto.endDate != '' ">
+			<if test="requestEmployeeDto.endDate != null ">
 				end_date,
 			</if>
 			<if test="requestEmployeeDto.partialDate != null and requestEmployeeDto.partialDate != '' ">
@@ -56,15 +56,11 @@
 			<if test="requesterActionDto.requesterActionId != null and requesterActionDto.requesterActionId != '' ">
 				#{requesterActionDto.requesterActionId, jdbcType=INTEGER},
 			</if>
-			<if test="requestEmployeeDto.startDate != null and requestEmployeeDto.startDate != '' ">
-				STR_TO_DATE(#{requestEmployeeDto.startDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d"),
+			<if test="requestEmployeeDto.startDate != null ">
+				#{requestEmployeeDto.startDate, jdbcType=DATE},
 			</if>
-			<if test="requestEmployeeDto.endDate != null and requestEmployeeDto.endDate != '' ">
-				STR_TO_DATE(#{requestEmployeeDto.endDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d"),
+			<if test="requestEmployeeDto.endDate != null ">
+				#{requestEmployeeDto.endDate, jdbcType=DATE},
 			</if>
 			<if test="requestEmployeeDto.partialDate != null and requestEmployeeDto.partialDate != '' ">
 				#{requestEmployeeDto.partialDate, jdbcType=VARCHAR},
@@ -76,7 +72,7 @@
 			<if test="requestEmployeeDto.expectedApproveDate != null and requestEmployeeDto.expectedApproveDate != '' ">
 				#{requestEmployeeDto.expectedApproveDate, jdbcType=VARCHAR},
 			</if>
-			<if test="requestEmployeeDto.duration != null and requestEmployeeDto.duration != '' ">
+			<if test="requestEmployeeDto.duration != null ">
 				#{requestEmployeeDto.duration, jdbcType=FLOAT},
 			</if>
 		</trim>
@@ -177,14 +173,10 @@
 		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
 			re.employee_id = #{requestEmployee.employeeId, jdbcType=INTEGER}
 			 <if test="requestEmployee.startDate != null and requestEmployee.endDate == null">
-				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
-					jdbcType=VARCHAR},
-					"%Y-%m-%d")
+				AND re.start_date &gt;= #{requestEmployee.startDate, jdbcType=DATE}
 			</if>
 			<if test="requestEmployee.endDate != null and requestEmployee.startDate == null">
-				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
-					jdbcType=VARCHAR},
-					"%Y-%m-%d")
+				AND re.end_date &lt;= #{requestEmployee.endDate, jdbcType=DATE}
 			</if>
 			<if test="requestEmployee.startDate != null and requestEmployee.endDate != null">
 				AND 
@@ -239,14 +231,10 @@
 		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
 			re.request_status = "APPROVED" 
 			<if test="requestEmployee.startDate != null and requestEmployee.endDate == null">
-				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
-					jdbcType=VARCHAR},
-					"%Y-%m-%d")
+				AND re.start_date &gt;= #{requestEmployee.startDate, jdbcType=DATE}
 			</if>
 			<if test="requestEmployee.endDate != null and requestEmployee.startDate == null">
-				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
-					jdbcType=VARCHAR},
-					"%Y-%m-%d")
+				AND re.end_date &lt;= #{requestEmployee.endDate, jdbcType=DATE}
 			</if>
 			<if test="requestEmployee.startDate != null and requestEmployee.endDate != null">
 				AND 
@@ -396,14 +384,10 @@
 				)
 			)
 			<if test="requestEmployee.startDate != null and requestEmployee.endDate == null">
-				AND re.start_date &gt;= STR_TO_DATE(#{requestEmployee.startDate,
-					jdbcType=VARCHAR},
-					"%Y-%m-%d")
+				AND re.start_date &gt;= #{requestEmployee.startDate, jdbcType=DATE}
 			</if>
 			<if test="requestEmployee.endDate != null and requestEmployee.startDate == null">
-				AND re.end_date &lt;= STR_TO_DATE(#{requestEmployee.endDate,
-					jdbcType=VARCHAR},
-					"%Y-%m-%d")
+				AND re.end_date &lt;= #{requestEmployee.endDate, jdbcType=DATE}
 			</if>
 			<if test="requestEmployee.startDate != null and requestEmployee.endDate != null">
 				AND 
@@ -457,21 +441,21 @@
 		(
 			re.start_date 
 			BETWEEN 
-				STR_TO_DATE(#{requestEmployee.startDate, jdbcType=VARCHAR},"%Y-%m-%d")
+				#{requestEmployee.startDate, jdbcType=DATE}
 			AND  
-				STR_TO_DATE(#{requestEmployee.endDate, jdbcType=VARCHAR}, "%Y-%m-%d")
+				#{requestEmployee.endDate, jdbcType=DATE}
 		)
 		OR	
 		(
 			re.end_date 
 			BETWEEN 
-				STR_TO_DATE(#{requestEmployee.startDate, jdbcType=VARCHAR},"%Y-%m-%d")
+				#{requestEmployee.startDate, jdbcType=DATE}
 			AND  
-			STR_TO_DATE(#{requestEmployee.endDate, jdbcType=VARCHAR}, "%Y-%m-%d")
+				#{requestEmployee.endDate, jdbcType=DATE}
 		)
 		OR
 		(
-			STR_TO_DATE(#{requestEmployee.startDate, jdbcType=VARCHAR},"%Y-%m-%d")
+			#{requestEmployee.startDate, jdbcType=DATE}
 			BETWEEN 
 				re.start_date 
 			AND
@@ -479,7 +463,7 @@
 		)
 		OR
 		(
-			STR_TO_DATE(#{requestEmployee.endDate, jdbcType=VARCHAR},"%Y-%m-%d")
+			#{requestEmployee.endDate, jdbcType=DATE}
 			BETWEEN 
 				re.start_date 
 			AND

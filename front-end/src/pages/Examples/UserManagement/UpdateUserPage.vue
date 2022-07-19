@@ -187,12 +187,18 @@ import {
   findRooms,
 } from "@/api/humanResources";
 import { MESSAGE } from "@/constant/message";
-import { EVENT_BUS, SEX_SELECT, LOCAL_STORAGE } from "@/constant/common";
+import {
+  EVENT_BUS,
+  SEX_SELECT,
+  LOCAL_STORAGE,
+  DATE_FORMAT,
+} from "@/constant/common";
 import { isValidEmail, isValidNumber } from "@/utils/validate";
 import { URL_IMG } from "@/utils/request";
 import { ACTIVED_STATUS } from "@/constant/searchListUserForm";
 import DocumentComponent from "./components/DocumentComponent.vue";
 import PositionComponent from "./components/PositionComponent.vue";
+import moment from "moment";
 
 export default {
   components: { Card, DocumentComponent, PositionComponent },
@@ -218,21 +224,30 @@ export default {
   },
   async created() {
     await findRooms().then((res) => (this.initRooms = res.data));
-    await findEmployeeById(this.$route.params.id).then((res) => {
-      this.employeeObj = res.data;
-      this.originRoom = Object.assign({}, res.data.room);
-      this.originEmployeeObj = Object.assign({}, res.data.employee);
-      this.originPersonalInfoObj = Object.assign({}, res.data.personalInfo);
-      this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
-    });
+    await this.findEmployeeById();
     this.$bus.on(EVENT_BUS.REFRESH_EMPLOYEE, () => {
-      findEmployeeById(this.$route.params.id).then((res) => {
-        this.employeeObj = res.data;
-        this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
-      });
+      this.findEmployeeById();
     });
   },
   methods: {
+    findEmployeeById() {
+      findEmployeeById(this.$route.params.id).then((res) => {
+        res.data.employee.employeeStartDate = moment(
+          res.data.employee.employeeStartDate
+        ).format(DATE_FORMAT);
+        res.data.employee.employeeEndDate = moment(
+          res.data.employee.employeeEndDate
+        ).format(DATE_FORMAT);
+        res.data.personalInfo.personalBirthday = moment(
+          res.data.personalInfo.personalBirthday
+        ).format(DATE_FORMAT);
+        this.employeeObj = res.data;
+        this.originRoom = Object.assign({}, res.data.room);
+        this.originEmployeeObj = Object.assign({}, res.data.employee);
+        this.originPersonalInfoObj = Object.assign({}, res.data.personalInfo);
+        this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
+      });
+    },
     fileSelected(e) {
       const file = e.target.files[0];
       if (file) {
@@ -242,6 +257,15 @@ export default {
     },
     resetForm() {
       findEmployeeById(this.$route.params.id).then((res) => {
+        res.data.employee.employeeStartDate = moment(
+          res.data.employee.employeeStartDate
+        ).format(DATE_FORMAT);
+        res.data.employee.employeeEndDate = moment(
+          res.data.employee.employeeEndDate
+        ).format(DATE_FORMAT);
+        res.data.personalInfo.personalBirthday = moment(
+          res.data.personalInfo.personalBirthday
+        ).format(DATE_FORMAT);
         this.employeeObj = res.data;
         this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
         let user = JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
