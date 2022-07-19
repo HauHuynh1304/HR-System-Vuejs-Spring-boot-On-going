@@ -283,7 +283,7 @@ import {
 } from "@/api/humanResources";
 import { resetObject, isContainNullValue } from "@/utils/objectUtil";
 import { MESSAGE } from "@/constant/message";
-import { SEX_SELECT } from "@/constant/common";
+import { SEX_SELECT, EVENT_BUS } from "@/constant/common";
 import { isValidEmail, isValidNumber } from "@/utils/validate";
 import { createImageFromUrl } from "@/utils/fileUtil";
 export default {
