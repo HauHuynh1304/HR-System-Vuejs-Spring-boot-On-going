@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="container">
+      <loading @[EVENT_BUS.DISABLE_ELEMENT]="disableElement" />
       <div class="col-lg-4 col-md-6 mt-auto ml-auto mr-auto">
         <form @submit.prevent="handleSubmit()">
           <card class="card-login card-white">
@@ -56,12 +57,15 @@ import {
 } from "../utils/cookies";
 import { MESSAGE } from "../constant/message";
 import { getLoginUserInfo } from "../api/user";
-import { LOCAL_STORAGE } from "../constant/common";
+import { LOCAL_STORAGE, EVENT_BUS, ROLES } from "@/constant/common";
 import jwt_decode from "jwt-decode";
-import { ROLES } from "@/constant/common";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
+import Loading from "@/components/Loading/Loading.vue";
 
 export default {
+  components: {
+    Loading,
+  },
   mixins: [formMixin],
   data() {
     return {
@@ -71,23 +75,29 @@ export default {
           password: null,
         },
       },
+      EVENT_BUS: EVENT_BUS,
+      isDisableElement: false,
     };
   },
   methods: {
+    disableElement() {
+      this.isDisableElement = !this.isDisableElement;
+    },
     handleSubmit() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       removeAccessToken();
       removeRefreshToken();
       login(this.formLogin)
-        .then(async (res) => {
+        .then((res) => {
           let status = res.status;
           let accessTocken = res.data.accessToken;
           let refreshToken = res.data.refreshToken;
           switch (status) {
             case 200:
-              await setAccessToken(accessTocken);
-              await setRefreshToken(refreshToken);
+              setAccessToken(accessTocken);
+              setRefreshToken(refreshToken);
               this.$store.dispatch("isLogin", true);
-              await getLoginUserInfo().then((res) => {
+              getLoginUserInfo().then((res) => {
                 localStorage.setItem(
                   LOCAL_STORAGE.NAME,
                   JSON.stringify(res.data.personalInfo)
@@ -114,6 +124,7 @@ export default {
                           .CREATE_REQUEST_TICKET.PATH
                       ),
                     });
+                this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
               });
               break;
             case 404:
@@ -122,6 +133,7 @@ export default {
                 message: MESSAGE.LOGIN.ERR,
                 horizontalAlign: "center",
               });
+              this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
             default:
               break;
           }
@@ -132,6 +144,7 @@ export default {
             message: MESSAGE.LOGIN.ERR,
             horizontalAlign: "center",
           });
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
     },
   },

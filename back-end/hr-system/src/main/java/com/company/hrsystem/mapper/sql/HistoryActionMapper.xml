@@ -49,9 +49,9 @@
 		WHERE 
 			ha.employee_id = #{id, jdbcType=INTEGER} 
 			AND ha.action_type IN (
-				"LOG IN", 
-				"LOG OUT" ,
-				"CHANGE PASSWORD")
+				'LOG IN', 
+				'LOG OUT' ,
+				'CHANGE PASSWORD')
 		ORDER BY
 			ha.history_action_id DESC
 		LIMIT 20
