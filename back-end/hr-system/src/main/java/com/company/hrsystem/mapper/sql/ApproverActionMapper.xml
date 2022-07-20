@@ -22,6 +22,6 @@
 		</set>
 		WHERE
 			approver_action_id = #{approverActionId, jdbcType=INTEGER}
-				AND action_type = "WAITING"
+				AND action_type = 'WAITING'
 	</update>
 </mapper>
