@@ -3,7 +3,7 @@
 <mapper
 	namespace="com.company.hrsystem.mapper.EmployeePositionMapper">
 	<insert id="insertEmployeePosition">
-		INSERT IGNORE INTO employee_position (employee_id, position_id, start_date)
+		INSERT INTO employee_position (employee_id, position_id, start_date)
 		VALUES
 		<foreach collection="positions" item="item" open="("
 			separator="),(" close=")">

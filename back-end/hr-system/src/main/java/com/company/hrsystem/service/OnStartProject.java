@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,8 +123,8 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 			systemAccountMapper.insertSelective(dto);
 			Integer[] roleIds = { 1 };
 			systemAccountRoleMapper.insertAccountRole(dto, roleIds);
-
-			EmployeeDto employee = new EmployeeDto(1, "IT001", 1, 1, LocalDate.now().toString());
+			long millis = System.currentTimeMillis();
+			EmployeeDto employee = new EmployeeDto(1, "IT001", 1, 1, new Date(millis));
 			PersonalInfoDto personalInfoDto = new PersonalInfoDto();
 			personalInfoDto.setPersonalInfoId(1);
 			employeeMapper.insertEmployee(personalInfoDto, employee);
@@ -186,7 +186,8 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 
 	public void createPersonalInfo() {
 		if (!personnalInfoMapper.isExistPersonInfo(rootEmail)) {
-			PersonalInfoDto dto = new PersonalInfoDto(1, "N/A", LocalDate.now().toString(), "N/A", "N/A", "N/A", "N/A",
+			long millis = System.currentTimeMillis();
+			PersonalInfoDto dto = new PersonalInfoDto(1, "N/A", new Date(millis), "N/A", "N/A", "N/A", "N/A",
 					rootEmail);
 			personnalInfoMapper.insertPersonalInfo(dto);
 		}

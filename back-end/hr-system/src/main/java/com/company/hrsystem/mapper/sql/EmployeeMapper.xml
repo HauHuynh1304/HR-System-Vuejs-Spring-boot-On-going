@@ -38,9 +38,7 @@
 				#{employee.systemAccountId, jdbcType=INTEGER},
 			</if>
 			<if test="employee.employeeStartDate != null">
-				STR_TO_DATE(#{employee.employeeStartDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d"),
+				#{employee.employeeStartDate, jdbcType=DATE},
 			</if>
 		</trim>
 	</insert>
@@ -55,14 +53,12 @@
 				deleted_flag = #{deletedFlag, jdbcType=BIT},
 			</if>
 			<if test="employeeStartDate != null">
-				employee_start_date = STR_TO_DATE(#{employeeStartDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d"),
+				employee_start_date = #{employeeStartDate,
+				jdbcType=DATE},
 			</if>
 			<if test="employeeEndDate != null">
-				employee_end_date = STR_TO_DATE(#{employeeEndDate,
-				jdbcType=VARCHAR},
-				"%Y-%m-%d"),
+				employee_end_date = #{employeeEndDate,
+				jdbcType=DATE},
 			</if>
 			<if test="updatedAt != null">
 				updated_at = #{updatedAt, jdbcType=TIMESTAMP},
@@ -138,14 +134,12 @@
 					AND p.personal_phone_number = #{personalInfo.personalPhoneNumber, jdbcType=VARCHAR}
 				</if>
 				<if test="employee.employeeStartDate != null">
-					AND e.employee_start_date &gt;= STR_TO_DATE(#{employee.employeeStartDate,
-					jdbcType=VARCHAR},
-					"%Y-%m-%d")
+					AND e.employee_start_date &gt;= #{employee.employeeStartDate,
+					jdbcType=DATE}
 				</if>
 				<if test="employee.employeeEndDate != null">
-					AND e.employee_end_date &lt;= STR_TO_DATE(#{employee.employeeEndDate,
-					jdbcType=VARCHAR},
-					"%Y-%m-%d")
+					AND e.employee_end_date &lt;= #{employee.employeeEndDate,
+					jdbcType=DATE}
 				</if>
 				<if test="employee.systemAccountId != null">
 					AND e.system_account_id = #{employee.systemAccountId, jdbcType=INTEGER}
@@ -160,7 +154,29 @@
 					AND e.deleted_flag = #{employee.deletedFlag, jdbcType=BIT}
 				</if>
 				<if test="isFullDocuments != null">
-					AND <include refid="isFullDocuments" /> = #{isFullDocuments, jdbcType=BIT}
+					AND ( 
+						select
+							COUNT(1)
+						from
+							document doc
+						where
+							doc.deleted_flag = false ) = 
+								(
+								select
+									COUNT(1)
+								from
+									employee_document empdoc
+								where
+									empdoc.deleted_flag = false
+									and empdoc.employee_id = e.employee_id
+									and empdoc.document_id in (
+									select
+										doc.document_id
+									from
+										document doc
+									where
+										doc.deleted_flag = false ) 
+								) = #{isFullDocuments, jdbcType=BIT}
 				</if>
 			</trim>
 		ORDER BY e.employee_id DESC
@@ -185,8 +201,8 @@
 						)
 					)
 				)
-		THEN CAST(1 AS UNSIGNED)
-		ELSE CAST(0 AS UNSIGNED)
+		THEN 1
+		ELSE 0
 		END)
 	</sql>
 	

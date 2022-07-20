@@ -1,5 +1,7 @@
 package com.company.hrsystem.dto;
 
+import java.sql.Date;
+
 import com.company.hrsystem.model.PersonalInfoModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -16,7 +18,7 @@ public class PersonalInfoDto extends PersonalInfoModel {
 
 	private static final long serialVersionUID = 1L;
 
-	public PersonalInfoDto(Integer personalInfoId, String personalName, String personalBirthday, String personalAddress,
+	public PersonalInfoDto(Integer personalInfoId, String personalName, Date personalBirthday, String personalAddress,
 			String personalPhoneNumber, String personalSex, String personalIdCard, String personalEmail) {
 		super(personalInfoId, personalName, personalBirthday, personalAddress, personalPhoneNumber, personalSex,
 				personalIdCard, personalEmail);

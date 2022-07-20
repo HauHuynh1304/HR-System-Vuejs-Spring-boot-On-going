@@ -33,8 +33,10 @@ import UserCard from "../Profile/UserCard";
 import EditProfileForm from "../Profile/EditProfileForm";
 import EditPasswordCard from "./UserProfile/EditPasswordCard";
 import { BaseTable } from "@/components";
-import { getLoginUserInfo } from "../../api/user";
-import { LOCAL_STORAGE } from "../../constant/common";
+import { getLoginUserInfo } from "@/api/user";
+import { LOCAL_STORAGE, DATE_FORMAT } from "@/constant/common";
+import moment from "moment";
+
 export default {
   // name: "user-profile-example",
 
@@ -60,6 +62,9 @@ export default {
     async getProfile() {
       getLoginUserInfo()
         .then((res) => {
+          res.data.personalInfo.personalBirthday = moment(
+            res.data.personalInfo.personalBirthday
+          ).format(DATE_FORMAT);
           this.user = res.data;
           localStorage.setItem(
             LOCAL_STORAGE.NAME,
