@@ -72,9 +72,10 @@
 <script>
 import { findAccounts } from "../../api/authen";
 import accountVue from "./account.vue";
-import { EVENT_BUS } from "../../constant/common";
+import { EVENT_BUS, DATE_FORMAT } from "../../constant/common";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import Card from "../../components/Cards/Card.vue";
+import moment from "moment";
 
 export default {
   components: {
@@ -104,6 +105,9 @@ export default {
           label: "CREATED AT",
           thClass: "text-center text-info",
           tdClass: "text-center",
+          formatter: (value) => {
+            return moment(value).format(DATE_FORMAT);
+          },
         },
         {
           key: "roles",
