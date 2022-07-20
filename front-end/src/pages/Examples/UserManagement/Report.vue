@@ -101,6 +101,7 @@ export default {
   created() {
     this.$bus.on(EVENT_BUS.FIND_REPORT_INFO, (data) => {
       this.reportData = data;
+      this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
     });
   },
   methods: {

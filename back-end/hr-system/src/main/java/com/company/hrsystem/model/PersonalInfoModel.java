@@ -2,6 +2,7 @@ package com.company.hrsystem.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,7 @@ public abstract class PersonalInfoModel implements Serializable {
 
 	private String createdAt;
 
-	private String updatedAt;
+	private Timestamp updatedAt;
 
 	public PersonalInfoModel(Integer personalInfoId, String personalName, Date personalBirthday,
 			String personalAddress, String personalPhoneNumber, String personalSex, String personalIdCard,

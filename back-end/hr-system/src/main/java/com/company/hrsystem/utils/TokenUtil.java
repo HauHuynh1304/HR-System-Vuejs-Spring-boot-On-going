@@ -32,6 +32,9 @@ public class TokenUtil implements Serializable {
 
 	@Value("${jwt.accessValid}")
 	private String accessTokenValid;
+	
+	@Value("${jwt.refreshValid}")
+	private String refreshTokenValid;
 
 	@Value("${token.store}")
 	private String tokenStore;
@@ -44,6 +47,9 @@ public class TokenUtil implements Serializable {
 	
 	@Value("${jwt.payload.roles}")
 	private String roles;
+	
+	@Value("${jwt.payload.maxValidTime}")
+	private String maxValidTime;
 
 	@Autowired
 	private CacheService cacheService;
@@ -90,6 +96,7 @@ public class TokenUtil implements Serializable {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put(id, userDetails.getId());
 		claims.put(roles, authorities);
+		claims.put(maxValidTime, mathUtil.calculateFromString(refreshTokenValid));
 		return doGenerateJWT(claims, userDetails.getUsername());
 	}
 

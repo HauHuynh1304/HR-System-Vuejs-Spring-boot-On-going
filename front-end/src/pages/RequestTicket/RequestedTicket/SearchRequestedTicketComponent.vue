@@ -80,7 +80,11 @@ export default {
     };
   },
   async created() {
-    await findRequestType().then((res) => (this.requestOptions = res.data));
+    this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
+    await findRequestType().then((res) => {
+      this.requestOptions = res.data;
+      this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+    });
   },
   methods: {
     onSubmit() {
@@ -90,7 +94,6 @@ export default {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findListRequestedTicket(this.submitObj).then((res) => {
         this.$bus.emit(EVENT_BUS.FIND_REQUESTED_TICKET, res.data);
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     onReset() {

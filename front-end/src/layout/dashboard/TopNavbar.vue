@@ -176,6 +176,22 @@
           </ul>
         </div>
       </collapse-transition>
+      <div>
+        <b-modal
+          :ref="modal.id.maxValidTime"
+          :id="modal.id.maxValidTime"
+          no-close-on-backdrop
+          hide-header
+          @ok="forceLogout"
+        >
+          <div class="text-center">{{ MESSAGE.REFRESH_TOKEN_EXPIRED.ERR }}</div>
+          <template #modal-footer="{ ok}">
+            <b-button variant="success" size="sm" @click="ok()">
+              OK
+            </b-button>
+          </template>
+        </b-modal>
+      </div>
     </div>
   </nav>
 </template>
@@ -194,7 +210,8 @@ import {
 } from "@/api/business";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import jwt_decode from "jwt-decode";
-import { getAccessToken } from "@/utils/cookies";
+import { getAccessToken, getMaxValidTime } from "@/utils/cookies";
+import { MESSAGE } from "@/constant/message";
 
 export default {
   components: {
@@ -222,6 +239,13 @@ export default {
       avatar: null,
       EVENT_BUS: EVENT_BUS,
       isDisableElement: false,
+      modal: {
+        id: {
+          maxValidTime: "maxValidTime",
+        },
+      },
+      MESSAGE: MESSAGE,
+      currentTime: new Date().getTime(),
     };
   },
   async created() {
@@ -230,8 +254,18 @@ export default {
       this.getProfile();
     });
     await this.findNotificationByReceiverId();
+    setTimeout(() => {
+      this.$refs[this.modal.id.maxValidTime]?.show();
+    }, parseInt(getMaxValidTime()) - this.currentTime);
   },
   methods: {
+    forceLogout() {
+      // If use login again by using another tag
+      // Will not excute force logout
+      if (parseInt(getMaxValidTime()) - this.currentTime < 1) {
+        this.$store.dispatch("logout", false);
+      }
+    },
     disableElement() {
       this.isDisableElement = !this.isDisableElement;
     },
@@ -302,10 +336,12 @@ export default {
       }
     },
     markNotificationAsRead(data) {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       markNotificationAsRead(data).then((res) => {
         if (res.status === 200) {
-          this.findNotificationByReceiverId();
+          this.notificationData.forEach((el) => (el.readFlag = true));
         }
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     cleanAllNotification(e) {
@@ -319,10 +355,12 @@ export default {
       }
     },
     deleteNotificationByReceiver(data) {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       deleteNotificationByReceiver(data).then((res) => {
         if (res.status === 200) {
-          this.findNotificationByReceiverId();
+          this.notificationData = [];
         }
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     resetNotificationUpdateRequest() {
@@ -366,5 +404,13 @@ export default {
 
 #notification-button .tim-icons {
   font-size: 12px;
+}
+
+/deep/ .modal-dialog > .modal-content > .modal-footer {
+  display: flex;
+  justify-content: right;
+  button {
+    margin-right: 1em;
+  }
 }
 </style>

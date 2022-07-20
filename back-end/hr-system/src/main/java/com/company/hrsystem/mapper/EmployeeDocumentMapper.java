@@ -1,5 +1,6 @@
 package com.company.hrsystem.mapper;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -13,10 +14,10 @@ public interface EmployeeDocumentMapper {
 
 	int insertEmployeeDocument(EmployeeDto employee, List<EmployeeDocumentDto> documents);
 
-	int updateEmployeeDocument(List<EmployeeDocumentDto> documents, String updatedAt);
-	
+	int updateEmployeeDocument(List<EmployeeDocumentDto> documents, Timestamp updatedAt);
+
 	Set<EmployeeDocumentDto> findLastInsertListEmployeeDocument(Integer employeeId);
-	
+
 	List<EmployeeDocumentDto> findEmployeeDocumentsByEmployeeId(Integer employeeId);
 
 }

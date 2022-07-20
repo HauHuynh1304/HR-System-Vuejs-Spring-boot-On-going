@@ -125,6 +125,7 @@ export default {
     this.$bus.on(EVENT_BUS.FIND_REQUESTED_TICKET, (data) => {
       this.items = data ? data : [];
       this.totalRows = this.items.length;
+      this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
     });
   },
 };

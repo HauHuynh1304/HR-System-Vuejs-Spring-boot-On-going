@@ -44,7 +44,15 @@
                           : ""
                       }}
                     </strong>
-                    {{ comment ? "at " + comment.createdAt : null }}</span
+                    {{
+                      comment
+                        ? "at " +
+                          comment.createdAt.substring(
+                            0,
+                            comment.createdAt.indexOf(".")
+                          )
+                        : null
+                    }}</span
                   >
                 </div>
                 <div
@@ -92,8 +100,10 @@
 import jwt_decode from "jwt-decode";
 import { getAccessToken } from "../../utils/cookies";
 import { COMMENT_REQUEST } from "@/constant/comment";
+import { EVENT_BUS } from "@/constant/common";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import { insertComment, findListComment } from "@/api/business";
+
 export default {
   props: {
     requestTicket: {
@@ -118,6 +128,7 @@ export default {
     async findListComment() {
       await findListComment(this.$route.params.id).then((res) => {
         this.comments = res.data;
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
       // Scroll to the last comment
       let objDiv = document.getElementById("chat-box");
@@ -153,9 +164,10 @@ export default {
         return;
       }
       this.setObjActionId();
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       insertComment(this.commentRequest).then(() => {
-        (this.commentRequest.comment.commentDetail = null),
-          this.findListComment();
+        this.commentRequest.comment.commentDetail = null;
+        this.findListComment();
       });
     },
   },

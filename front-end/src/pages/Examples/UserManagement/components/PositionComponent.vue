@@ -200,6 +200,8 @@ import { POSITION_TABLE_COLUMN } from "@/constant/positionTable";
 import { ACTION, EVENT_BUS } from "../../../../constant/common";
 import { updateEmployee, findPositions } from "@/api/humanResources";
 import { MESSAGE } from "@/constant/message";
+import { DATE_FORMAT } from "@/constant/common";
+import moment from "moment";
 
 export default {
   name: "position-component",
@@ -312,9 +314,10 @@ export default {
       formData.append("formEmployee", new Blob([JSON.stringify(obj)]), {
         type: "application/json",
       });
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateEmployee(formData).then((res) => {
-        this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);
         this.$refs["insertPositionsModal"].hide();
+        this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);
       });
     },
     setValueDeleteFlag(action, item, button) {
@@ -342,8 +345,12 @@ export default {
     edit(item, index, button) {
       this.modalPosition.oldObj.startDate = item.startDate;
       this.modalPosition.oldObj.endDate = item.endDate;
-      this.modalPosition.normalInfo.startDate = item.startDate;
-      this.modalPosition.normalInfo.endDate = item.endDate;
+      this.modalPosition.normalInfo.startDate = moment(item.startDate).format(
+        DATE_FORMAT
+      );
+      this.modalPosition.normalInfo.endDate = item.endDate
+        ? moment(item.endDate).format(DATE_FORMAT)
+        : null;
       this.modalPosition.positionName = item.positionName;
       this.modalPosition.normalInfo.employeePositionId =
         item.employeePositionId;

@@ -1,6 +1,7 @@
 package com.company.hrsystem.service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -198,7 +199,7 @@ public class BusinessRequestService {
 			HttpServletRequest httpServletRequest) {
 		RequesterActionDto requesterActionDto = request.getData().getRequesterAction();
 		String requestStatus = requesterActionDto.getActionType();
-		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
+		Timestamp currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
 		requesterActionDto.setUpdatedAt(currentDayHourSecond);
 
 		// Check valid status from Client, ONLY CANCEL STATUS can be apply
@@ -273,7 +274,7 @@ public class BusinessRequestService {
 				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
 	}
 
-	public ResponseTemplate findRequestTicketById(String id) {
+	public ResponseTemplate findRequestTicketById(Integer id) {
 		FindTicketRequestByIdResponse obj = requestEmployeeMapper.findRequestTicketById(id,
 				employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
 		if (ObjectUtils.isEmpty(obj)) {
@@ -405,7 +406,7 @@ public class BusinessRequestService {
 	}
 
 	public void updateSupervisorAction(SupervisorActionDto supervisorActionDto, HttpServletRequest httpServletRequest) {
-		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
+		Timestamp currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
 		String requestStatus = supervisorActionDto.getActionType();
 		supervisorActionDto.setUpdatedAt(currentDayHourSecond);
 
@@ -441,7 +442,7 @@ public class BusinessRequestService {
 
 	public void updateApproverAction(ApproverActionDto approverActionDto, HttpServletRequest httpServletRequest) {
 		String requestStatus = approverActionDto.getActionType();
-		String currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
+		Timestamp currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
 		approverActionDto.setUpdatedAt(currentDayHourSecond);
 
 		// Check valid status from Client

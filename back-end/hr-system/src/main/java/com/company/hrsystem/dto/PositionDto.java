@@ -1,5 +1,7 @@
 package com.company.hrsystem.dto;
 
+import java.sql.Date;
+
 import com.company.hrsystem.model.PositionModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -16,8 +18,8 @@ public class PositionDto extends PositionModel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private String startDate;
+	private Date startDate;
 	
-	private String endDate;
+	private Date endDate;
 
 }

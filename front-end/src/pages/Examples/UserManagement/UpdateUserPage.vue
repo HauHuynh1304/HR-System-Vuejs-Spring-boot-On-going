@@ -231,6 +231,7 @@ export default {
   },
   methods: {
     findEmployeeById() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findEmployeeById(this.$route.params.id).then((res) => {
         res.data.employee.employeeStartDate = moment(
           res.data.employee.employeeStartDate
@@ -246,6 +247,7 @@ export default {
         this.originEmployeeObj = Object.assign({}, res.data.employee);
         this.originPersonalInfoObj = Object.assign({}, res.data.personalInfo);
         this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     fileSelected(e) {
@@ -256,6 +258,7 @@ export default {
       }
     },
     resetForm() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findEmployeeById(this.$route.params.id).then((res) => {
         res.data.employee.employeeStartDate = moment(
           res.data.employee.employeeStartDate
@@ -276,6 +279,7 @@ export default {
           );
           this.$bus.emit(EVENT_BUS.REFRESH_LOCAL_STORAGE);
         }
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     submitForm() {
@@ -307,7 +311,7 @@ export default {
         });
         return;
       }
-
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       let copyEmployeeObj = Object.assign({}, this.employeeObj.employee);
       diff(copyEmployeeObj, this.originEmployeeObj);
       if (!isAllNullValue(copyEmployeeObj)) {
@@ -352,6 +356,7 @@ export default {
               horizontalAlign: "center",
             });
             this.resetForm();
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           })
           .catch(() => {
             this.$notify({
@@ -360,6 +365,7 @@ export default {
               icon: "tim-icons icon-bell-55",
               horizontalAlign: "center",
             });
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           });
       }
     },

@@ -7,28 +7,38 @@ import {
 import { API } from "../constant/api";
 import store from "../store";
 
-const windownProtocol = window.location.protocol.concat(
+let windownProtocol = window.location.protocol.concat(
   "//",
   location.hostname,
   ":"
 );
-const appServerPort = process.env.VUE_APP_SERVER_PORT;
-const appBaseApiUrl = process.env.VUE_APP_BASE_API;
-
-export const URL_IMG = windownProtocol.concat(appServerPort, "/");
+let appServerPort = null;
+let appBaseApiUrl = null;
+let baseURLParam = null;
+export let URL_IMG = null;
 // miliseconds
 const timeOut = 60 * 1000;
+if (windownProtocol.includes("localhost")) {
+  appServerPort = process.env.VUE_APP_SERVER_PORT;
+  appBaseApiUrl = process.env.VUE_APP_BASE_API;
+  URL_IMG = windownProtocol.concat(appServerPort, "/");
+  baseURLParam = windownProtocol.concat(appServerPort, appBaseApiUrl);
+} else {
+  baseURLParam = process.env.VUE_APP_PRODUCT.concat(process.env.VUE_APP_BASE_API);
+  URL_IMG = process.env.VUE_APP_PRODUCT.concat("/");
+}
+
 // create an axios instance
 const request = axios.create({
   timeout: timeOut,
-  baseURL: windownProtocol.concat(appServerPort, appBaseApiUrl),
+  baseURL: baseURLParam,
 });
 
 export const get = (url, params) => {
   return new Promise((resolve, reject) => {
     request.get(url + params).then(
       (obj) => {
-        if (obj !== undefined && obj.data) resolve(obj.data);
+        resolve(obj?.data);
       },
       (err) => {
         reject(err);
@@ -41,7 +51,7 @@ export const post = (url, params, config) => {
   return new Promise((resolve, reject) => {
     request.post(url, params, config).then(
       (obj) => {
-        if (obj !== undefined && obj.data) resolve(obj.data);
+        resolve(obj?.data);
       },
       (err) => {
         reject(err);

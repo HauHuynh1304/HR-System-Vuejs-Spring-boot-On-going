@@ -1,6 +1,7 @@
 package com.company.hrsystem.service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -78,10 +79,10 @@ public class HumanResourceService {
 
 	@Autowired
 	private DocumentMapper documentMapper;
-	
+
 	@Autowired
 	private RoomMapper roomMapper;
-	
+
 	@Autowired
 	private RequestEmployeeMapper requestEmployeeMapper;
 
@@ -103,7 +104,7 @@ public class HumanResourceService {
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate insertEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
-		Gson gson=  new GsonBuilder().setDateFormat(DateUtil.DAY).create();
+		Gson gson = new GsonBuilder().setDateFormat(DateUtil.DAY).create();
 		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
 		String fileName = null;
 		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
@@ -154,13 +155,13 @@ public class HumanResourceService {
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate updateEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
-		Gson gson=  new GsonBuilder().setDateFormat(DateUtil.DAY).create();
+		Gson gson = new GsonBuilder().setDateFormat(DateUtil.DAY).create();
 		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
 		EmployeeDto employee = request.getEmployee();
 		PersonalInfoDto personalInfo = request.getPersonalInfo();
 		List<EmployeeDocumentDto> documents = request.getDocuments();
 		List<EmployeePositionDto> positions = request.getPositions();
-		String updatedAt = DateUtil.getCurrentDayHourSecond();
+		Timestamp updatedAt = DateUtil.getCurrentDayHourSecond();
 		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
 
 		try {
@@ -200,12 +201,12 @@ public class HumanResourceService {
 				historyActionService.saveHistoryAction(personalInfo, inserterId, CommonConstant.UPDATE_ACTION,
 						personalInfo.getPersonalInfoId(), CommonConstant.TABLE_PERSONAL, servletRequest);
 			}
-			
+
 			/*
-			 * In documents, parameter employeeDocumentId is always not null then it will call
-			 * API update updateEmployeeDocument if only use ObjectUtil.isEmpty(personalInfo)
-			 * So, update updateEmployeeDocument API will be executive if not null parameter
-			 * greater than 1
+			 * In documents, parameter employeeDocumentId is always not null then it will
+			 * call API update updateEmployeeDocument if only use
+			 * ObjectUtil.isEmpty(personalInfo) So, update updateEmployeeDocument API will
+			 * be executive if not null parameter greater than 1
 			 */
 			if (ObjectUtils.isNotEmpty(documents)) {
 				List<EmployeeDocumentDto> oldDocuments = new ArrayList<EmployeeDocumentDto>();
@@ -230,12 +231,12 @@ public class HumanResourceService {
 					saveHistoryLastInsertDocuments(inserterId, employee.getEmployeeId(), servletRequest);
 				}
 			}
-			
+
 			/*
-			 * In positions, parameter employeePositionId is always not null then it will call
-			 * API update updateEmployeePosition if only use ObjectUtil.isEmpty(personalInfo)
-			 * So, update updateEmployeePosition API will be executive if not null parameter
-			 * greater than 1
+			 * In positions, parameter employeePositionId is always not null then it will
+			 * call API update updateEmployeePosition if only use
+			 * ObjectUtil.isEmpty(personalInfo) So, update updateEmployeePosition API will
+			 * be executive if not null parameter greater than 1
 			 */
 			if (ObjectUtils.isNotEmpty(positions)) {
 				List<EmployeePositionDto> oldPositions = new ArrayList<EmployeePositionDto>();
@@ -304,7 +305,7 @@ public class HumanResourceService {
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
 				messageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findRooms());
 	}
-	
+
 	public ResponseTemplate findReportCaseSelected(FindListTicketRequest request) {
 		List<FindReportCaseSelectedResponse> listObj = requestEmployeeMapper.findReportCaseSelected(request.getData());
 		return new ResponseTemplate(system, version, HttpStatus.OK.value(),

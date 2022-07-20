@@ -1,26 +1,25 @@
 package com.company.hrsystem.utils;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.format.DateTimeFormatter;
 
 import com.company.hrsystem.enums.PartialDateEnum;
 
 public class DateUtil {
 
-	public static final String DAY_HOUR_SECOND = "yyyy/MM/dd HH:mm:ss";
+	public static final String DAY_HOUR_SECOND = "yyyy-mm-dd hh:mm:ss";
 
 	public static final String DAY = "yyyy/MM/dd";
 
 	public static final String TIME_ZONE = "Asia/Ho_Chi_Minh";;
 
-	public static String getCurrentDayHourSecond() {
-		DateTimeFormatter format = DateTimeFormatter.ofPattern(DAY_HOUR_SECOND);
+	public static Timestamp getCurrentDayHourSecond() {
 		LocalDateTime time = LocalDateTime.now();
-		return time.format(format);
+		return Timestamp.valueOf(time);
 	}
 
 	public static Double caculateDuration(String type, Date startDate, Date endDate) throws DateTimeException {

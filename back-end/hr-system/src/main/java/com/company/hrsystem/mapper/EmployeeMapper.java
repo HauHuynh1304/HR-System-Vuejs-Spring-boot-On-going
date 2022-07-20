@@ -13,11 +13,11 @@ import com.company.hrsystem.response.FindListEmployeesResponse;
 @Mapper
 public interface EmployeeMapper {
 
-	int insertEmployee(PersonalInfoDto personalInfo, EmployeeDto employee);
+	Integer insertEmployee(PersonalInfoDto personalInfo, EmployeeDto employee);
 	
-	int updateEmployee(EmployeeDto employee);
+	Integer updateEmployee(EmployeeDto employee);
 	
-	int findEmployeeIdByAccountId(Integer accountId);
+	Integer findEmployeeIdByAccountId(Integer accountId);
 	
 	List<FindListEmployeesResponse> findListEmployees(FindListEmployeesRequest request);
 	

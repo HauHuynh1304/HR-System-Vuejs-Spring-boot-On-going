@@ -1,6 +1,7 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public abstract class SystemRoleModel implements Serializable {
 
 	private String createdAt;
 
-	private String updatedAt;
+	private Timestamp updatedAt;
 
 	public SystemRoleModel(Integer systemRoleId, String roleName) {
 		this.systemRoleId = systemRoleId;

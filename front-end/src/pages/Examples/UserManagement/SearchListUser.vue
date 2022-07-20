@@ -144,7 +144,6 @@ export default {
       findListEmployee(this.data)
         .then((res) => {
           this.$bus.emit(EVENT_BUS.FETCH_DATA_LIST_EMPLOYEE, res.data);
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         })
         .catch((err) => {
           this.$notify({
@@ -165,9 +164,11 @@ export default {
     },
   },
   async created() {
+    this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
     await findAllAccounts().then((res) => (this.listAccounts = res.data));
     await findPositions().then((res) => (this.listPositions = res.data));
     await findRooms().then((res) => (this.listRooms = res.data));
+    this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
 };
 </script>

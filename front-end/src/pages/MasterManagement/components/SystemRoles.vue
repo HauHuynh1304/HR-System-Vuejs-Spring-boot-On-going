@@ -189,7 +189,7 @@ import {
   SYSTEM_ROLE_OBJ,
 } from "@/constant/systemRolesTable";
 import { findAllRoles, updateRole, insertRole } from "@/api/master";
-import { ACTION } from "@/constant/common";
+import { ACTION, EVENT_BUS } from "@/constant/common";
 import { resetObject, diff, isAllNullValue } from "@/utils/objectUtil";
 import { MESSAGE } from "@/constant/message";
 import { fexibleMesage } from "@/utils/message";
@@ -300,13 +300,16 @@ export default {
       }
     },
     callApiUpdate(data) {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateRole(data)
         .then((res) => {
           if (res.status === 200) {
             this.initData();
           }
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         })
         .catch((err) => {
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           this.$notify({
             type: "warning",
             message: MESSAGE.CALL_API_ERR.ERR,
@@ -316,13 +319,16 @@ export default {
         });
     },
     callApiInsert(data) {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       insertRole(data)
         .then((res) => {
           if (res.status === 200) {
             this.initData();
           }
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         })
         .catch((err) => {
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           this.$notify({
             type: "warning",
             message: MESSAGE.CALL_API_ERR.ERR,
@@ -357,8 +363,10 @@ export default {
       resetObject(this.modalRoles.newObj.systemRole);
     },
     initData() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findAllRoles().then((res) => {
         this.systemRoles = res.data;
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
   },
@@ -373,9 +381,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#systemRoles {
+/deep/ #systemRoles > .table-responsive {
   max-height: 55vh;
-  overflow-x: auto;
+  thead th {
+    background: white;
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }
 .line-through {
   text-decoration: line-through;

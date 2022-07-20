@@ -272,7 +272,7 @@
 			</if>
 			AND e.employee_id IS NOT NULL
 		ORDER BY 
-			sa.system_account_id DESC
+			e.employee_id DESC
 	</select>
   
 	<select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultType="java.lang.Integer">

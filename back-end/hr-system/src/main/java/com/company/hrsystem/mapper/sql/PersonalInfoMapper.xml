@@ -89,7 +89,7 @@
 			<if test="personalImage != null and personalImage != '' ">
 				personal_image = #{personalImage, jdbcType=VARCHAR},
 			</if>
-			<if test="updatedAt != null and updatedAt != '' ">
+			<if test="updatedAt != null ">
 				updated_at = #{updatedAt, jdbcType=TIMESTAMP},
 			</if>
 		</set>

@@ -85,6 +85,7 @@
               :name="routerProps.HUMAN_MANAGEMENT.CHILDREN.REPORT.NAME"
               icon="tim-icons icon-paper"
               class="ml-3"
+              v-if="roles.includes(ACCOUNT_ROLES.HUMAN_RESOURCES)"
             />
           </b-collapse>
         </li>

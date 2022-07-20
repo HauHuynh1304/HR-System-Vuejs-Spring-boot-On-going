@@ -179,6 +179,7 @@
                   @click="onUpdate"
                   type="info"
                   size="sm"
+                  :disabled="isDisableUpdateButton"
                 >
                   UPDATE
                 </base-button>
@@ -197,7 +198,7 @@ import { addNewAccount, updateAccount, isEmailInDb } from "../../api/authen";
 import { EVENT_BUS, ACCOUNT_STATUS } from "../../constant/common";
 import { MESSAGE } from "../../constant/message";
 import { isValidEmail, isValidPassword } from "@/utils/validate";
-import { resetObject } from "@/utils/objectUtil";
+import { resetObject, isAllNullValue } from "@/utils/objectUtil";
 export default {
   components: { BaseButton },
   name: "account-plugin",
@@ -205,6 +206,7 @@ export default {
   data() {
     return {
       // Properties for update account start
+      isDisableUpdateButton: true,
       updateLogicProperties: {
         originStatus: null,
         originRoles: [],
@@ -355,6 +357,7 @@ export default {
       resetObject(this.dataUpdateAccount.account);
       this.dataUpdateAccount.addNewRoleIds = [];
       this.dataUpdateAccount.deleteRoleIds = [];
+      this.isDisableUpdateButton = true;
     },
     onUpdate() {
       if (
@@ -404,6 +407,15 @@ export default {
       } else {
         this.dataUpdateAccount.account.deletedFlag = null;
       }
+      if (
+        !this.dataUpdateAccount.account.systemPassword &&
+        !this.dataUpdateAccount.account.deletedFlag &&
+        !this.dataUpdateAccount.addNewRoleIds.length &&
+        !this.dataUpdateAccount.deleteRoleIds.length
+      ) {
+        return;
+      }
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateAccount(this.dataUpdateAccount)
         .then((res) => {
           this.$notify({
@@ -413,7 +425,7 @@ export default {
           });
           res.status === 200
             ? this.$bus.emit(EVENT_BUS.REFRESH_TABLE_LIST_USER)
-            : null;
+            : this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         })
         .catch(() => {
           this.$notify({
@@ -421,6 +433,7 @@ export default {
             message: MESSAGE.CALL_API_ERR.ERR,
             horizontalAlign: "center",
           });
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
     },
   },
@@ -437,6 +450,7 @@ export default {
   created() {
     this.$bus.on(EVENT_BUS.EDIT_ACCOUNT, (item) => {
       if (item.length) {
+        this.isDisableUpdateButton = false;
         this.updateLogicProperties.originRoles = item[0].roles;
         this.updateLogicProperties.registeredTags = item[0].roles.map(
           (el) => el.roleName
@@ -498,5 +512,9 @@ export default {
 
 .custom-select {
   color: black;
+}
+
+.list-inline-item {
+  margin-bottom: 5px;
 }
 </style>

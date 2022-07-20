@@ -1,5 +1,7 @@
 package com.company.hrsystem.dto;
 
+import java.sql.Timestamp;
+
 import com.company.hrsystem.model.RequestEmployeeModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -17,7 +19,7 @@ public class RequestEmployeeDto extends RequestEmployeeModel {
 	private static final long serialVersionUID = 1L;
 
 	public RequestEmployeeDto(Integer requesterActionId, Integer supervisorActionId, Integer approverActionId,
-			String requestStatus, String updatedAt) {
+			String requestStatus, Timestamp updatedAt) {
 		super(requesterActionId, supervisorActionId, approverActionId, requestStatus, updatedAt);
 	}
 

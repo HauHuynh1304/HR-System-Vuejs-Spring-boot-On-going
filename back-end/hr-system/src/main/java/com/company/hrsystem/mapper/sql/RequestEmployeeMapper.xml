@@ -32,7 +32,7 @@
 			<if test="requestEmployeeDto.requestDescription != null and requestEmployeeDto.requestDescription != '' ">
 				request_description,
 			</if>
-			<if test="requestEmployeeDto.expectedApproveDate != null and requestEmployeeDto.expectedApproveDate != '' ">
+			<if test="requestEmployeeDto.expectedApproveDate != null ">
 				expected_approve_date,
 			</if>
 			<if test="requestEmployeeDto.duration != null and requestEmployeeDto.duration != '' ">
@@ -69,8 +69,8 @@
 				#{requestEmployeeDto.requestDescription,
 				jdbcType=VARCHAR},
 			</if>
-			<if test="requestEmployeeDto.expectedApproveDate != null and requestEmployeeDto.expectedApproveDate != '' ">
-				#{requestEmployeeDto.expectedApproveDate, jdbcType=VARCHAR},
+			<if test="requestEmployeeDto.expectedApproveDate != null ">
+				#{requestEmployeeDto.expectedApproveDate, jdbcType=TIMESTAMP},
 			</if>
 			<if test="requestEmployeeDto.duration != null ">
 				#{requestEmployeeDto.duration, jdbcType=FLOAT},
@@ -101,7 +101,7 @@
 			<if test="requesterActionId != null and requesterActionId != '' ">
 				AND requester_action_id = #{requesterActionId, jdbcType=INTEGER}
 			</if>
-			AND request_status = "WAITING"
+			AND request_status = 'WAITING'
 		</trim>
 	</update>
 	
@@ -114,7 +114,7 @@
 		</set>
 		WHERE
 			supervisor_action_id = #{supervisorActionId, jdbcType=INTEGER}
-				AND request_status = "WAITING"
+				AND request_status = 'WAITING'
 	</update>
 	
 	<update id="updateRequestByApprover"
@@ -126,7 +126,7 @@
 		</set>
 		WHERE
 			approver_action_id = #{approverActionId, jdbcType=INTEGER}
-				AND request_status = "WAITING"
+				AND request_status = 'WAITING'
 	</update>
 	
 	<resultMap type="com.company.hrsystem.response.FindListTicketResponse" 
@@ -229,7 +229,7 @@
 				LEFT JOIN approver_action apa
 					ON apa.approver_action_id = re.approver_action_id
 		<trim prefix="WHERE (" prefixOverrides="AND" suffix=")">
-			re.request_status = "APPROVED" 
+			re.request_status = 'APPROVED' 
 			<if test="requestEmployee.startDate != null and requestEmployee.endDate == null">
 				AND re.start_date &gt;= #{requestEmployee.startDate, jdbcType=DATE}
 			</if>
@@ -334,7 +334,7 @@
 				LEFT JOIN requester_action rqa
 					ON rqa.requester_action_id = re.requester_action_id
 		WHERE
-			re.request_id = #{id, jdbcType=VARCHAR}
+			re.request_id = #{id, jdbcType=INTEGER}
 			AND 
 			(
 				rqa.requester_id = #{employeeId, jdbcType=INTEGER}
