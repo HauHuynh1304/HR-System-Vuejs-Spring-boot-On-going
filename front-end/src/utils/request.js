@@ -28,7 +28,7 @@ export const get = (url, params) => {
   return new Promise((resolve, reject) => {
     request.get(url + params).then(
       (obj) => {
-        if (obj !== undefined && obj.data) resolve(obj.data);
+        resolve(obj?.data);
       },
       (err) => {
         reject(err);
@@ -41,7 +41,7 @@ export const post = (url, params, config) => {
   return new Promise((resolve, reject) => {
     request.post(url, params, config).then(
       (obj) => {
-        if (obj !== undefined && obj.data) resolve(obj.data);
+        resolve(obj?.data);
       },
       (err) => {
         reject(err);

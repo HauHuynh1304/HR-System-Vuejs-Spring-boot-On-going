@@ -23,6 +23,6 @@
 		</set>
 		WHERE
 			supervisor_action_id = #{supervisorActionId, jdbcType=INTEGER}
-				AND action_type = "WAITING"
+				AND action_type = 'WAITING'
 	</update>
 </mapper>
