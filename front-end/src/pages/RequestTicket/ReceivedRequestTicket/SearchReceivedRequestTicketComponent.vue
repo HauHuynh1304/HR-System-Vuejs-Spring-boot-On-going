@@ -87,7 +87,6 @@ export default {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findReceivedTicket(this.submitObj).then((res) => {
         this.$bus.emit(EVENT_BUS.FIND_RECEIVED_TICKET, res.data);
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     onReset() {
@@ -96,7 +95,11 @@ export default {
     },
   },
   async created() {
-    await findRequestType().then((res) => (this.requestOptions = res.data));
+    this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
+    await findRequestType().then((res) => {
+      this.requestOptions = res.data;
+      this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+    });
     this.$bus.on(EVENT_BUS.REFRESH_RECEIVED_TICKET, () => {
       this.onSearch();
     });

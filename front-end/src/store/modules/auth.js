@@ -1,5 +1,9 @@
 import { LOCAL_STORAGE } from "../../constant/common";
-import { removeAccessToken, removeRefreshToken } from "../../utils/cookies";
+import {
+  removeAccessToken,
+  removeRefreshToken,
+  removeMaxValidTime,
+} from "../../utils/cookies";
 import router from "@/router";
 
 export default {
@@ -30,6 +34,7 @@ export default {
       commit("isAuthenticated", payload);
       removeAccessToken();
       removeRefreshToken();
+      removeMaxValidTime();
       localStorage.removeItem(LOCAL_STORAGE.NAME);
       return router.push({ name: "Login" }).catch(() => {});
     },

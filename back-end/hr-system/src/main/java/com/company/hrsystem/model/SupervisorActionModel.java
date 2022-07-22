@@ -1,6 +1,7 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,9 +22,9 @@ public abstract class SupervisorActionModel implements Serializable {
 
 	private String createdAt;
 
-	private String updatedAt;
+	private Timestamp updatedAt;
 
-	public SupervisorActionModel(Integer supervisorActionId, String actionType, String updatedAt) {
+	public SupervisorActionModel(Integer supervisorActionId, String actionType, Timestamp updatedAt) {
 		this.supervisorActionId = supervisorActionId;
 		this.actionType = actionType;
 		this.updatedAt = updatedAt;

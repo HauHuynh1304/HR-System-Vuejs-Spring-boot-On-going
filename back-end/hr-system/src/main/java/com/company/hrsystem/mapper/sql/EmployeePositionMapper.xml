@@ -24,10 +24,10 @@
 					deleted_flag = #{item.deletedFlag}, 
 				</if>
 				<if test="item.startDate != null">
-					start_date = #{item.startDate}, 
+					start_date = #{item.startDate, jdbcType=DATE}, 
 				</if>
 				<if test="item.endDate != null">
-					end_date = #{item.endDate}, 
+					end_date = #{item.endDate, jdbcType=DATE}, 
 				</if>
 				updated_at = #{updatedAt}, 
 			</set>

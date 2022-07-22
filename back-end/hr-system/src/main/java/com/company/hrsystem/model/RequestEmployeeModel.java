@@ -2,6 +2,9 @@ package com.company.hrsystem.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +34,9 @@ public abstract class RequestEmployeeModel implements Serializable {
 	private String partialDate;
 
 	private String requestDescription;
-
-	private String expectedApproveDate;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Timestamp expectedApproveDate;
 
 	private Double duration;
 
@@ -40,10 +44,10 @@ public abstract class RequestEmployeeModel implements Serializable {
 
 	private String createdAt;
 
-	private String updatedAt;
+	private Timestamp updatedAt;
 
 	public RequestEmployeeModel(Integer requesterActionId ,Integer supervisorActionId, Integer approverActionId, String requestStatus,
-			String updatedAt) {
+			Timestamp updatedAt) {
 		this.requesterActionId = requesterActionId;
 		this.supervisorActionId = supervisorActionId;
 		this.approverActionId = approverActionId;

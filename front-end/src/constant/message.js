@@ -45,4 +45,7 @@ export const MESSAGE = {
     ERR: "{0} can't be null",
     DUPLICATE: "{0} was used",
   },
+  UPDATE_ACCOUNT:{
+    ERR_EMPTY: "Nothing to update!"
+  }
 };

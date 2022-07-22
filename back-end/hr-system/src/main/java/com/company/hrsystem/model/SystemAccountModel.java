@@ -1,6 +1,7 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,10 +24,10 @@ public abstract class SystemAccountModel implements Serializable {
 
 	private String createdAt;
 
-	private String updatedAt;
+	private Timestamp updatedAt;
 
 	public SystemAccountModel(Integer systemAccountId, String systemEmail, String systemPassword, Boolean deletedFlag,
-			String createdAt, String updatedAt) {
+			String createdAt, Timestamp updatedAt) {
 		this.systemAccountId = systemAccountId;
 		this.systemEmail = systemEmail;
 		this.systemPassword = systemPassword;

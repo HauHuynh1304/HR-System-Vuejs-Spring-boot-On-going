@@ -32,7 +32,7 @@
 			<if test="requestEmployeeDto.requestDescription != null and requestEmployeeDto.requestDescription != '' ">
 				request_description,
 			</if>
-			<if test="requestEmployeeDto.expectedApproveDate != null and requestEmployeeDto.expectedApproveDate != '' ">
+			<if test="requestEmployeeDto.expectedApproveDate != null ">
 				expected_approve_date,
 			</if>
 			<if test="requestEmployeeDto.duration != null and requestEmployeeDto.duration != '' ">
@@ -69,8 +69,8 @@
 				#{requestEmployeeDto.requestDescription,
 				jdbcType=VARCHAR},
 			</if>
-			<if test="requestEmployeeDto.expectedApproveDate != null and requestEmployeeDto.expectedApproveDate != '' ">
-				#{requestEmployeeDto.expectedApproveDate, jdbcType=VARCHAR},
+			<if test="requestEmployeeDto.expectedApproveDate != null ">
+				#{requestEmployeeDto.expectedApproveDate, jdbcType=TIMESTAMP},
 			</if>
 			<if test="requestEmployeeDto.duration != null ">
 				#{requestEmployeeDto.duration, jdbcType=FLOAT},
@@ -334,7 +334,7 @@
 				LEFT JOIN requester_action rqa
 					ON rqa.requester_action_id = re.requester_action_id
 		WHERE
-			re.request_id = #{id, jdbcType=VARCHAR}
+			re.request_id = #{id, jdbcType=INTEGER}
 			AND 
 			(
 				rqa.requester_id = #{employeeId, jdbcType=INTEGER}

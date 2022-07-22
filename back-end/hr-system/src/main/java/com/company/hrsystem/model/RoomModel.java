@@ -1,6 +1,7 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public abstract class RoomModel implements Serializable {
 
 	private String createdAt;
 
-	private String updatedAt;
+	private Timestamp updatedAt;
 
 	public RoomModel(Integer roomId, String roomName) {
 		this.roomId = roomId;

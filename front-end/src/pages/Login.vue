@@ -52,8 +52,10 @@ import { login } from "../api/authen";
 import {
   setAccessToken,
   setRefreshToken,
+  setMaxValidTime,
   removeAccessToken,
   removeRefreshToken,
+  removeMaxValidTime,
 } from "../utils/cookies";
 import { MESSAGE } from "../constant/message";
 import { getLoginUserInfo } from "../api/user";
@@ -87,6 +89,7 @@ export default {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       removeAccessToken();
       removeRefreshToken();
+      removeMaxValidTime();
       login(this.formLogin)
         .then((res) => {
           let status = res.status;
@@ -124,27 +127,31 @@ export default {
                           .CREATE_REQUEST_TICKET.PATH
                       ),
                     });
+
+                let maxValidTime =
+                  new Date().getTime() + jwt_decode(accessTocken).maxValidTime;
+                setMaxValidTime(maxValidTime);
                 this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
               });
               break;
             case 404:
+              this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
               this.$notify({
                 type: "danger",
                 message: MESSAGE.LOGIN.ERR,
                 horizontalAlign: "center",
               });
-              this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
             default:
               break;
           }
         })
         .catch(() => {
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           this.$notify({
             type: "danger",
             message: MESSAGE.LOGIN.ERR,
             horizontalAlign: "center",
           });
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
     },
   },

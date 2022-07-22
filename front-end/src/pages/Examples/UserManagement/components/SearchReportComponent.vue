@@ -146,6 +146,7 @@ export default {
     };
   },
   async created() {
+    this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
     await findAllAccounts().then((res) => {
       if (res.status === 200) {
         this.initListAccounts = res.data;
@@ -153,6 +154,7 @@ export default {
       }
     });
     await findRequestType().then((res) => (this.requestTypes = res.data));
+    this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
   methods: {
     onSubmit() {
@@ -164,7 +166,6 @@ export default {
       findReportCaseSelected(this.submitObj).then((res) => {
         this.isEnableDownload = true;
         this.$bus.emit(EVENT_BUS.FIND_REPORT_INFO, res.data);
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     onReset() {

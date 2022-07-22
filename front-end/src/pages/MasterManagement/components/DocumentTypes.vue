@@ -161,7 +161,7 @@
 <script>
 import { DOCUMENT_TABLE_COLUMN, OBJ } from "@/constant/documentTable";
 import { findAllDocuments, updateDocument, insertDocument } from "@/api/master";
-import { ACTION } from "@/constant/common";
+import { ACTION, EVENT_BUS } from "@/constant/common";
 import { resetObject, diff, isAllNullValue } from "@/utils/objectUtil";
 import { MESSAGE } from "@/constant/message";
 import { fexibleMesage } from "@/utils/message";
@@ -273,13 +273,16 @@ export default {
       }
     },
     callApiUpdate(data) {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateDocument(data)
         .then((res) => {
           if (res.status === 200) {
             this.initData();
           }
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         })
         .catch((err) => {
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           this.$notify({
             type: "warning",
             message: MESSAGE.CALL_API_ERR.ERR,
@@ -289,13 +292,16 @@ export default {
         });
     },
     callApiInsert(data) {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       insertDocument(data)
         .then((res) => {
           if (res.status === 200) {
             this.initData();
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           }
         })
         .catch((err) => {
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           this.$notify({
             type: "warning",
             message: MESSAGE.CALL_API_ERR.ERR,
@@ -322,8 +328,10 @@ export default {
       resetObject(this.modal.newObj.document);
     },
     initData() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findAllDocuments().then((res) => {
         this.document = res.data;
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
   },
@@ -338,9 +346,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#document {
+/deep/ #document > .table-responsive {
   max-height: 55vh;
-  overflow-x: auto;
+  thead th {
+    background: white;
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }
 .line-through {
   text-decoration: line-through;

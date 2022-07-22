@@ -10,10 +10,12 @@
           <base-table :data="user.historyActions" thead-classes="text-primary">
             <template slot-scope="{ row }">
               <td>
-                <p class="title">{{ row.createdAt }}</p>
-                <p class="text-muted">
-                  {{ row.actionType }} at
-                  {{ row.computerIp }}
+                <p class="title">
+                  {{ row.createdAt.substring(0, row.createdAt.indexOf(".")) }}
+                </p>
+                <p class="text-info">
+                  <Strong>{{ row.actionType }}</Strong> from
+                  <Strong>{{ row.computerIp }}</Strong>
                 </p>
               </td>
             </template>
@@ -34,7 +36,11 @@ import EditProfileForm from "../Profile/EditProfileForm";
 import EditPasswordCard from "./UserProfile/EditPasswordCard";
 import { BaseTable } from "@/components";
 import { getLoginUserInfo } from "@/api/user";
-import { LOCAL_STORAGE, DATE_FORMAT } from "@/constant/common";
+import {
+  LOCAL_STORAGE,
+  DATE_FORMAT,
+  DATE_TIME_FORMAT,
+} from "@/constant/common";
 import moment from "moment";
 
 export default {

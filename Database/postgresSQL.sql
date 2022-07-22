@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS request_employee (
     end_date DATE NOT NULL,
     partial_date varchar(10) NOT NULL DEFAULT 'ALL DAY',
     request_description varchar(255),
-    expected_approve_date timestamp NOT NULL,
+    expected_approve_date timestamptz NOT NULL,
     duration DECIMAL (5,2) NOT NULL,
     request_status varchar(10) NOT NULL DEFAULT 'WAITING',
     created_at timestamp NOT NULL default current_timestamp,

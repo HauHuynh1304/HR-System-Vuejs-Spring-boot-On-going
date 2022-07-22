@@ -1,7 +1,6 @@
 package com.company.hrsystem.response;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.sql.Timestamp;
 
 import com.company.hrsystem.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,9 +23,9 @@ public class ResponseTemplate {
 	private String message;
 
 	private String errorMessage;
-
+	
 	@JsonFormat(pattern = DateUtil.DAY_HOUR_SECOND, timezone = DateUtil.TIME_ZONE)
-	private Date timestamp;
+	private Timestamp timestamp;
 
 	private Object data;
 
@@ -37,7 +36,7 @@ public class ResponseTemplate {
 		this.status = status;
 		this.message = message;
 		this.errorMessage = errorMessage;
-		setTimestamp(Calendar.getInstance().getTime());
+		setTimestamp(DateUtil.getCurrentDayHourSecond());
 		this.data = data;
 	}
 

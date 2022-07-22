@@ -74,7 +74,7 @@ public class BusinessRequestController {
 
 	@GetMapping(ApiUrlConstant.BUSINESS_SEARCH_REQUEST_BY_ID)
 	@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
-	public ResponseEntity<?> findRequestTicketById(@PathVariable String id) {
+	public ResponseEntity<?> findRequestTicketById(@PathVariable Integer id) {
 		return ResponseEntity.ok(businessRequestService.findRequestTicketById(id));
 	}
 

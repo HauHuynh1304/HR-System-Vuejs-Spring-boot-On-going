@@ -31,7 +31,7 @@ public interface RequestEmployeeMapper {
 
 	List<FindListTicketResponse> findListReceivedRequestTicket(FindListTicketRequest request);
 
-	FindTicketRequestByIdResponse findRequestTicketById(String id, Integer employeeId);
+	FindTicketRequestByIdResponse findRequestTicketById(Integer id, Integer employeeId);
 
 	RequestEmployeeDto findCurrentRequestEmployee(RequestEmployeeDto requestEmployeeDto);
 

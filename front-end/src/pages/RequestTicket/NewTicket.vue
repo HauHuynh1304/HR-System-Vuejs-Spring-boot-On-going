@@ -172,7 +172,7 @@ import {
   findRequestType,
   insertRequestTicket,
 } from "@/api/business";
-import { ROLES, DATE_FORMAT } from "@/constant/common";
+import { ROLES, DATE_FORMAT, EVENT_BUS } from "@/constant/common";
 import {
   resetObject,
   isContainNullValue,
@@ -202,6 +202,7 @@ export default {
     };
   },
   async created() {
+    this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
     await findAccountByRole(ROLES.SUPERVISOR).then(
       (res) => (this.supervisorOptions = res.data)
     );
@@ -211,6 +212,7 @@ export default {
     await findReason().then((res) => (this.reasonOptions = res.data));
     await findRequestType().then((res) => (this.requestOptions = res.data));
     this.initTimeObj();
+    this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
   methods: {
     calDuration() {
@@ -286,6 +288,7 @@ export default {
         });
         return;
       } else {
+        this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
         insertRequestTicket(this.insertTicketObj)
           .then((res) => {
             this.$notify({
@@ -297,6 +300,7 @@ export default {
               horizontalAlign: "center",
             });
             this.onReset();
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           })
           .catch(() => {
             this.$notify({
@@ -305,6 +309,7 @@ export default {
               icon: "tim-icons icon-bell-55",
               horizontalAlign: "center",
             });
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           });
       }
     },

@@ -223,7 +223,7 @@ import { updateRequesterAction } from "@/api/business";
 import { resetObject } from "@/utils/objectUtil";
 import jwt_decode from "jwt-decode";
 import { getAccessToken } from "@/utils/cookies";
-import { DATE_FORMAT } from "@/constant/common";
+import { DATE_FORMAT, EVENT_BUS } from "@/constant/common";
 import moment from "moment";
 
 export default {
@@ -248,6 +248,7 @@ export default {
   },
   methods: {
     getRequestedTicketData() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findRequestedTicket(this.$route.params.id).then((res) => {
         res.data.requestEmployee.startDate = moment(
           res.data.requestEmployee.startDate
@@ -255,7 +256,17 @@ export default {
         res.data.requestEmployee.endDate = moment(
           res.data.requestEmployee.endDate
         ).format(DATE_FORMAT);
+        res.data.requesterAction.updatedAt = moment(
+          res.data.requesterAction.updatedAt
+        ).format(DATE_FORMAT);
+        res.data.supervisorAction.updatedAt = moment(
+          res.data.supervisorAction.updatedAt
+        ).format(DATE_FORMAT);
+        res.data.approverAction.updatedAt = moment(
+          res.data.approverAction.updatedAt
+        ).format(DATE_FORMAT);
         this.requestTicket = res.data;
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     cancelRequest() {
@@ -266,9 +277,11 @@ export default {
         return;
       }
       this.setObjAction();
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateRequesterAction(this.action).then((res) => {
         this.getRequestedTicketData();
         resetObject(this.action.requesterAction);
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     setObjAction() {
@@ -299,7 +312,7 @@ export default {
       ) {
         return;
       }
-
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       if (
         this.userEmail === this.requestTicket.supervisorAction.supervisorEmail
       ) {
@@ -308,6 +321,7 @@ export default {
         updateSupervisorAction(this.action).then((res) => {
           this.getRequestedTicketData();
           resetObject(this.action.supervisorAction);
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
       } else {
         this.action.approverAction.actionType = this.ticketStatus.APPROVED;
@@ -315,6 +329,7 @@ export default {
         updateApproverAction(this.action).then((res) => {
           this.getRequestedTicketData();
           resetObject(this.action.approverAction);
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
       }
     },
@@ -325,7 +340,7 @@ export default {
       ) {
         return;
       }
-
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       if (
         this.userEmail === this.requestTicket.supervisorAction.supervisorEmail
       ) {
@@ -334,6 +349,7 @@ export default {
         updateSupervisorAction(this.action).then((res) => {
           this.getRequestedTicketData();
           resetObject(this.action.supervisorAction);
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
       } else {
         this.action.approverAction.actionType = this.ticketStatus.REJECT;
@@ -341,6 +357,7 @@ export default {
         updateApproverAction(this.action).then((res) => {
           this.getRequestedTicketData();
           resetObject(this.action.approverAction);
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
       }
     },

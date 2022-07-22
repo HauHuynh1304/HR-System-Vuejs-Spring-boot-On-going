@@ -279,6 +279,7 @@ export default {
           type: "application/json",
         }
       );
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateEmployee(formData).then((res) => {
         this.$refs["insertDocumentModal"].hide();
         this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);

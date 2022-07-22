@@ -155,7 +155,7 @@
 <script>
 import { REASON_TABLE_COLUMN, OBJ } from "@/constant/reasonTable";
 import { findAllReason, updateReason, insertReason } from "@/api/master";
-import { ACTION } from "@/constant/common";
+import { ACTION, EVENT_BUS } from "@/constant/common";
 import { resetObject, diff, isAllNullValue } from "@/utils/objectUtil";
 import { MESSAGE } from "@/constant/message";
 import { fexibleMesage } from "@/utils/message";
@@ -267,13 +267,16 @@ export default {
       }
     },
     callApiUpdate(data) {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateReason(data)
         .then((res) => {
           if (res.status === 200) {
             this.initData();
           }
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         })
         .catch((err) => {
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           this.$notify({
             type: "warning",
             message: MESSAGE.CALL_API_ERR.ERR,
@@ -283,13 +286,16 @@ export default {
         });
     },
     callApiInsert(data) {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       insertReason(data)
         .then((res) => {
           if (res.status === 200) {
             this.initData();
           }
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         })
         .catch((err) => {
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
           this.$notify({
             type: "warning",
             message: MESSAGE.CALL_API_ERR.ERR,
@@ -316,8 +322,10 @@ export default {
       resetObject(this.modal.newObj.reason);
     },
     initData() {
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findAllReason().then((res) => {
         this.reason = res.data;
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
   },
@@ -332,9 +340,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#reason {
+/deep/ #reason > .table-responsive {
   max-height: 55vh;
-  overflow-x: auto;
+  thead th {
+    background: white;
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }
 .line-through {
   text-decoration: line-through;

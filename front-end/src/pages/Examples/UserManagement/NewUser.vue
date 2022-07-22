@@ -313,6 +313,7 @@ export default {
     };
   },
   async created() {
+    this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
     await findAvailbleAccounts().then(
       (res) => (this.originAccounts = res?.data)
     );
@@ -325,6 +326,7 @@ export default {
       this.originDocuments = res.data;
       this.originDocumentOptions = res.data.map((el) => el.documentName);
     });
+    this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
   methods: {
     fileSelected(e) {
@@ -387,17 +389,27 @@ export default {
       formData.append("image", this.imageObj.file);
       insertEmployee(formData)
         .then((res) => {
-          this.$notify({
-            type: "success",
-            message: res.message,
-            icon: "tim-icons icon-bell-55",
-            horizontalAlign: "center",
-          });
-          findAvailbleAccounts().then(
-            (res) => (this.originAccounts = res.data)
-          );
-          this.resetForm();
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          if (res.status === 200) {
+            this.$notify({
+              type: "success",
+              message: res.message,
+              icon: "tim-icons icon-bell-55",
+              horizontalAlign: "center",
+            });
+            findAvailbleAccounts().then(
+              (res) => (this.originAccounts = res.data)
+            );
+            this.resetForm();
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          } else {
+            this.$notify({
+              type: "warning",
+              message: MESSAGE.CALL_API_ERR.ERR,
+              icon: "tim-icons icon-bell-55",
+              horizontalAlign: "center",
+            });
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          }
         })
         .catch(() => {
           this.$notify({

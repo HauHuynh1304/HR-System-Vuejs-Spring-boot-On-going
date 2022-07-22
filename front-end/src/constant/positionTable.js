@@ -1,3 +1,6 @@
+import { DATE_FORMAT } from "@/constant/common";
+import moment from "moment";
+
 export const POSITION_TABLE_COLUMN = {
   fields: [
     {
@@ -11,12 +14,18 @@ export const POSITION_TABLE_COLUMN = {
       label: "start",
       thClass: "text-center text-info",
       tdClass: "text-center",
+      formatter: (value) => {
+        return moment(value).format(DATE_FORMAT);
+      },
     },
     {
       key: "endDate",
       label: "end",
       thClass: "text-center text-info",
       tdClass: "text-center",
+      formatter: (value) => {
+        return value ? moment(value).format(DATE_FORMAT) : null;
+      },
     },
     {
       key: "edit",

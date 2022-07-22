@@ -1,6 +1,7 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,9 +22,9 @@ public abstract class ApproverActionModel implements Serializable {
 
 	private String createdAt;
 
-	private String updatedAt;
+	private Timestamp updatedAt;
 
-	public ApproverActionModel(Integer approverActionId, String actionType, String updatedAt) {
+	public ApproverActionModel(Integer approverActionId, String actionType, Timestamp updatedAt) {
 		this.approverActionId = approverActionId;
 		this.actionType = actionType;
 		this.updatedAt = updatedAt;
