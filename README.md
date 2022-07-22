@@ -51,42 +51,42 @@ Then, login will be available
  ┣ 📜mvnw  
  ┣ 📜mvnw.cmd  
  ┗ 📜pom.xml  
-📦Database  
- ┣ 📜create_database_hr-system.sql  
- ┣ 📜ERD.drawio  
- ┗ 📜postgresSQL.sql  
-📦front-end  
- ┣ 📂src  
- ┃ ┣ 📂api  
- ┃ ┣ 📂components  
- ┃ ┣ 📂constant  
- ┃ ┣ 📂layout  
- ┃ ┣ 📂locales  
- ┃ ┣ 📂middleware  
- ┃ ┣ 📂mixins  
- ┃ ┣ 📂pages  
- ┃ ┣ 📂plugins  
- ┃ ┣ 📂router  
- ┃ ┣ 📂store  
- ┃ ┣ 📂utils  
- ┃ ┣ 📜App.vue  
- ┃ ┣ 📜config.js  
- ┃ ┣ 📜i18n.js  
- ┃ ┣ 📜main.js  
- ┃ ┗ 📜registerServiceWorker.js  
- ┣ 📜.babelrc  
- ┣ 📜.env  
- ┣ 📜.eslintrc  
- ┣ 📜.firebaserc  
- ┣ 📜.gitattributes  
- ┣ 📜.gitignore  
- ┣ 📜firebase.json  
- ┣ 📜intelij.webpack.js  
- ┣ 📜package-lock.json  
- ┣ 📜package.json  
- ┣ 📜vue.config.js  
- ┗ 📜yarn.lock  
-📜.gitignore  
-📜README.md
+ ┣📦Database  
+ ┃ ┣ 📜create_database_hr-system.sql  
+ ┃ ┣ 📜ERD.drawio  
+ ┃ ┗ 📜postgresSQL.sql  
+ ┣📦front-end  
+ ┃ ┣ 📂src  
+ ┃ ┃ ┣ 📂api  
+ ┃ ┃ ┣ 📂components  
+ ┃ ┃ ┣ 📂constant  
+ ┃ ┃ ┣ 📂layout  
+ ┃ ┃ ┣ 📂locales  
+ ┃ ┃ ┣ 📂middleware  
+ ┃ ┃ ┣ 📂mixins  
+ ┃ ┃ ┣ 📂pages  
+ ┃ ┃ ┣ 📂plugins  
+ ┃ ┃ ┣ 📂router  
+ ┃ ┃ ┣ 📂store  
+ ┃ ┃ ┣ 📂utils  
+ ┃ ┃ ┣ 📜App.vue  
+ ┃ ┃ ┣ 📜config.js  
+ ┃ ┃ ┣ 📜i18n.js  
+ ┃ ┃ ┣ 📜main.js  
+ ┃ ┃ ┗ 📜registerServiceWorker.js  
+ ┃ ┣ 📜.babelrc  
+ ┃ ┣ 📜.env  
+ ┃ ┣ 📜.eslintrc  
+ ┃ ┣ 📜.firebaserc  
+ ┃ ┣ 📜.gitattributes  
+ ┃ ┣ 📜.gitignore  
+ ┃ ┣ 📜firebase.json  
+ ┃ ┣ 📜intelij.webpack.js  
+ ┃ ┣ 📜package-lock.json  
+ ┃ ┣ 📜package.json  
+ ┃ ┣ 📜vue.config.js  
+ ┃ ┗ 📜yarn.lock  
+ ┣📜.gitignore  
+ ┗📜README.md
 
  
