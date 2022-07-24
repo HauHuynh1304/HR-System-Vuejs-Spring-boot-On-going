@@ -41,6 +41,21 @@
               </div>
             </div>
           </card>
+          <card>
+            <div>
+              <p>Account: admin@hrsystem.com</p>
+              <p>Password: 123aA@123</p>
+              <p class="text-warning">
+                <strong>If login with error, contact me at</strong>
+              </p>
+              <a
+                href="https://www.facebook.com/hau.huynh.7524"
+                class="text-info"
+                target="blank"
+                ><strong>facebook.com/hau.huynh.7524</strong></a
+              >
+            </div>
+          </card>
         </form>
       </div>
     </div>

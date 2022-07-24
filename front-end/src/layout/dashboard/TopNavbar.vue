@@ -21,10 +21,10 @@
             <span class="navbar-toggler-bar bar3"></span>
           </button>
         </div>
-        <a class="navbar-brand">{{ routeName }}</a>
+        <span class="d-flex align-items-center">Hi, {{ title }}</span>
       </div>
       <button
-        class="navbar-toggler"
+        class="navbar-toggler navbar-nav ml-auto"
         type="button"
         @click="toggleMenu"
         data-toggle="collapse"
@@ -149,9 +149,6 @@
                   :style="{ 'background-image': `url('${avatar}')` }"
                 />
                 <b class="caret d-none d-lg-block d-xl-block"></b>
-                <p class="d-lg-none">
-                  Log out
-                </p>
               </a>
               <li class="nav-item">
                 <div class="text-left">
@@ -246,6 +243,7 @@ export default {
       },
       MESSAGE: MESSAGE,
       currentTime: new Date().getTime(),
+      title: null,
     };
   },
   async created() {
