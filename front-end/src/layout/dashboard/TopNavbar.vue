@@ -145,10 +145,10 @@
                 aria-expanded="true"
               >
                 <div
+                  v-b-popover.hover.bottom="MESSAGE.FREE_HOSTING.ERR"
                   class="photo avatar-image"
                   :style="{ 'background-image': `url('${avatar}')` }"
                 />
-                <b class="caret d-none d-lg-block d-xl-block"></b>
               </a>
               <li class="nav-item">
                 <div class="text-left">
@@ -209,6 +209,7 @@ import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import jwt_decode from "jwt-decode";
 import { getAccessToken, getMaxValidTime } from "@/utils/cookies";
 import { MESSAGE } from "@/constant/message";
+import { get } from "@/utils/request";
 
 export default {
   components: {
@@ -270,11 +271,13 @@ export default {
     async getProfile() {
       let user = await JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
       this.title = user.personalName;
-      if (user.personalImage.includes(null)) {
-        this.avatar = require("@/assets/image/1024px-User-avatar.png");
-      } else {
-        this.avatar = URL_IMG + user.personalImage;
-      }
+      get(URL_IMG, user.personalImage)
+        .then((res) => {
+          this.avatar = URL_IMG + user.personalImage;
+        })
+        .catch((err) => {
+          this.avatar = require("@/assets/image/1024px-User-avatar.png");
+        });
     },
     findNotificationByReceiverId() {
       let roles = jwt_decode(getAccessToken()).roles;
