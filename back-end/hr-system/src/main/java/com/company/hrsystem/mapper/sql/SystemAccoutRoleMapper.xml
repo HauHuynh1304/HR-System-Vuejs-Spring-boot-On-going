@@ -38,12 +38,11 @@
 		UPDATE system_account_role
 		SET deleted_flag = true
 		WHERE system_account_role_id 
-			IN (
+			IN 
 				<foreach item="item" index="index" collection="systemRoleIds"
 		             open="(" separator="," close=")">
-		        	#{item}
-        		</foreach>			
-			)
+		        	#{item, jdbcType=INTEGER}
+        		</foreach>	
 	</update>
 	
 </mapper>
