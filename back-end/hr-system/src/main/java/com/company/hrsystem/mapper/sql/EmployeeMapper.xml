@@ -112,7 +112,17 @@
 			e.employee_start_date,
 			e.employee_end_date,
 			r.room_name,
-			pos.position_name,
+			(
+				SELECT
+				 	po.position_name
+				FROM
+					position po 
+						LEFT JOIN employee_position emp
+							ON emp.position_id = po.position_id
+				WHERE
+					emp.deleted_flag = false AND
+					emp.employee_id = e.employee_id
+			) AS position_name,
 			sy.system_email,
 			<include refid="isFullDocuments" /> AS is_full_documents
 		FROM personal_info p

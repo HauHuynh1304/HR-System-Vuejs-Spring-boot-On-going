@@ -15,8 +15,7 @@
   </card>
 </template>
 <script>
-import { URL_IMG } from "@/utils/request";
-import { get } from "@/utils/request";
+import { URL_IMG, get } from "@/utils/request";
 import { MESSAGE } from "@/constant/message";
 
 export default {

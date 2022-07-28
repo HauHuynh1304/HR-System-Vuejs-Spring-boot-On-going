@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-md-3">
             <card type="user" align="center">
-              <img
+              <img v-b-popover.hover.bottom="MESSAGE.FREE_HOSTING.ERR"
                 class="avatar"
                 :src="imageObj.imageUrl ? imageObj.imageUrl : defaultImg"
               />
@@ -194,7 +194,7 @@ import {
   DATE_FORMAT,
 } from "@/constant/common";
 import { isValidEmail, isValidNumber } from "@/utils/validate";
-import { URL_IMG } from "@/utils/request";
+import { URL_IMG, get } from "@/utils/request";
 import { ACTIVED_STATUS } from "@/constant/searchListUserForm";
 import DocumentComponent from "./components/DocumentComponent.vue";
 import PositionComponent from "./components/PositionComponent.vue";
@@ -204,6 +204,7 @@ export default {
   components: { Card, DocumentComponent, PositionComponent },
   data() {
     return {
+      MESSAGE: MESSAGE,
       originEmployeeObj: null,
       originPersonalInfoObj: null,
       originRoom: null,
@@ -246,7 +247,14 @@ export default {
         this.originRoom = Object.assign({}, res.data.room);
         this.originEmployeeObj = Object.assign({}, res.data.employee);
         this.originPersonalInfoObj = Object.assign({}, res.data.personalInfo);
-        this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
+        get(URL_IMG, this.employeeObj.personalInfo.personalImage)
+          .then((res) => {
+            this.defaultImg =
+              URL_IMG + this.employeeObj.personalInfo.personalImage;
+          })
+          .catch((err) => {
+            this.defaultImg = require("@/assets/image/1024px-User-avatar.png");
+          });
         this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },

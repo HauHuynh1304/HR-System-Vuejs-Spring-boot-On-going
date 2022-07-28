@@ -271,6 +271,7 @@
 				sr.role_name = #{role, jdbcType=VARCHAR}
 			</if>
 			AND e.employee_id IS NOT NULL
+			AND sar.deleted_flag = false
 		ORDER BY 
 			e.employee_id DESC
 	</select>
