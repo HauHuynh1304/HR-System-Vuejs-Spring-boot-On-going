@@ -255,6 +255,7 @@ export default {
     toggleDropDown() {
       this.isOpen = !this.isOpen;
       if (this.isOpen) {
+        this.reset();
         this.options = [];
         getRoles()
           .then((res) => {
@@ -409,7 +410,7 @@ export default {
       }
       if (
         !this.dataUpdateAccount.account.systemPassword &&
-        !this.dataUpdateAccount.account.deletedFlag &&
+        this.dataUpdateAccount.account.deletedFlag === null &&
         !this.dataUpdateAccount.addNewRoleIds.length &&
         !this.dataUpdateAccount.deleteRoleIds.length
       ) {
