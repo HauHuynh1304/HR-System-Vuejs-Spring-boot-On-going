@@ -21,5 +21,7 @@ public class NotificationDto extends NotificationModel {
 	}
 
 	private String sender;
+	
+	private String requestType;
 
 }

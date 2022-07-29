@@ -60,50 +60,55 @@
                       : 'd-none d-lg-block d-xl-block'
                   "
                 />
-                <i class="tim-icons icon-sound-wave"></i>
+                <span class="tim-icons icon-sound-wave text-info"></span>
               </a>
               <div class="notification-box">
                 <div v-if="!notificationData.length" class="text-center">
                   <span>Waiting for new Notification</span>
                 </div>
-                <div
-                  v-for="(notification, index) in notificationData"
-                  :key="index"
-                >
-                  <li class="nav-link">
-                    <a
-                      :href="
-                        !isDisableElement
-                          ? routerProps.REQUEST_TICKET.ROOT_PATH.concat(
-                              '/',
-                              routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH.replace(
-                                ':id',
-                                notification.requestId
+                <div id="notification-box-info">
+                  <div
+                    v-for="(notification, index) in notificationData"
+                    :key="index"
+                  >
+                    <li class="nav-link">
+                      <a
+                        :href="
+                          !isDisableElement
+                            ? routerProps.REQUEST_TICKET.ROOT_PATH.concat(
+                                '/',
+                                routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH.replace(
+                                  ':id',
+                                  notification.requestId
+                                )
                               )
-                            )
-                          : null
-                      "
-                      class=" nav-item dropdown-item "
-                      target="_blank"
-                      @click="
-                        markAsReadOneNotification(notification.notificationId)
-                      "
-                    >
-                      <div class="d-flex justify-content-between">
-                        <span
-                          :class="
-                            notification.readFlag
-                              ? 'd-none d-lg-block d-xl-block'
-                              : 'notification-symbol d-none d-lg-block d-xl-block'
-                          "
-                        >
-                        </span>
-                        <span> Ticket from {{ notification.sender }} </span>
-                      </div>
-                    </a>
-                  </li>
+                            : null
+                        "
+                        class=" nav-item dropdown-item "
+                        target="_blank"
+                        @click="
+                          markAsReadOneNotification(notification.notificationId)
+                        "
+                      >
+                        <div class="d-flex justify-content-start">
+                          <span
+                            :class="
+                              notification.readFlag
+                                ? 'd-none d-lg-block d-xl-block'
+                                : 'notification-symbol d-none d-lg-block d-xl-block'
+                            "
+                          >
+                          </span>
+                          <span class="text-left">
+                            <b> {{ notification.requestType }} </b> from
+                            {{ notification.sender }}
+                          </span>
+                        </div>
+                      </a>
+                    </li>
+                  </div>
                 </div>
-                <div v-if="!isDisableElement">
+                <div id="group-button-notification">
                   <div class="dropdown-divider" />
                   <div
                     class="d-flex justify-content-around"
@@ -111,65 +116,55 @@
                   >
                     <base-button
                       size="sm"
-                      type="success"
                       @click="readAllNotification"
-                      class="tim-icons icon-check-2"
-                    />
+                      class="btn btn-link"
+                      v-b-popover.hover.bottom="MESSAGE.INFO.READ_ALL"
+                    >
+                      <p class="tim-icons icon-check-2 text-success" />
+                    </base-button>
                     <base-button
                       size="sm"
-                      type="info"
                       @click="reloadNotification"
-                      class="tim-icons icon-refresh-02"
-                    />
+                      class="btn btn-link"
+                      v-b-popover.hover.bottom="MESSAGE.INFO.REFRESH"
+                    >
+                      <p class="tim-icons icon-refresh-02 text-info" />
+                    </base-button>
                     <base-button
                       size="sm"
-                      type="warning"
                       @click="cleanAllNotification"
-                      class="btn tim-icons icon-trash-simple"
-                    />
+                      class="btn btn-link"
+                      v-b-popover.hover.bottom="MESSAGE.INFO.DELETE_ALL"
+                    >
+                      <p class="tim-icons icon-trash-simple text-warning" />
+                    </base-button>
                   </div>
                 </div>
               </div>
             </base-dropdown>
-            <base-dropdown
-              tag="li"
-              menu-on-right
-              title-tag="a"
-              class="nav-item"
-              menu-classes="dropdown-navbar"
+            <div
+              v-b-popover.hover.bottom="MESSAGE.FREE_HOSTING.ERR"
+              class="photo avatar-image"
+              :style="{ 'background-image': `url('${avatar}')` }"
+              @click="toProfilePage"
             >
               <a
-                slot="title"
+                :href="!isDisableElement ? routerProps.USER.PATH : null"
+                aria-current="page"
                 class="nav-link"
-                data-toggle="dropdown"
-                aria-expanded="true"
+                ref="toProfilePage"
               >
-                <div
-                  v-b-popover.hover.bottom="MESSAGE.FREE_HOSTING.ERR"
-                  class="photo avatar-image"
-                  :style="{ 'background-image': `url('${avatar}')` }"
-                />
               </a>
-              <li class="nav-item">
-                <div class="text-left">
-                  <a
-                    :href="!isDisableElement ? routerProps.USER.PATH : null"
-                    aria-current="page"
-                    class="nav-link"
-                  >
-                    <p>Profile</p>
-                  </a>
-                </div>
-              </li>
-              <div class="dropdown-divider"></div>
-              <li class="nav-item">
-                <div class="text-left">
-                  <a class="nav-link">
-                    <p @click="logout">Log out</p>
-                  </a>
-                </div>
-              </li>
-            </base-dropdown>
+            </div>
+            <div>
+              <b-button
+                class="btn btn-link"
+                @click="logout"
+                v-b-popover.hover.bottom="MESSAGE.INFO.LOG_OUT"
+              >
+                <p class="tim-icons icon-user-run text-warning" />
+              </b-button>
+            </div>
           </ul>
         </div>
       </collapse-transition>
@@ -334,15 +329,14 @@ export default {
       );
       if (this.notificationUpdateRequest.notificationId.length) {
         this.markNotificationAsRead(this.notificationUpdateRequest);
+        this.isShowSysbolNewNotification = false;
       }
     },
     markNotificationAsRead(data) {
-      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       markNotificationAsRead(data).then((res) => {
         if (res.status === 200) {
           this.notificationData.forEach((el) => (el.readFlag = true));
         }
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     cleanAllNotification(e) {
@@ -356,12 +350,11 @@ export default {
       }
     },
     deleteNotificationByReceiver(data) {
-      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       deleteNotificationByReceiver(data).then((res) => {
         if (res.status === 200) {
           this.notificationData = [];
+          this.isShowSysbolNewNotification = false;
         }
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
     },
     resetNotificationUpdateRequest() {
@@ -370,11 +363,24 @@ export default {
     markAsReadOneNotification(notificationId) {
       this.resetNotificationUpdateRequest();
       this.notificationUpdateRequest.notificationId.push(notificationId);
-      this.markNotificationAsRead(this.notificationUpdateRequest);
+      setTimeout(() => {
+        markNotificationAsRead(this.notificationUpdateRequest).then((res) => {
+          if (res.status === 200) {
+            this.notificationData.forEach((el) => {
+              el.notificationId === notificationId
+                ? (el.readFlag = true)
+                : null;
+            });
+          }
+        });
+      }, 1);
     },
     reloadNotification(e) {
       e.stopPropagation();
       this.findNotificationByReceiverId();
+    },
+    toProfilePage() {
+      this.$refs.toProfilePage.click();
     },
   },
 };
@@ -382,12 +388,14 @@ export default {
 <style lang="scss" scoped>
 @import "~@/assets/sass/black-dashboard/custom/variables";
 
-.notification-box {
+#notification-box-info {
   max-height: 200px;
   max-width: 500px;
   overflow-x: auto;
 }
-
+.icon-sound-wave{
+  font-weight: bold;
+}
 .notification-symbol {
   background: $danger;
   color: $white;
@@ -402,9 +410,10 @@ export default {
 #notification-button {
   margin-bottom: 0.75rem;
 }
-
 #notification-button .tim-icons {
-  font-size: 12px;
+  font-size: 15px;
+  margin: auto;
+  font-weight: bold;
 }
 
 /deep/ .modal-dialog > .modal-content > .modal-footer {
@@ -413,5 +422,20 @@ export default {
   button {
     margin-right: 1em;
   }
+}
+.photo {
+  cursor: pointer;
+  margin: 4px 3px 5px 10px;
+}
+.icon-user-run {
+  font-size: 23px;
+  font-weight: bold;
+}
+#group-button-notification {
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  bottom: 0;
+  background: white;
+  height: auto;
 }
 </style>

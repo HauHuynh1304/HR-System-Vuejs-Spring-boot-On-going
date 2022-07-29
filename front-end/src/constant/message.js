@@ -51,4 +51,10 @@ export const MESSAGE = {
   FREE_HOSTING: {
     ERR: "Image may be not excuted by using free hosting!",
   },
+  INFO: {
+    LOG_OUT: "Log-out",
+    READ_ALL: "Read All",
+    REFRESH: "Refresh",
+    DELETE_ALL: "Delete All",
+  },
 };
