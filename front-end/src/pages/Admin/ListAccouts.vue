@@ -60,6 +60,11 @@
               <template #cell(roles)="data">
                 <span v-html="data.value"></span>
               </template>
+              <template #cell(deletedFlag)="data">
+                <p :class="data.item.deletedFlag ? 'text-danger' : 'text-info'">
+                  {{ data.item.deletedFlag ? "NO" : "YES" }}
+                </p>
+              </template>
             </b-table>
           </div>
         </div>
