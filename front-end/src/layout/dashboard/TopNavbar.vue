@@ -60,7 +60,7 @@
                       : 'd-none d-lg-block d-xl-block'
                   "
                 />
-                <i class="tim-icons icon-sound-wave"></i>
+                <i class="tim-icons icon-sound-wave text-info"></i>
               </a>
               <div class="notification-box">
                 <div v-if="!notificationData.length" class="text-center">
@@ -111,65 +111,53 @@
                   >
                     <base-button
                       size="sm"
-                      type="success"
                       @click="readAllNotification"
-                      class="tim-icons icon-check-2"
-                    />
+                      class="btn btn-link"
+                      v-b-popover.hover.bottom="MESSAGE.INFO.READ_ALL"
+                    >
+                      <p class="tim-icons icon-check-2 text-success" />
+                    </base-button>
                     <base-button
                       size="sm"
-                      type="info"
                       @click="reloadNotification"
-                      class="tim-icons icon-refresh-02"
-                    />
+                      class="btn btn-link"
+                      v-b-popover.hover.bottom="MESSAGE.INFO.REFRESH"
+                    >
+                      <p class="tim-icons icon-refresh-02 text-info" />
+                    </base-button>
                     <base-button
                       size="sm"
-                      type="warning"
                       @click="cleanAllNotification"
-                      class="btn tim-icons icon-trash-simple"
-                    />
+                      class="btn btn-link"
+                      v-b-popover.hover.bottom="MESSAGE.INFO.DELETE_ALL"
+                    >
+                      <p class="tim-icons icon-trash-simple text-warning" />
+                    </base-button>
                   </div>
                 </div>
               </div>
             </base-dropdown>
-            <base-dropdown
-              tag="li"
-              menu-on-right
-              title-tag="a"
-              class="nav-item"
-              menu-classes="dropdown-navbar"
+            <div
+              v-b-popover.hover.bottom="MESSAGE.FREE_HOSTING.ERR"
+              class="photo avatar-image"
+              :style="{ 'background-image': `url('${avatar}')` }"
             >
               <a
-                slot="title"
+                :href="!isDisableElement ? routerProps.USER.PATH : null"
+                aria-current="page"
                 class="nav-link"
-                data-toggle="dropdown"
-                aria-expanded="true"
               >
-                <div
-                  v-b-popover.hover.bottom="MESSAGE.FREE_HOSTING.ERR"
-                  class="photo avatar-image"
-                  :style="{ 'background-image': `url('${avatar}')` }"
-                />
               </a>
-              <li class="nav-item">
-                <div class="text-left">
-                  <a
-                    :href="!isDisableElement ? routerProps.USER.PATH : null"
-                    aria-current="page"
-                    class="nav-link"
-                  >
-                    <p>Profile</p>
-                  </a>
-                </div>
-              </li>
-              <div class="dropdown-divider"></div>
-              <li class="nav-item">
-                <div class="text-left">
-                  <a class="nav-link">
-                    <p @click="logout">Log out</p>
-                  </a>
-                </div>
-              </li>
-            </base-dropdown>
+            </div>
+            <div>
+              <b-button
+                class="btn btn-link"
+                @click="logout"
+                v-b-popover.hover.bottom="MESSAGE.INFO.LOG_OUT"
+              >
+                <p class="tim-icons icon-user-run text-warning" />
+              </b-button>
+            </div>
           </ul>
         </div>
       </collapse-transition>
@@ -404,7 +392,8 @@ export default {
 }
 
 #notification-button .tim-icons {
-  font-size: 12px;
+  font-size: 15px;
+  margin: auto;
 }
 
 /deep/ .modal-dialog > .modal-content > .modal-footer {
@@ -413,5 +402,12 @@ export default {
   button {
     margin-right: 1em;
   }
+}
+.photo {
+  cursor: pointer;
+  margin: 4px 3px 5px 10px;
+}
+.icon-user-run {
+  font-size: 20px;
 }
 </style>

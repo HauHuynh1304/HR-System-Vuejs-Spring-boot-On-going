@@ -203,7 +203,7 @@ public class BusinessRequestService {
 		requesterActionDto.setUpdatedAt(currentDayHourSecond);
 
 		// Check valid status from Client, ONLY CANCEL STATUS can be apply
-		if (requestStatus.isBlank() || BusinessRequestStatusEnum.isForbidentEmployee(requestStatus)
+		if (StringUtils.isBlank(requestStatus) || BusinessRequestStatusEnum.isForbidentEmployee(requestStatus)
 				|| !BusinessRequestStatusEnum.isExists(requestStatus)) {
 			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
 			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
@@ -384,7 +384,7 @@ public class BusinessRequestService {
 	}
 
 	public void isErrorRequestManager(String status) {
-		if (status.isBlank() || BusinessRequestStatusEnum.isForbidenManager(status)
+		if (StringUtils.isBlank(status) || BusinessRequestStatusEnum.isForbidenManager(status)
 				|| !BusinessRequestStatusEnum.isExists(status)) {
 			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
 			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
