@@ -316,7 +316,6 @@ export default {
             horizontalAlign: "center",
           });
         } else {
-          this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
           addNewAccount(this.data)
             .then((res) => {
               if (res.status === 200) {
@@ -334,7 +333,6 @@ export default {
                   horizontalAlign: "center",
                 });
               }
-              this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
             })
             .catch(() => {
               this.$notify({
@@ -343,7 +341,6 @@ export default {
                 horizontalAlign: "center",
               });
               this.reset();
-              this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
             });
         }
       });
@@ -416,7 +413,6 @@ export default {
       ) {
         return;
       }
-      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateAccount(this.dataUpdateAccount)
         .then((res) => {
           this.$notify({
@@ -426,7 +422,7 @@ export default {
           });
           res.status === 200
             ? this.$bus.emit(EVENT_BUS.REFRESH_TABLE_LIST_USER)
-            : this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+            : null;
         })
         .catch(() => {
           this.$notify({
@@ -434,7 +430,6 @@ export default {
             message: MESSAGE.CALL_API_ERR.ERR,
             horizontalAlign: "center",
           });
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
     },
   },
