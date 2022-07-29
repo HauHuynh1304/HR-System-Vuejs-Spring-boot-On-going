@@ -91,11 +91,13 @@
         </li>
         <li class="nav-item" v-if="roles.includes(ACCOUNT_ROLES.EMPLOYEE)">
           <a class="nav-link">
-            <i :class="
+            <i
+              :class="
                 rqVisible
                   ? 'tim-icons icon-minimal-up'
                   : 'tim-icons icon-minimal-down'
-              "></i>
+              "
+            ></i>
             <p
               aria-controls="request-ticket"
               @click="rqVisible = !rqVisible"
@@ -153,10 +155,9 @@
     </side-bar>
     <div class="main-panel" :data="backgroundColor">
       <top-navbar></top-navbar>
-
       <dashboard-content @click.native="toggleSidebar"> </dashboard-content>
+      <content-footer></content-footer>
     </div>
-    <content-footer></content-footer>
   </div>
 </template>
 <style lang="scss"></style>

@@ -61,6 +61,7 @@
 		<result column="sender" jdbcType="VARCHAR" property="sender" />
 		<result column="created_at" jdbcType="VARCHAR" property="createdAt" />
 		<result column="read_flag" jdbcType="BIT" property="readFlag" />
+		<result column="requestType" jdbcType="VARCHAR" property="requestType" />
 	</resultMap>
 	<select id="findNotificationByReceiverId" resultMap="findNotification">
 		SELECT
@@ -77,7 +78,24 @@
 							ON sa.system_account_id = emp.system_account_id
 				WHERE
 					emp.employee_id = n.sender_id
-			) AS sender
+			) AS sender,
+			(
+				(
+					SELECT
+						reqt.request_type_name
+					FROM
+						request_type reqt
+					WHERE
+						reqt.request_type_id = (
+							SELECT
+								req.request_type_id
+							FROM
+								request req
+							WHERE
+								req.request_id = n.request_id
+						)
+				)
+			) AS requestType
 		FROM 
 			notification n
 		WHERE
