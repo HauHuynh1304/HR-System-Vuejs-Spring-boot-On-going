@@ -81,9 +81,6 @@ export const TABLE_LIST_EMPLOYEE = {
       label: "On working",
       thClass: "text-center text-danger",
       tdClass: "text-center",
-      formatter: (value) => {
-        return value ? "Resign" : "Working";
-      },
     },
   ],
 };
