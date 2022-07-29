@@ -71,6 +71,15 @@
                   {{ row.item.systemEmail }}
                 </router-link>
               </template>
+              <template #cell(employee.deletedFlag)="row">
+                <p
+                  :class="
+                    row.item.employee.deletedFlag ? 'text-danger' : 'text-info'
+                  "
+                >
+                  {{ row.item.employee.deletedFlag ? "resign" : "working" }}
+                </p>
+              </template>
             </b-table>
           </div>
         </div>
