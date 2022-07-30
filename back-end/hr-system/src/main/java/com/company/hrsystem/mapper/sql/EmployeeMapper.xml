@@ -95,7 +95,9 @@
 	    	<result column="room_name" jdbcType="VARCHAR" property="roomName" />
 	    </collection>
         <collection property="position"  ofType="com.company.hrsystem.dto.PositionDto">
+	    	<id column="employee_position_id" />
         	<result property="positionName" jdbcType="VARCHAR" column="position_name"/>
+        	<result property="deletedFlag" jdbcType="BIT" column="position_deleted_flag"/>
         </collection>
 	    <!--  <collection property="positions" javaType="list" ofType="string" >
         	 <result column="position_name" />
@@ -112,17 +114,9 @@
 			e.employee_start_date,
 			e.employee_end_date,
 			r.room_name,
-			(
-				SELECT
-				 	po.position_name
-				FROM
-					position po 
-						LEFT JOIN employee_position emp
-							ON emp.position_id = po.position_id
-				WHERE
-					emp.deleted_flag = false AND
-					emp.employee_id = e.employee_id
-			) AS position_name,
+			pos.position_name,
+			empos.deleted_flag AS position_deleted_flag,
+			empos.employee_position_id AS employee_position_id,
 			sy.system_email,
 			<include refid="isFullDocuments" /> AS is_full_documents
 		FROM personal_info p
