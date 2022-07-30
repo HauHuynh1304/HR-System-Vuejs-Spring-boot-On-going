@@ -57,8 +57,11 @@ export const TABLE_LIST_EMPLOYEE = {
       thClass: "text-center text-info",
       tdClass: "text-center",
       formatter: (value) => {
-        let position = value.map((item) => item.positionName).toString();
-        return position.replaceAll(",", ", ");
+        let position = [];
+        value.forEach((item) =>
+          !item.deletedFlag ? position.push(item.positionName) : null
+        );
+        return position.toString().replaceAll(",", ", ");
       },
     },
     {
