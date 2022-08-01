@@ -253,7 +253,7 @@ public class MasterService {
 	public ResponseTemplate insertRequestType(RequestTypeRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RequestTypeDto obj = request.getData().getRequestType();
-		if (ObjectUtils.isEmpty(obj) || obj.getRequestTypeName().isBlank()) {
+		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRequestTypeName()) ) {
 			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty",
 					CommonConstant.REQUEST_TYPE_INSERT_NOT_NULL));
 			throw new NullPointRequestException(system, version, messageUtil.getFlexMessageLangUS("null.request.empty",
@@ -298,7 +298,7 @@ public class MasterService {
 	public ResponseTemplate insertRoom(RoomRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RoomDto obj = request.getData().getRoom();
-		if (ObjectUtils.isEmpty(obj) || obj.getRoomName().isBlank()) {
+		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRoomName())) {
 			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
 			throw new NullPointRequestException(system, version,
 					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
