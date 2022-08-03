@@ -95,12 +95,6 @@ let humanManagementMenu = {
       meta: { middleware: humanManagement },
     },
     {
-      path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.PATH,
-      name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.NAME,
-      components: { default: UpdateUserPage },
-      meta: { middleware: humanManagementOnly },
-    },
-    {
       path: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.REPORT.PATH,
       name: FE_ROUTER_PROP.HUMAN_MANAGEMENT.CHILDREN.REPORT.NAME,
       components: { default: Report },
@@ -127,12 +121,6 @@ let employeeMenu = {
       meta: { middleware: employee },
     },
     {
-      path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.PATH,
-      name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.NAME,
-      components: { default: RequestedTicket },
-      meta: { middleware: employee },
-    },
-    {
       path:
         FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
           .PATH,
@@ -140,12 +128,6 @@ let employeeMenu = {
         FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
           .NAME,
       components: { default: ListReceivedRequestTicket },
-      meta: { middleware: employee },
-    },
-    {
-      path: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH,
-      name: FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.NAME,
-      components: { default: RequestedTicket },
       meta: { middleware: employee },
     },
   ],

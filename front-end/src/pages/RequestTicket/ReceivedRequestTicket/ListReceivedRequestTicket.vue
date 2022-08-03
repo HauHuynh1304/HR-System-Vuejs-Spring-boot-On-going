@@ -69,20 +69,11 @@
               :per-page="perPage"
             >
               <template #cell(requestType)="row">
-                <router-link
-                  :to="
-                    routerProps.REQUEST_TICKET.ROOT_PATH.concat(
-                      '/',
-                      routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH.replace(
-                        ':id',
-                        row.item.requestId
-                      )
-                    )
-                  "
-                  target="_blank"
+                <b-link
+                  @click="openReceivedTicketDetailModal(row.item.requestId)"
                 >
                   {{ row.item.requestType }}
-                </router-link>
+                </b-link>
               </template>
               <template #cell(requestEmployee.requestStatus)="row">
                 <p
@@ -107,6 +98,18 @@
         </div>
       </card>
     </card>
+    <b-modal
+      size="xl"
+      :ref="modal.receivedDetail.id"
+      :id="modal.receivedDetail.id"
+      hide-footer
+      hide-header
+    >
+      <requested-ticket
+        :requestId="modal.receivedDetail.requestId"
+        :isRequesterArea="false"
+      />
+    </b-modal>
   </div>
 </template>
 
@@ -125,8 +128,9 @@ import jwt_decode from "jwt-decode";
 import { getAccessToken } from "@/utils/cookies";
 import { mutipleUpdateRequestTicketStatus } from "@/api/business";
 import { MESSAGE } from "@/constant/message";
+import RequestedTicket from "../RequestedTicket/RequestedTicket.vue";
 export default {
-  components: { SearchReceivedRequestTicketComponent, Card },
+  components: { SearchReceivedRequestTicketComponent, Card, RequestedTicket },
   data() {
     return {
       isApproverArea: false,
@@ -141,6 +145,12 @@ export default {
       items: null,
       fields: RECEIVED_TIKCET_TABLE.fields,
       mutipleUpdateData: MUTIPLE_UPDATE_DATA,
+      modal: {
+        receivedDetail: {
+          id: "received-detail-modal",
+          requestId: null,
+        },
+      },
     };
   },
   created() {
@@ -149,8 +159,20 @@ export default {
       this.totalRows = this.items.length;
       this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
     });
+    this.$bus.on(EVENT_BUS.REFRESH_SPECIAL_RECEIVED_TICKET, (data) => {
+      for (let i in this.items) {
+        if (this.items[i].requestId == data.requestId) {
+          this.items[i].requestEmployee.requestStatus = data.requestStatus;
+          return;
+        }
+      }
+    });
   },
   methods: {
+    openReceivedTicketDetailModal(requestId) {
+      this.modal.receivedDetail.requestId = parseInt(requestId);
+      this.$refs[this.modal.receivedDetail.id].show();
+    },
     approveAll() {
       if (!this.items) {
         return;
@@ -263,5 +285,10 @@ export default {
 #mutiple-request-area >>> button {
   margin: 0;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+}
+/deep/ #received-detail-modal___BV_modal_body_ {
+  position: fixed;
+  margin: 1rem 0 0 0;
+  width: 100%;
 }
 </style>

@@ -26,7 +26,7 @@ import BlackDashboard from "./plugins/blackDashboard";
 import i18n from "./i18n";
 import "./registerServiceWorker";
 import VueMeta from "vue-meta";
-import { BootstrapVue } from "bootstrap-vue";
+import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import EventBus from "./utils/EventBus";
 import _ from "lodash";
 
@@ -37,6 +37,7 @@ Vue.use(VueMeta, { keyName: "head" });
 Vue.use(BootstrapVue);
 Vue.use(EventBus);
 Vue.use(_);
+Vue.use(BootstrapVueIcons)
 
 /* eslint-disable no-new */
 new Vue({

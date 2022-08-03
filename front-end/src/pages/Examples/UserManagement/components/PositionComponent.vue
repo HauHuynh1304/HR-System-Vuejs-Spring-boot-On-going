@@ -11,12 +11,10 @@
           class="btn btn-info tim-icons icon-simple-add"
         />
         <b-modal
-          id="insertPositionsModal"
-          ref="insertPositionsModal"
+          :id="modalPosition.addPosition.id"
           @ok="insertPositionsAction($event)"
           title="New Positions"
           @hidden="resetPositionsModal"
-          no-stacking
         >
           <b-form-group
             id="tags-position-component-select"
@@ -210,6 +208,10 @@ export default {
       type: Array,
       default: [],
     },
+    employeeId: {
+      type: Number,
+      default: null,
+    },
   },
   data() {
     return {
@@ -222,6 +224,9 @@ export default {
       perPage: 5,
       fields: POSITION_TABLE_COLUMN.fields,
       modalPosition: {
+        addPosition: {
+          id: "add-positions-modal",
+        },
         editInfo: {
           id: "edit-position-modal",
         },
@@ -252,7 +257,7 @@ export default {
   watch: {
     positionObj: function() {
       this.totalRows = this.positionObj.length;
-      this.updateEmployeeObj.employee.employeeId = this.$route.params.id;
+      this.updateEmployeeObj.employee.employeeId = this.employeeId;
     },
   },
   computed: {
@@ -268,7 +273,7 @@ export default {
         this.originPositionObj = res.data;
         this.tagPositionValue = this.positionObj.map((el) => el.positionName);
         this.positionOption = res.data.map((el) => el.positionName);
-        this.$refs["insertPositionsModal"].show();
+        this.$root.$emit("bv::show::modal", this.modalPosition.addPosition.id);
       });
     },
     updatePosition(action) {
@@ -316,7 +321,7 @@ export default {
       });
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateEmployee(formData).then((res) => {
-        this.$refs["insertPositionsModal"].hide();
+        this.$root.$emit("bv::hide::modal", this.modalPosition.addPosition.id);
         this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);
       });
     },

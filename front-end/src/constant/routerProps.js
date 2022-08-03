@@ -42,10 +42,6 @@ export const FE_ROUTER_PROP = {
         PATH: "new-employee",
         NAME: "New employee",
       },
-      UPDATE_EMPLOYEE: {
-        PATH: "employee/:id",
-        NAME: "UPDATE EMPLOYEE",
-      },
       REPORT: {
         PATH: "report",
         NAME: "report",
@@ -64,17 +60,9 @@ export const FE_ROUTER_PROP = {
         PATH: "list-requested-ticket",
         NAME: "Requested ticket",
       },
-      REQUESTED_TICKET: {
-        PATH: "requested-ticket/:id",
-        NAME: "Requested Ticket",
-      },
       LIST_RECEIVED_REQUEST_TICKET: {
         PATH: "list-received-ticket",
         NAME: "Received ticket",
-      },
-      RECEIVED_REQUEST_TICKET: {
-        PATH: "received-ticket/:id",
-        NAME: "received Ticket",
       },
     },
   },

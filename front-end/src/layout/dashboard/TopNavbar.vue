@@ -73,21 +73,13 @@
                   >
                     <li class="nav-link">
                       <a
-                        :href="
-                          !isDisableElement
-                            ? routerProps.REQUEST_TICKET.ROOT_PATH.concat(
-                                '/',
-                                routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.PATH.replace(
-                                  ':id',
-                                  notification.requestId
-                                )
-                              )
-                            : null
-                        "
                         class=" nav-item dropdown-item "
                         target="_blank"
                         @click="
-                          markAsReadOneNotification(notification.notificationId)
+                          markAsReadOneNotification(
+                            notification.notificationId,
+                            notification.requestId
+                          )
                         "
                       >
                         <div class="d-flex justify-content-start">
@@ -162,7 +154,7 @@
                 @click="logout"
                 v-b-popover.hover.bottom="MESSAGE.INFO.LOG_OUT"
               >
-                <p class="tim-icons icon-user-run text-warning" />
+                <b-icon class="logout" icon="power" variant="warning"></b-icon>
               </b-button>
             </div>
           </ul>
@@ -184,6 +176,18 @@
           </template>
         </b-modal>
       </div>
+      <b-modal
+        size="xl"
+        :ref="modal.receivedDetail.id"
+        :id="modal.receivedDetail.id"
+        hide-footer
+        hide-header
+      >
+        <requested-ticket
+          :requestId="modal.receivedDetail.requestId"
+          :isRequesterArea="false"
+        />
+      </b-modal>
     </div>
   </nav>
 </template>
@@ -205,12 +209,13 @@ import jwt_decode from "jwt-decode";
 import { getAccessToken, getMaxValidTime } from "@/utils/cookies";
 import { MESSAGE } from "@/constant/message";
 import { get } from "@/utils/request";
-
+import RequestedTicket from "../../pages/RequestTicket/RequestedTicket/RequestedTicket.vue";
 export default {
   components: {
     CollapseTransition,
     Modal,
     Loading,
+    RequestedTicket,
   },
   computed: {
     routeName() {
@@ -235,6 +240,10 @@ export default {
       modal: {
         id: {
           maxValidTime: "maxValidTime",
+        },
+        receivedDetail: {
+          id: "received-detail-modal-on-topnav",
+          requestId: null,
         },
       },
       MESSAGE: MESSAGE,
@@ -360,9 +369,11 @@ export default {
     resetNotificationUpdateRequest() {
       this.notificationUpdateRequest.notificationId = [];
     },
-    markAsReadOneNotification(notificationId) {
+    markAsReadOneNotification(notificationId, requestId) {
       this.resetNotificationUpdateRequest();
       this.notificationUpdateRequest.notificationId.push(notificationId);
+      this.modal.receivedDetail.requestId = parseInt(requestId);
+      this.$refs[this.modal.receivedDetail.id].show();
       setTimeout(() => {
         markNotificationAsRead(this.notificationUpdateRequest).then((res) => {
           if (res.status === 200) {
@@ -393,7 +404,7 @@ export default {
   max-width: 500px;
   overflow-x: auto;
 }
-.icon-sound-wave{
+.icon-sound-wave {
   font-weight: bold;
 }
 .notification-symbol {
@@ -427,7 +438,7 @@ export default {
   cursor: pointer;
   margin: 4px 3px 5px 10px;
 }
-.icon-user-run {
+.logout {
   font-size: 23px;
   font-weight: bold;
 }
@@ -437,5 +448,10 @@ export default {
   bottom: 0;
   background: white;
   height: auto;
+}
+/deep/ #received-detail-modal-on-topnav___BV_modal_body_ {
+  position: fixed;
+  margin: 1rem 0 0 0;
+  width: 100%;
 }
 </style>

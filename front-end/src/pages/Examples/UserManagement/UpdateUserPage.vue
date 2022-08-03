@@ -2,15 +2,11 @@
   <div>
     <div>
       <card card-body-classes="table-full-width">
-        <h4 slot="header" class="title">
-          {{
-            routerProps.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.NAME.toUpperCase()
-          }}
-        </h4>
         <div class="row">
           <div class="col-md-3">
             <card type="user" align="center">
-              <img v-b-popover.hover.bottom="MESSAGE.FREE_HOSTING.ERR"
+              <img
+                v-b-popover.hover.bottom="MESSAGE.FREE_HOSTING.ERR"
                 class="avatar"
                 :src="imageObj.imageUrl ? imageObj.imageUrl : defaultImg"
               />
@@ -163,12 +159,12 @@
       <div class="row" style="height: 100px;">
         <div class="col-md-4">
           <card>
-            <document-component :documentObj="employeeObj.documents" />
+            <document-component :documentObj="employeeObj.documents" :employeeId="employeeId"/>
           </card>
         </div>
         <div class="col-md-8">
           <card>
-            <position-component :positionObj="employeeObj.positions" />
+            <position-component :positionObj="employeeObj.positions" :employeeId="employeeId"/>
           </card>
         </div>
       </div>
@@ -202,6 +198,12 @@ import moment from "moment";
 
 export default {
   components: { Card, DocumentComponent, PositionComponent },
+  props: {
+    employeeId: {
+      type: Number,
+      default: 0,
+    },
+  },
   data() {
     return {
       MESSAGE: MESSAGE,
@@ -233,7 +235,7 @@ export default {
   methods: {
     findEmployeeById() {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      findEmployeeById(this.$route.params.id).then((res) => {
+      findEmployeeById(this.employeeId).then((res) => {
         res.data.employee.employeeStartDate = moment(
           res.data.employee.employeeStartDate
         ).format(DATE_FORMAT);
@@ -267,7 +269,7 @@ export default {
     },
     resetForm() {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      findEmployeeById(this.$route.params.id).then((res) => {
+      findEmployeeById(this.employeeId).then((res) => {
         res.data.employee.employeeStartDate = moment(
           res.data.employee.employeeStartDate
         ).format(DATE_FORMAT);
@@ -278,7 +280,14 @@ export default {
           res.data.personalInfo.personalBirthday
         ).format(DATE_FORMAT);
         this.employeeObj = res.data;
-        this.defaultImg = URL_IMG + this.employeeObj.personalInfo.personalImage;
+        get(URL_IMG, this.employeeObj.personalInfo.personalImage)
+          .then((res) => {
+            this.defaultImg =
+              URL_IMG + this.employeeObj.personalInfo.personalImage;
+          })
+          .catch((err) => {
+            this.defaultImg = require("@/assets/image/1024px-User-avatar.png");
+          });
         let user = JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
         if (res.data.personalInfo.personalInfoId == user.personalInfoId) {
           localStorage.setItem(
