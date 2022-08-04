@@ -56,20 +56,11 @@
               :per-page="perPage"
             >
               <template #cell(systemEmail)="row">
-                <router-link
-                  :to="
-                    routerProps.HUMAN_MANAGEMENT.ROOT_PATH.concat(
-                      '/',
-                      routerProps.HUMAN_MANAGEMENT.CHILDREN.UPDATE_EMPLOYEE.PATH.replace(
-                        ':id',
-                        row.item.employee.employeeId
-                      )
-                    )
-                  "
-                  target="_blank"
+                <b-link
+                  @click="openUpdateEmployeeModal(row.item.employee.employeeId)"
                 >
                   {{ row.item.systemEmail }}
-                </router-link>
+                </b-link>
               </template>
               <template #cell(employee.deletedFlag)="row">
                 <p
@@ -85,6 +76,15 @@
         </div>
       </card>
     </card>
+    <b-modal
+      size="xl"
+      :ref="modal.updateEmployee.id"
+      :id="modal.updateEmployee.id"
+      hide-footer
+      hide-header
+    >
+      <update-user-page :employeeId="this.modal.updateEmployee.idValue" />
+    </b-modal>
   </div>
 </template>
 
@@ -96,9 +96,10 @@ import SearchListUser from "./SearchListUser.vue";
 import Card from "@/components/Cards/Card.vue";
 import { URL_IMG } from "@/utils/request";
 import { API } from "@/constant/api";
+import UpdateUserPage from "./UpdateUserPage.vue";
 
 export default {
-  components: { SearchListUser, Card },
+  components: { SearchListUser, Card, UpdateUserPage },
   data() {
     return {
       URL_IMG: URL_IMG,
@@ -111,6 +112,12 @@ export default {
       filter: null,
       items: null,
       fields: TABLE_LIST_EMPLOYEE.fields,
+      modal: {
+        updateEmployee: {
+          id: "update-employee",
+          idValue: null,
+        },
+      },
     };
   },
   created() {
@@ -120,7 +127,12 @@ export default {
       this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
     });
   },
-  methods: {},
+  methods: {
+    openUpdateEmployeeModal(employeeId) {
+      this.modal.updateEmployee.idValue = employeeId;
+      this.$refs[this.modal.updateEmployee.id].show();
+    },
+  },
 };
 </script>
 
@@ -132,5 +144,8 @@ export default {
 #pagination /deep/ .page-link {
   color: black;
   font-size: 0.75rem;
+}
+/deep/ #update-employee___BV_modal_body_ {
+  position: fixed;
 }
 </style>

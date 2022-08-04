@@ -5,13 +5,13 @@
 		useGeneratedKeys="true" keyColumn="comment_id" keyProperty="commentId">
 		INSERT INTO comment
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="supervisorActionId != null and supervisorActionId != '' ">
+			<if test="supervisorActionId != null ">
 				supervisor_action_id,
 			</if>
-			<if test="approverActionId != null and approverActionId != '' ">
+			<if test="approverActionId != null ">
 				approver_action_id,
 			</if>
-			<if test="requesterActionId != null and requesterActionId != '' ">
+			<if test="requesterActionId != null ">
 				requester_action_id,
 			</if>
 			<if test="commentDetail != null and commentDetail != '' ">
@@ -19,13 +19,13 @@
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="supervisorActionId != null and supervisorActionId != '' ">
+			<if test="supervisorActionId != null ">
 				#{supervisorActionId, jdbcType=INTEGER},
 			</if>
-			<if test="approverActionId != null and approverActionId != '' ">
+			<if test="approverActionId != null ">
 				#{approverActionId, jdbcType=INTEGER},
 			</if>
-			<if test="requesterActionId != null and requesterActionId != '' ">
+			<if test="requesterActionId != null ">
 				#{requesterActionId, jdbcType=INTEGER},
 			</if>
 			<if test="commentDetail != null and commentDetail != '' ">

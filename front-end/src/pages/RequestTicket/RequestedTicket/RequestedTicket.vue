@@ -4,13 +4,7 @@
       <card>
         <div slot="header">
           <div class="row">
-            <div class="col-md-6 title">
-              {{
-                isRequesterArea
-                  ? routerProps.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.NAME.toUpperCase()
-                  : routerProps.REQUEST_TICKET.CHILDREN.RECEIVED_REQUEST_TICKET.NAME.toUpperCase()
-              }}
-            </div>
+            <div class="col-md-6 title" />
             <div class="col-md-6 title">
               <div
                 :class="
@@ -31,10 +25,9 @@
             </div>
           </div>
         </div>
-        <h4 slot="header" class="title"></h4>
 
         <!-- Request info start -->
-        <div class="container">
+        <div class="request-info">
           <div class="row">
             <div class="col-md-4">
               <label class="control-label">Request Type</label><br />
@@ -98,7 +91,11 @@
         </div>
         <!-- Request info end -->
       </card>
-      <comment :requestTicket="requestTicket" />
+      <comment
+        :requestTicket="requestTicket"
+        :requestId="requestId"
+        :isRequesterArea="isRequesterArea"
+      />
     </div>
     <div class="col-md-4">
       <card>
@@ -225,12 +222,20 @@ import jwt_decode from "jwt-decode";
 import { getAccessToken } from "@/utils/cookies";
 import { DATE_FORMAT, EVENT_BUS } from "@/constant/common";
 import moment from "moment";
-
 export default {
   components: { Comment },
+  props: {
+    requestId: {
+      type: Number,
+      default: null,
+    },
+    isRequesterArea: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
-      isRequesterArea: false,
       ticketStatus: TICKET_STATUS,
       requestTicket: REQUESTED_TICKET_RESPONSE,
       routerProps: FE_ROUTER_PROP,
@@ -241,15 +246,12 @@ export default {
   },
   async created() {
     await this.getRequestedTicketData();
-    if (this.isRequesterPath()) {
-      this.isRequesterArea = true;
-    }
     this.userEmail = jwt_decode(getAccessToken()).sub;
   },
   methods: {
     getRequestedTicketData() {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      findRequestedTicket(this.$route.params.id).then((res) => {
+      findRequestedTicket(this.requestId).then((res) => {
         res.data.requestEmployee.startDate = moment(
           res.data.requestEmployee.startDate
         ).format(DATE_FORMAT);
@@ -276,34 +278,21 @@ export default {
       ) {
         return;
       }
-      this.setObjAction();
+      this.action.requesterAction.requesterActionId = this.requestTicket.requesterAction.requesterActionId;
+      this.action.requesterAction.actionType = this.ticketStatus.CANCEL;
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateRequesterAction(this.action).then((res) => {
         this.getRequestedTicketData();
         resetObject(this.action.requesterAction);
+        // force update special request in list ticket
+        this.emitEventToListTicket(
+          FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.PATH,
+          EVENT_BUS.REFRESH_SPECIAL_REQUESTED_TICKET,
+          this.requestId,
+          this.ticketStatus.CANCEL
+        );
         this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
-    },
-    setObjAction() {
-      if (this.isRequesterPath()) {
-        this.action.requesterAction.requesterActionId = this.requestTicket.requesterAction.requesterActionId;
-        this.action.requesterAction.actionType = this.ticketStatus.CANCEL;
-      }
-    },
-    isRequesterPath() {
-      let originRouteRequestedTicket =
-        FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.PATH;
-      if (
-        this.$route.path.includes(
-          originRouteRequestedTicket.substring(
-            0,
-            originRouteRequestedTicket.lastIndexOf("/")
-          )
-        )
-      ) {
-        return true;
-      }
-      return false;
     },
     approveRequest() {
       if (
@@ -329,6 +318,14 @@ export default {
         updateApproverAction(this.action).then((res) => {
           this.getRequestedTicketData();
           resetObject(this.action.approverAction);
+          // force update special request in list ticket
+          this.emitEventToListTicket(
+            FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
+              .PATH,
+            EVENT_BUS.REFRESH_SPECIAL_RECEIVED_TICKET,
+            this.requestId,
+            this.ticketStatus.APPROVED
+          );
           this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
         });
       }
@@ -357,7 +354,23 @@ export default {
         updateApproverAction(this.action).then((res) => {
           this.getRequestedTicketData();
           resetObject(this.action.approverAction);
+          // force update special request in list ticket
+          this.emitEventToListTicket(
+            FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
+              .PATH,
+            EVENT_BUS.REFRESH_SPECIAL_RECEIVED_TICKET,
+            this.requestId,
+            this.ticketStatus.REJECT
+          );
           this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+        });
+      }
+    },
+    emitEventToListTicket(path, event, requestId, ticketStatus) {
+      if (this.$route.path.includes(path)) {
+        this.$bus.emit(event, {
+          requestId: requestId,
+          requestStatus: ticketStatus,
         });
       }
     },
@@ -376,13 +389,14 @@ export default {
   background-color: $medium-gray;
   border-color: rgba(29, 37, 59, 0.3);
 }
-
 .textarea:focus {
   outline: none !important;
   border-color: $primary;
 }
-
 .wrapper {
   height: 100%;
+}
+.request-info {
+  margin: auto;
 }
 </style>

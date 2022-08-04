@@ -58,20 +58,9 @@
               :per-page="perPage"
             >
               <template #cell(requestType)="row">
-                <router-link
-                  :to="
-                    routerProps.REQUEST_TICKET.ROOT_PATH.concat(
-                      '/',
-                      routerProps.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.PATH.replace(
-                        ':id',
-                        row.item.requestId
-                      )
-                    )
-                  "
-                  target="_blank"
-                >
+                <b-link @click="openTicketDetailModal(row.item.requestId)">
                   {{ row.item.requestType }}
-                </router-link>
+                </b-link>
               </template>
               <template #cell(requestEmployee.requestStatus)="row">
                 <p
@@ -96,6 +85,18 @@
         </div>
       </card>
     </card>
+    <b-modal
+      size="xl"
+      :ref="modal.requestDetail.id"
+      :id="modal.requestDetail.id"
+      hide-footer
+      hide-header
+    >
+      <requested-ticket
+        :requestId="modal.requestDetail.requestId"
+        :isRequesterArea="true"
+      />
+    </b-modal>
   </div>
 </template>
 
@@ -106,8 +107,9 @@ import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import { EVENT_BUS } from "@/constant/common";
 import { REQUESTED_TIKCET_TABLE } from "@/constant/requestedTicketTable";
 import { TICKET_STATUS } from "@/constant/requestTicket";
+import RequestedTicket from "./RequestedTicket.vue";
 export default {
-  components: { SearchRequestedTicketComponent, Card },
+  components: { SearchRequestedTicketComponent, Card, RequestedTicket },
   data() {
     return {
       ticketStatus: TICKET_STATUS,
@@ -119,6 +121,12 @@ export default {
       filter: null,
       items: null,
       fields: REQUESTED_TIKCET_TABLE.fields,
+      modal: {
+        requestDetail: {
+          id: "request-detail-modal",
+          requestId: null,
+        },
+      },
     };
   },
   created() {
@@ -127,6 +135,20 @@ export default {
       this.totalRows = this.items.length;
       this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
     });
+    this.$bus.on(EVENT_BUS.REFRESH_SPECIAL_REQUESTED_TICKET, (data) => {
+      for (let i in this.items) {
+        if (this.items[i].requestId == data.requestId) {
+          this.items[i].requestEmployee.requestStatus = data.requestStatus;
+          return;
+        }
+      }
+    });
+  },
+  methods: {
+    openTicketDetailModal(requestId) {
+      this.modal.requestDetail.requestId = parseInt(requestId);
+      this.$refs[this.modal.requestDetail.id].show();
+    },
   },
 };
 </script>
@@ -135,9 +157,12 @@ export default {
 #per-page-select {
   color: black;
 }
-
 #pagination /deep/ .page-link {
   color: black;
   font-size: 0.75rem;
+}
+/deep/ #request-detail-modal___BV_modal_body_ {
+  position: fixed;
+  width: 100%;
 }
 </style>

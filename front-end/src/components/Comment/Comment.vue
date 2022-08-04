@@ -46,11 +46,13 @@
                     </strong>
                     {{
                       comment
-                        ? "at " +
-                          comment.createdAt.substring(
-                            0,
-                            comment.createdAt.indexOf(".")
-                          )
+                        ? comment.createdAt.indexOf(".") !== -1
+                          ? "at " +
+                            comment.createdAt.substring(
+                              0,
+                              comment.createdAt.indexOf(".")
+                            )
+                          : "at " + comment.createdAt
                         : null
                     }}</span
                   >
@@ -101,7 +103,6 @@ import jwt_decode from "jwt-decode";
 import { getAccessToken } from "../../utils/cookies";
 import { COMMENT_REQUEST } from "@/constant/comment";
 import { EVENT_BUS } from "@/constant/common";
-import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import { insertComment, findListComment } from "@/api/business";
 
 export default {
@@ -109,6 +110,14 @@ export default {
     requestTicket: {
       type: Object,
       default: {},
+    },
+    requestId: {
+      type: Number,
+      default: 0,
+    },
+    isRequesterArea: {
+      type: Boolean,
+      default: false,
     },
     shouldPlay: Boolean,
   },
@@ -126,25 +135,15 @@ export default {
   },
   methods: {
     async findListComment() {
-      await findListComment(this.$route.params.id).then((res) => {
+      await findListComment(this.requestId).then((res) => {
         this.comments = res.data;
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
       });
       // Scroll to the last comment
       let objDiv = document.getElementById("chat-box");
       objDiv.scrollTop = objDiv.scrollHeight;
     },
     setObjActionId() {
-      let originRouteRequestedTicket =
-        FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.REQUESTED_TICKET.PATH;
-      if (
-        this.$route.path.includes(
-          originRouteRequestedTicket.substring(
-            0,
-            originRouteRequestedTicket.lastIndexOf("/")
-          )
-        )
-      ) {
+      if (this.isRequesterArea) {
         this.commentRequest.comment.requesterActionId = this.requestTicket.requesterAction.requesterActionId;
       } else {
         if (
@@ -164,7 +163,6 @@ export default {
         return;
       }
       this.setObjActionId();
-      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       insertComment(this.commentRequest).then(() => {
         this.commentRequest.comment.commentDetail = null;
         this.findListComment();
@@ -239,14 +237,14 @@ export default {
 
 @media only screen and (max-height: 767px) {
   .chat .chat-history {
-    height: 300px;
+    height: calc(100vh - 490px);
     overflow-x: auto;
   }
 }
 
 @media only screen and (min-height: 768px) and (max-height: 992px) {
   .chat .chat-history {
-    height: 600px;
+    height: calc(100vh - 490px);
     overflow-x: auto;
   }
 }

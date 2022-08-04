@@ -95,11 +95,9 @@
       </template>
     </b-modal>
     <b-modal
-      id="insertDocumentModal"
-      ref="insertDocumentModal"
+      :id="modalDocument.insertDocument.id"
       @ok="insertDocumentsAction($event)"
       title="New Documents"
-      no-stacking
       @hidden="resetDocumentModal"
     >
       <b-form-group
@@ -174,6 +172,10 @@ export default {
       type: Array,
       default: [],
     },
+    employeeId: {
+      type: Number,
+      default: null,
+    },
   },
   data() {
     return {
@@ -186,6 +188,9 @@ export default {
       currentPage: 1,
       fields: DOCUMENT_TABLE_COLUMN.fields,
       modalDocument: {
+        insertDocument: {
+          id: "insert-document-modal",
+        },
         undelInfo: {
           id: "undel-document-modal",
         },
@@ -204,7 +209,7 @@ export default {
   watch: {
     documentObj: function() {
       this.totalRows = this.documentObj.length;
-      this.updateEmployeeObj.employee.employeeId = this.$route.params.id;
+      this.updateEmployeeObj.employee.employeeId = this.employeeId;
     },
   },
   computed: {
@@ -220,7 +225,10 @@ export default {
         this.originDocumentObj = res.data;
         this.tagDocumentValue = this.documentObj.map((el) => el.documentName);
         this.documentOption = res.data.map((el) => el.documentName);
-        this.$refs["insertDocumentModal"].show();
+        this.$root.$emit(
+          "bv::show::modal",
+          this.modalDocument.insertDocument.id
+        );
       });
     },
     setValueDeleteFlag(action, item, button) {
@@ -281,7 +289,10 @@ export default {
       );
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       updateEmployee(formData).then((res) => {
-        this.$refs["insertDocumentModal"].hide();
+        this.$root.$emit(
+          "bv::hide::modal",
+          this.modalDocument.insertDocument.id
+        );
         this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);
       });
     },
