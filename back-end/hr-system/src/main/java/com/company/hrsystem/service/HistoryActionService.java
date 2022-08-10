@@ -14,13 +14,14 @@ import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.HistoryActionDto;
 import com.company.hrsystem.mapper.EmployeeMapper;
 import com.company.hrsystem.mapper.HistoryActionMapper;
+import com.company.hrsystem.serviceInterface.HistoryActionServiceInterface;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.ClientUtil;
 import com.company.hrsystem.utils.ObjectUtil;
 import com.company.hrsystem.utils.StringUtil;
 
 @Service
-public class HistoryActionService {
+public class HistoryActionService implements HistoryActionServiceInterface {
 
 	@Autowired
 	private ObjectUtil objectUtil;

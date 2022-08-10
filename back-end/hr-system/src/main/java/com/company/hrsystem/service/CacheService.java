@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
+import com.company.hrsystem.serviceInterface.CacheServiceInterface;
+
 @Service
-public class CacheService {
+public class CacheService implements CacheServiceInterface {
 
 	@Autowired
 	CacheManager cacheManager;
