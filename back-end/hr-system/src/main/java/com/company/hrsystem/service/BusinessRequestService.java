@@ -1,6 +1,5 @@
 package com.company.hrsystem.service;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -143,8 +142,8 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		}
 		int insertRows = 0;
 		RequestEmployeeDto requestEmployee = request.getData().getRequestEmployee();
-		Date startDate = request.getData().getRequestEmployee().getStartDate();
-		Date endDate = request.getData().getRequestEmployee().getEndDate();
+		Timestamp startDate = request.getData().getRequestEmployee().getStartDate();
+		Timestamp endDate = request.getData().getRequestEmployee().getEndDate();
 		if (DateUtil.isPreviousMonthYear(startDate) || DateUtil.isPreviousMonthYear(endDate)) {
 			LogUtil.warn(messageUtil.getMessagelangUS("Partial.date.not.correct"));
 			throw new GlobalException(system, version, messageUtil.getMessagelangUS("previous.month"));

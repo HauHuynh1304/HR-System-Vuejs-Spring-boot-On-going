@@ -1,6 +1,6 @@
 package com.company.hrsystem.constants;
 
-public class ApiUrlConstant {
+public final class ApiUrlConstant {
 
 	public static final String ROOT_API = "/hr-system/api";
 

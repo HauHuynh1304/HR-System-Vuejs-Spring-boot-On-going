@@ -14,18 +14,12 @@ export const REQUESTED_TIKCET_TABLE = {
       label: "start date",
       thClass: "text-center text-info",
       tdClass: "text-center",
-      formatter: (value) => {
-        return moment(value).format(DATE_FORMAT);
-      },
     },
     {
       key: "requestEmployee.endDate",
       label: "end date",
       thClass: "text-center text-info",
       tdClass: "text-center",
-      formatter: (value) => {
-        return moment(value).format(DATE_FORMAT);
-      },
     },
     {
       key: "requestEmployee.duration",
@@ -44,6 +38,9 @@ export const REQUESTED_TIKCET_TABLE = {
       label: "approver",
       thClass: "text-center text-info",
       tdClass: "text-center",
+      formatter: (value) => {
+        return value.substring(0, value.indexOf("@"));
+      },
     },
     {
       key: "requestEmployee.requestStatus",
@@ -67,18 +64,12 @@ export const RECEIVED_TIKCET_TABLE = {
       label: "start date",
       thClass: "text-center text-info",
       tdClass: "text-center",
-      formatter: (value) => {
-        return moment(value).format(DATE_FORMAT);
-      },
     },
     {
       key: "requestEmployee.endDate",
       label: "end date",
       thClass: "text-center text-info",
       tdClass: "text-center",
-      formatter: (value) => {
-        return moment(value).format(DATE_FORMAT);
-      },
     },
     {
       key: "requestEmployee.duration",
@@ -97,6 +88,9 @@ export const RECEIVED_TIKCET_TABLE = {
       label: "requester",
       thClass: "text-center text-info",
       tdClass: "text-center",
+      formatter: (value) => {
+        return value.substring(0, value.indexOf("@"));
+      },
     },
     {
       key: "requestEmployee.requestStatus",

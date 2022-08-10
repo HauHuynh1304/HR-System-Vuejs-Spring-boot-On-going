@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="container">
-      <loading @[EVENT_BUS.DISABLE_ELEMENT]="disableElement" />
+      <loading />
       <div class="col-lg-4 col-md-6 mt-auto ml-auto mr-auto">
         <form @submit.prevent="handleSubmit()">
           <card class="card-login card-white">
@@ -93,13 +93,9 @@ export default {
         },
       },
       EVENT_BUS: EVENT_BUS,
-      isDisableElement: false,
     };
   },
   methods: {
-    disableElement() {
-      this.isDisableElement = !this.isDisableElement;
-    },
     handleSubmit() {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       removeAccessToken();

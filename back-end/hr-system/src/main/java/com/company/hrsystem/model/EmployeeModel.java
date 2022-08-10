@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.company.hrsystem.utils.DateUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,8 +34,7 @@ public abstract class EmployeeModel implements Serializable {
 
 	private Date employeeEndDate;
 
-	private String createdAt;
-
+	@JsonFormat(timezone=DateUtil.TIME_ZONE)
 	private Timestamp updatedAt;
 
 	public EmployeeModel(Integer employeeId, String employeeProfileId, Integer roomId, Integer systemAccountId,

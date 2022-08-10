@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-6 p-auto">
           <b-form-group
-            label="Emails"
+            label="Requester"
             id="tags-component-select"
             label-for="tags-component-select"
             ref="tags-component-select"
@@ -99,15 +99,6 @@
               SEARCH
             </base-button>
             <base-button
-              native-type="submit"
-              type="info"
-              size="sm"
-              @click="onDownload"
-              :disabled="!isEnableDownload"
-            >
-              DOWNLOAD
-            </base-button>
-            <base-button
               id="onResetButton"
               type="warning"
               size="sm"
@@ -142,7 +133,6 @@ export default {
       initListAccounts: null,
       requestTypes: null,
       submitObj: SEARCH_REQUESTED_TICKET,
-      isEnableDownload: false,
     };
   },
   async created() {
@@ -164,7 +154,6 @@ export default {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       this.getSystemAccountIds();
       findReportCaseSelected(this.submitObj).then((res) => {
-        this.isEnableDownload = true;
         this.$bus.emit(EVENT_BUS.FIND_REPORT_INFO, res.data);
       });
     },

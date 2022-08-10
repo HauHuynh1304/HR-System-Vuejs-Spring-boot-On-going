@@ -1,11 +1,34 @@
 <template>
-  <div class="card">
-    <card card-body-classes="table-full-width">
+  <div>
+    <card>
       <h4 slot="header" class="title">
         {{ routerProps.HUMAN_MANAGEMENT.CHILDREN.REPORT.NAME.toUpperCase() }}
       </h4>
       <search-report-component @[EVENT_BUS.CLICK_DOWNLOAD]="onDownload" />
-      <div id="report-table" v-if="reportData">
+    </card>
+    <card v-if="isShowTable">
+      <div class="d-flex justify-content-between">
+        <div>
+          <b-button variant="success" size="sm" @click="leaveReportArea">
+            Leave Report
+          </b-button>
+          <b-button variant="success" size="sm" @click="otReportArea">
+            OT Report
+          </b-button>
+        </div>
+        <div>
+          <b-button
+            native-type="submit"
+            variant="primary"
+            size="sm"
+            @click="onDownload"
+          >
+            Download
+          </b-button>
+        </div>
+      </div>
+      <br />
+      <div id="report-table">
         <b-table-simple responsive hover small>
           <b-thead>
             <b-tr>
@@ -20,13 +43,23 @@
               <b-th>Total</b-th>
             </b-tr>
           </b-thead>
-          <b-tbody v-if="reportData">
-            <b-tr v-for="(rootItem, rootIndex) in reportData" :key="rootIndex">
+          <b-tbody>
+            <b-tr
+              v-for="(rootItem, rootIndex) in isLeaveReportArea
+                ? leaveReportData
+                : otReportData"
+              :key="rootIndex"
+            >
               <b-td>
                 {{ rootIndex + 1 }}
               </b-td>
               <b-td>
-                {{ rootItem.requester }}
+                {{
+                  rootItem.requester.substring(
+                    0,
+                    rootItem.requester.indexOf("@")
+                  )
+                }}
               </b-td>
               <b-td>
                 <b-tr v-for="(item, index) in rootItem.reportInfo" :key="index">
@@ -40,17 +73,25 @@
               </b-td>
               <b-td>
                 <b-tr v-for="(item, index) in rootItem.reportInfo" :key="index">
-                  {{ item.approver }}
+                  {{ item.approver.substring(0, item.approver.indexOf("@")) }}
                 </b-tr>
               </b-td>
               <b-td>
                 <b-tr v-for="(item, index) in rootItem.reportInfo" :key="index">
-                  {{ item.startDate }}
+                  {{
+                    isLeaveReportArea
+                      ? item.startDate.substring(0, 10)
+                      : item.startDate
+                  }}
                 </b-tr>
               </b-td>
               <b-td>
                 <b-tr v-for="(item, index) in rootItem.reportInfo" :key="index">
-                  {{ item.endDate }}
+                  {{
+                    isLeaveReportArea
+                      ? item.endDate.substring(0, 10)
+                      : item.endDate
+                  }}
                 </b-tr>
               </b-td>
               <b-td>
@@ -81,7 +122,7 @@
 import Card from "@/components/Cards/Card.vue";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
 import SearchReportComponent from "./components/SearchReportComponent.vue";
-import { EVENT_BUS, REPORT_TYPE } from "@/constant/common";
+import { EVENT_BUS, REPORT_TYPE, SPECIAL_VALUE } from "@/constant/common";
 import * as XLSX from "xlsx/xlsx.mjs";
 
 export default {
@@ -93,14 +134,41 @@ export default {
       totalRows: null,
       currentPage: 1,
       perPage: 10,
-      filter: null,
-      reportData: null,
+      isShowTable: false,
       EVENT_BUS: EVENT_BUS,
+      isLeaveReportArea: true,
+      isOTReportArea: false,
+      leaveReportData: [],
+      otReportData: [],
+      countSearch: 0,
     };
   },
   created() {
     this.$bus.on(EVENT_BUS.FIND_REPORT_INFO, (data) => {
-      this.reportData = data;
+      this.isShowTable = true;
+      this.leaveReportData = [];
+      this.otReportData = [];
+      data.forEach((el) => {
+        let leaveObj = {
+          requester: el.requester,
+          reportInfo: el.reportInfo.filter(
+            (item) => item.requestType !== SPECIAL_VALUE.OVER_TIME
+          ),
+        };
+        if (leaveObj.reportInfo.length) {
+          this.leaveReportData.push(leaveObj);
+        }
+
+        let otObj = {
+          requester: el.requester,
+          reportInfo: el.reportInfo.filter(
+            (item) => item.requestType === SPECIAL_VALUE.OVER_TIME
+          ),
+        };
+        if (otObj.reportInfo.length) {
+          this.otReportData.push(otObj);
+        }
+      });
       this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
     });
   },
@@ -112,11 +180,34 @@ export default {
     },
     onDownload() {
       const workbook = XLSX.utils.book_new();
-      this.reportData.forEach((el) => {
+      let exportData = this.isLeaveReportArea
+        ? this.leaveReportData
+        : this.otReportData;
+      if(!exportData.length) return;  
+      exportData.forEach((el) => {
         const worksheet = XLSX.utils.json_to_sheet(el.reportInfo);
         XLSX.utils.book_append_sheet(workbook, worksheet, el.requester);
       });
-      XLSX.writeFile(workbook, REPORT_TYPE.GENERAL);
+      XLSX.writeFile(
+        workbook,
+        this.isLeaveReportArea
+          ? REPORT_TYPE.LEAVE_REPORT
+          : REPORT_TYPE.OT_REPORT
+      );
+    },
+    leaveReportArea() {
+      this.isLeaveReportArea = true;
+      this.isOTReportArea = false;
+      this.leaveReportData.length
+        ? (this.isEnableDownload = true)
+        : (this.isEnableDownload = false);
+    },
+    otReportArea() {
+      this.isLeaveReportArea = false;
+      this.isOTReportArea = true;
+      this.otReportData.length
+        ? (this.isEnableDownload = true)
+        : (this.isEnableDownload = false);
     },
   },
 };

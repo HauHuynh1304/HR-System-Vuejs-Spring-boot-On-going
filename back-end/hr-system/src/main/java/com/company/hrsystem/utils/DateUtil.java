@@ -1,17 +1,14 @@
 package com.company.hrsystem.utils;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.DateTimeException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 
 import com.company.hrsystem.enums.PartialDateEnum;
 
 public class DateUtil {
 
-	public static final String DAY_HOUR_SECOND = "yyyy-mm-dd hh:mm:ss";
+	public static final String DAY_HOUR_SECOND = "yyyy-MM-dd HH:mm:ss";
 
 	public static final String DAY = "yyyy/MM/dd";
 
@@ -22,21 +19,27 @@ public class DateUtil {
 		return Timestamp.valueOf(time);
 	}
 
-	public static Double caculateDuration(String type, Date startDate, Date endDate) throws DateTimeException {
+	public static Double caculateDuration(String type, Timestamp startDate, Timestamp endDate)
+			throws DateTimeException {
 		double ratio = 0;
-		if (type.equals(PartialDateEnum.ALL_DAY.getValue())) {
+		double duration = 0;
+		if (type.equals(PartialDateEnum.ALL_DAY.getValue()) || type.equals(PartialDateEnum.HOURS.getValue())) {
 			ratio = 1;
 		} else if (type.equals(PartialDateEnum.HALF_DAY.getValue())) {
 			ratio = 0.5;
 		}
-		Period diff = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
-		double duration = diff.getDays() + 1;
+
+		if (type.equals(PartialDateEnum.HOURS.getValue())) {
+			duration = (int) (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+		} else {
+			duration = (int) (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) + 1;
+		}
 		return ratio * duration;
 	}
 
-	public static boolean isPreviousMonthYear(Date date) {
-		LocalDate coverDate = date.toLocalDate();
-		LocalDate currentDate = new Date(System.currentTimeMillis()).toLocalDate();
+	public static boolean isPreviousMonthYear(Timestamp date) {
+		LocalDateTime coverDate = date.toLocalDateTime();
+		LocalDateTime currentDate = LocalDateTime.now();
 		if (coverDate.getMonthValue() < currentDate.getMonthValue() || coverDate.getYear() < currentDate.getYear()) {
 			return true;
 		}
