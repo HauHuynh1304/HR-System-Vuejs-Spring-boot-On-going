@@ -58,6 +58,7 @@ import com.company.hrsystem.response.FindEmployeeResponse;
 import com.company.hrsystem.response.FindListTicketResponse;
 import com.company.hrsystem.response.FindTicketRequestByIdResponse;
 import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.serviceInterface.BusinessRequestServiceInterface;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.FileUtil;
@@ -65,7 +66,7 @@ import com.company.hrsystem.utils.LogUtil;
 import com.company.hrsystem.utils.MessageUtil;
 
 @Service
-public class BusinessRequestService {
+public class BusinessRequestService implements BusinessRequestServiceInterface {
 
 	@Value("${system.name}")
 	private String system;

@@ -35,6 +35,7 @@ import com.company.hrsystem.request.IsEmailInDbRequest;
 import com.company.hrsystem.request.SignUpRequest;
 import com.company.hrsystem.request.UpdateAccountRequest;
 import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.serviceInterface.AuthenticationServiceInterface;
 import com.company.hrsystem.utils.TokenUtil;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
@@ -42,7 +43,7 @@ import com.company.hrsystem.utils.MessageUtil;
 import com.company.hrsystem.utils.ObjectUtil;
 
 @Service
-public class AuthenticationService {
+public class AuthenticationService implements AuthenticationServiceInterface {
 
 	@Value("${system.name}")
 	private String system;
@@ -98,7 +99,7 @@ public class AuthenticationService {
 	@Autowired
 	private ObjectUtil objectUtil;
 
-	public ResponseTemplate handleLogin(AuthenRequest req, HttpServletRequest servletRequest) throws Exception {
+	public ResponseTemplate handleLogin(AuthenRequest req, HttpServletRequest servletRequest) {
 		String email = req.getData().getUsername();
 		String password = req.getData().getPassword();
 		Authentication authentication = authenticationManager

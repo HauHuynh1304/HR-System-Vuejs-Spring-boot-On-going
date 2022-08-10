@@ -41,6 +41,7 @@ import com.company.hrsystem.response.FindEmployeeResponse;
 import com.company.hrsystem.response.FindListEmployeesResponse;
 import com.company.hrsystem.response.FindReportCaseSelectedResponse;
 import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.serviceInterface.HumanResourceServiceInterface;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.FileUtil;
@@ -51,7 +52,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Service
-public class HumanResourceService {
+public class HumanResourceService implements HumanResourceServiceInterface {
 
 	@Value("${system.name}")
 	private String system;

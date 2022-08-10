@@ -22,6 +22,7 @@ import com.company.hrsystem.mapper.ResfreshTokenMapper;
 import com.company.hrsystem.mapper.SystemAccountMapper;
 import com.company.hrsystem.request.ResfreshTokenRequest;
 import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.serviceInterface.RefreshTokenServiceInterface;
 import com.company.hrsystem.utils.TokenUtil;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.MathUtil;
@@ -30,7 +31,7 @@ import com.company.hrsystem.utils.MessageUtil;
 import io.jsonwebtoken.impl.DefaultClaims;
 
 @Service
-public class RefreshTokenService {
+public class RefreshTokenService implements RefreshTokenServiceInterface {
 
 	@Autowired
 	SystemAccountMapper systemAccountMapper;

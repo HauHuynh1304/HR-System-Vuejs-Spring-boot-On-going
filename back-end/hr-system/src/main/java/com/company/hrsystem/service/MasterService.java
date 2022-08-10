@@ -34,12 +34,13 @@ import com.company.hrsystem.request.RequestTypeRequest;
 import com.company.hrsystem.request.RoomRequest;
 import com.company.hrsystem.request.SystemRoleRequest;
 import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.serviceInterface.MasterServiceInterface;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.LogUtil;
 import com.company.hrsystem.utils.MessageUtil;
 
 @Service
-public class MasterService {
+public class MasterService implements MasterServiceInterface {
 
 	@Value("${system.name}")
 	private String system;
@@ -253,7 +254,7 @@ public class MasterService {
 	public ResponseTemplate insertRequestType(RequestTypeRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RequestTypeDto obj = request.getData().getRequestType();
-		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRequestTypeName()) ) {
+		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRequestTypeName())) {
 			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty",
 					CommonConstant.REQUEST_TYPE_INSERT_NOT_NULL));
 			throw new NullPointRequestException(system, version, messageUtil.getFlexMessageLangUS("null.request.empty",
