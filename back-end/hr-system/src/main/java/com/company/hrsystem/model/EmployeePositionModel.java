@@ -2,7 +2,10 @@ package com.company.hrsystem.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
+import com.company.hrsystem.utils.DateUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -29,9 +32,8 @@ public abstract class EmployeePositionModel implements Serializable {
 	private Date startDate;
 	
 	private Date endDate;
-
-	private String createdAt;
-
-	private String updatedAt;
+	
+	@JsonFormat(timezone=DateUtil.TIME_ZONE)
+	private Timestamp updatedAt;
 	
 }

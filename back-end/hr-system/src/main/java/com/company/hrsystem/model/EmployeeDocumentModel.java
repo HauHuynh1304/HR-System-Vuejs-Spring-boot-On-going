@@ -1,6 +1,10 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+
+import com.company.hrsystem.utils.DateUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +25,7 @@ public abstract class EmployeeDocumentModel implements Serializable {
 
 	private Boolean deletedFlag;
 
-	private String createdAt;
-
-	private String updatedAt;
+	@JsonFormat(timezone=DateUtil.TIME_ZONE)
+	private Timestamp updatedAt;
 
 }

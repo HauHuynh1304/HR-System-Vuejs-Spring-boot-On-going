@@ -1,11 +1,13 @@
 <template>
-  <div class="card ">
-    <card card-body-classes="table-full-width">
+  <div>
+    <card>
       <h4 slot="header" class="title">
         {{ routerProps.HUMAN_MANAGEMENT.CHILDREN.EMPLOYEES.NAME.toUpperCase() }}
       </h4>
       <Search-list-user />
-      <card>
+    </card>
+    <card>
+      <div v-if="items">
         <div class="row">
           <div class="col-md-2 p-auto">
             <b-form-group
@@ -45,36 +47,35 @@
             />
           </div>
         </div>
-        <div class="row">
-          <div class="table-responsive">
-            <b-table
-              hover
-              :items="items"
-              :fields="fields"
-              :filter="filter"
-              :current-page="currentPage"
-              :per-page="perPage"
-            >
-              <template #cell(systemEmail)="row">
-                <b-link
-                  @click="openUpdateEmployeeModal(row.item.employee.employeeId)"
-                >
-                  {{ row.item.systemEmail }}
-                </b-link>
-              </template>
-              <template #cell(employee.deletedFlag)="row">
-                <p
-                  :class="
-                    row.item.employee.deletedFlag ? 'text-danger' : 'text-info'
-                  "
-                >
-                  {{ row.item.employee.deletedFlag ? "resign" : "working" }}
-                </p>
-              </template>
-            </b-table>
-          </div>
+        <div id="list-employee-table">
+          <b-table
+            hover
+            :items="items"
+            :fields="fields"
+            :filter="filter"
+            :current-page="currentPage"
+            :per-page="perPage"
+            responsive
+          >
+            <template #cell(systemEmail)="row">
+              <b-link
+                @click="openUpdateEmployeeModal(row.item.employee.employeeId)"
+              >
+                {{ row.item.systemEmail }}
+              </b-link>
+            </template>
+            <template #cell(employee.deletedFlag)="row">
+              <p
+                :class="
+                  row.item.employee.deletedFlag ? 'text-danger' : 'text-info'
+                "
+              >
+                {{ row.item.employee.deletedFlag ? "resign" : "working" }}
+              </p>
+            </template>
+          </b-table>
         </div>
-      </card>
+      </div>
     </card>
     <b-modal
       size="xl"
@@ -99,7 +100,7 @@ import { API } from "@/constant/api";
 import UpdateUserPage from "./UpdateUserPage.vue";
 
 export default {
-  components: { SearchListUser, Card, UpdateUserPage },
+  components: { SearchListUser, Card, UpdateUserPage, Card },
   data() {
     return {
       URL_IMG: URL_IMG,
@@ -136,16 +137,25 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #per-page-select {
   color: black;
 }
-
 #pagination /deep/ .page-link {
   color: black;
   font-size: 0.75rem;
 }
 /deep/ #update-employee___BV_modal_body_ {
   position: fixed;
+}
+#list-employee-table > .table-responsive {
+  max-height: 50vh;
+  /deep/ thead tr {
+    background: white;
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }
 </style>

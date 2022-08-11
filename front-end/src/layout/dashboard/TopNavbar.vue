@@ -3,7 +3,7 @@
     class="navbar navbar-expand-lg navbar-absolute"
     :class="{ 'bg-white': showMenu, 'navbar-transparent': !showMenu }"
   >
-    <loading @[EVENT_BUS.DISABLE_ELEMENT]="disableElement" />
+    <loading />
     <div class="container-fluid">
       <div class="navbar-wrapper">
         <div
@@ -141,7 +141,7 @@
               @click="toProfilePage"
             >
               <a
-                :href="!isDisableElement ? routerProps.USER.PATH : null"
+                :href="routerProps.USER.PATH"
                 aria-current="page"
                 class="nav-link"
                 ref="toProfilePage"
@@ -236,7 +236,6 @@ export default {
       searchQuery: "",
       avatar: null,
       EVENT_BUS: EVENT_BUS,
-      isDisableElement: false,
       modal: {
         id: {
           maxValidTime: "maxValidTime",
@@ -268,9 +267,6 @@ export default {
       if (parseInt(getMaxValidTime()) - this.currentTime < 1) {
         this.$store.dispatch("logout", false);
       }
-    },
-    disableElement() {
-      this.isDisableElement = !this.isDisableElement;
     },
     async getProfile() {
       let user = await JSON.parse(localStorage.getItem(LOCAL_STORAGE.NAME));
@@ -313,15 +309,9 @@ export default {
       this.$sidebar.displaySidebar(false);
     },
     toggleMenu() {
-      if (this.isDisableElement) {
-        return;
-      }
       this.showMenu = !this.showMenu;
     },
     logout() {
-      if (this.isDisableElement) {
-        return;
-      }
       logout(null).then((res) => {
         this.$store.dispatch("logout", false);
       });

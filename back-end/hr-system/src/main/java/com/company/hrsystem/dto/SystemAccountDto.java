@@ -18,9 +18,8 @@ public class SystemAccountDto extends SystemAccountModel {
 
 	private static final long serialVersionUID = 1L;
 
-	public SystemAccountDto(Integer systemAccountId, String systemEmail, String systemPassword, Boolean deletedFlag,
-			String createdAt, Timestamp updatedAt) {
-		super(systemAccountId, systemEmail, systemPassword, deletedFlag, createdAt, updatedAt);
+	public SystemAccountDto(Integer systemAccountId, String systemEmail, String systemPassword, Boolean deletedFlag, Timestamp updatedAt) {
+		super(systemAccountId, systemEmail, systemPassword, deletedFlag, updatedAt);
 	}
 
 }

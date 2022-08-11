@@ -50,7 +50,7 @@ export const FE_ROUTER_PROP = {
   },
   REQUEST_TICKET: {
     ROOT_PATH: "/business",
-    ROOT_NAME: "Request Ticket",
+    ROOT_NAME: "Tickets",
     CHILDREN: {
       CREATE_REQUEST_TICKET: {
         PATH: "new-ticket",
@@ -58,7 +58,7 @@ export const FE_ROUTER_PROP = {
       },
       LIST_REQUESTED_TICKET: {
         PATH: "list-leave-ticket",
-        NAME: "Leave ticket",
+        NAME: "My ticket",
       },
       LIST_RECEIVED_REQUEST_TICKET: {
         PATH: "list-received-ticket",

@@ -161,7 +161,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 		if (emailFromToken.equals(emailFromRequest) || authenUtil.isAuthen(roleAdmin)
 				|| authenUtil.isAuthen(roleRootAmin)) {
 			String password = passwordEncoder.encode(ChangePwRequest.getData().getAccount().getSystemPassword());
-			SystemAccountDto account = new SystemAccountDto(null, emailFromRequest, password, null, null,
+			SystemAccountDto account = new SystemAccountDto(null, emailFromRequest, password, null,
 					DateUtil.getCurrentDayHourSecond());
 			accountMapper.updateByEmailSelective(account);
 

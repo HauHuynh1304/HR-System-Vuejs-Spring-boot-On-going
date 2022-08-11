@@ -1,102 +1,132 @@
 <template>
-  <div class="card ">
-    <card card-body-classes="table-full-width">
+  <div>
+    <card>
       <h4 slot="header" class="title">
         {{
           routerProps.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET.NAME.toUpperCase()
         }}
       </h4>
       <search-received-request-ticket-component />
-      <card>
-        <div class="row">
-          <div class="col-md-2 p-auto">
-            <b-form-group
-              label="Per page"
-              label-for="per-page-select"
-              label-cols-sm="6"
-              label-cols-md="4"
-              label-cols-lg="6"
-              label-align-sm="left"
-              label-size="sm"
-            >
-              <b-form-select
-                id="per-page-select"
-                v-model="perPage"
-                :options="pageOptions"
-                size="sm"
-              ></b-form-select>
-            </b-form-group>
-          </div>
-          <div class="col-md-3 p-auto">
-            <b-form-input
-              id="filter-input"
-              v-model="filter"
-              type="search"
-              size="sm"
-              placeholder="Filter"
-            />
-          </div>
-          <div
-            id="mutiple-request-area"
-            class="col-md-3 p-auto text-right d-flex justify-content-around align-items-start"
+    </card>
+    <card v-if="items">
+      <div class="row">
+        <div class="col-md-2 p-auto">
+          <b-form-group
+            label="Per page"
+            label-for="per-page-select"
+            label-cols-sm="6"
+            label-cols-md="4"
+            label-cols-lg="6"
+            label-align-sm="left"
+            label-size="sm"
           >
-            <base-button size="sm" type="info" @click="approveAll">
-              APPROVE ALL
-            </base-button>
-            <base-button size="sm" type="warning" @click="rejectAll">
-              REJECT ALL
-            </base-button>
-          </div>
-          <div class="col-md-4 p-auto">
-            <b-pagination
-              id="pagination"
-              v-model="currentPage"
-              :total-rows="totalRows"
-              :per-page="perPage"
-              align="right"
+            <b-form-select
+              id="per-page-select"
+              v-model="perPage"
+              :options="pageOptions"
               size="sm"
-            />
-          </div>
+            ></b-form-select>
+          </b-form-group>
         </div>
-        <div class="row">
-          <div class="table-responsive">
-            <b-table
-              hover
-              :items="items"
-              :fields="fields"
-              :filter="filter"
-              :current-page="currentPage"
-              :per-page="perPage"
+        <div class="col-md-3 p-auto">
+          <b-form-input
+            id="filter-input"
+            v-model="filter"
+            type="search"
+            size="sm"
+            placeholder="Filter"
+          />
+        </div>
+        <div
+          id="mutiple-request-area"
+          class="col-md-3 p-auto text-right d-flex justify-content-around align-items-start"
+        >
+          <base-button size="sm" type="info" @click="approveAll">
+            APPROVE ALL
+          </base-button>
+          <base-button size="sm" type="warning" @click="rejectAll">
+            REJECT ALL
+          </base-button>
+        </div>
+        <div class="col-md-4 p-auto">
+          <b-pagination
+            id="pagination"
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="right"
+            size="sm"
+          />
+        </div>
+      </div>
+      <div id="list-received-ticket-table">
+        <b-table
+          hover
+          :items="items"
+          :fields="fields"
+          :filter="filter"
+          :current-page="currentPage"
+          :per-page="perPage"
+          responsive
+        >
+          <template #cell(requestType)="row">
+            <b-link @click="openReceivedTicketDetailModal(row.item.requestId)">
+              {{ row.item.requestType }}
+            </b-link>
+          </template>
+          <template #cell(requestEmployee.requestStatus)="row">
+            <p
+              :class="
+                row.item.requestEmployee.requestStatus === ticketStatus.APPROVED
+                  ? 'text-success'
+                  : row.item.requestEmployee.requestStatus ===
+                    ticketStatus.REJECT
+                  ? 'text-danger'
+                  : row.item.requestEmployee.requestStatus ===
+                    ticketStatus.CANCEL
+                  ? 'text-warning'
+                  : 'text-primary'
+              "
             >
-              <template #cell(requestType)="row">
-                <b-link
-                  @click="openReceivedTicketDetailModal(row.item.requestId)"
-                >
-                  {{ row.item.requestType }}
-                </b-link>
-              </template>
-              <template #cell(requestEmployee.requestStatus)="row">
-                <p
-                  :class="
-                    row.item.requestEmployee.requestStatus ===
-                    ticketStatus.APPROVED
-                      ? 'text-success'
-                      : row.item.requestEmployee.requestStatus ===
-                        ticketStatus.REJECT
-                      ? 'text-danger'
-                      : row.item.requestEmployee.requestStatus ===
-                        ticketStatus.CANCEL
-                      ? 'text-warning'
-                      : 'text-primary'
-                  "
-                >
-                  {{ row.item.requestEmployee.requestStatus }}
-                </p>
-              </template>
-            </b-table>
-          </div>
-        </div>
-      </card>
+              {{ row.item.requestEmployee.requestStatus }}
+            </p>
+          </template>
+          <template #cell(requestEmployee.startDate)="row">
+            <p>
+              {{
+                row.item.requestType === SPECIAL_VALUE.OVER_TIME
+                  ? moment(row.item.requestEmployee.startDate).format(
+                      DATE_TIME_FORMAT
+                    )
+                  : moment(row.item.requestEmployee.startDate).format(
+                      DATE_FORMAT
+                    )
+              }}
+            </p>
+          </template>
+          <template #cell(requestEmployee.endDate)="row">
+            <p>
+              {{
+                row.item.requestType === SPECIAL_VALUE.OVER_TIME
+                  ? moment(row.item.requestEmployee.endDate).format(
+                      DATE_TIME_FORMAT
+                    )
+                  : moment(row.item.requestEmployee.endDate).format(DATE_FORMAT)
+              }}
+            </p>
+          </template>
+          <template #cell(requestEmployee.duration)="row">
+            <p>
+              {{
+                row.item.requestEmployee.duration +
+                  (row.item.requestType === SPECIAL_VALUE.OVER_TIME
+                    ? " hours"
+                    : " day(s)")
+              }}
+            </p>
+          </template>
+        </b-table>
+      </div>
     </card>
     <b-modal
       size="xl"
@@ -117,7 +147,12 @@
 import SearchReceivedRequestTicketComponent from "./SearchReceivedRequestTicketComponent.vue";
 import Card from "../../../components/Cards/Card.vue";
 import { FE_ROUTER_PROP } from "@/constant/routerProps";
-import { EVENT_BUS } from "@/constant/common";
+import {
+  EVENT_BUS,
+  SPECIAL_VALUE,
+  DATE_FORMAT,
+  DATE_TIME_FORMAT,
+} from "@/constant/common";
 import { RECEIVED_TIKCET_TABLE } from "@/constant/requestedTicketTable";
 import {
   TICKET_STATUS,
@@ -129,6 +164,7 @@ import { getAccessToken } from "@/utils/cookies";
 import { mutipleUpdateRequestTicketStatus } from "@/api/business";
 import { MESSAGE } from "@/constant/message";
 import RequestedTicket from "../RequestedTicket/RequestedTicket.vue";
+import moment from "moment";
 export default {
   components: { SearchReceivedRequestTicketComponent, Card, RequestedTicket },
   data() {
@@ -151,6 +187,10 @@ export default {
           requestId: null,
         },
       },
+      moment: moment,
+      SPECIAL_VALUE: SPECIAL_VALUE,
+      DATE_FORMAT: DATE_FORMAT,
+      DATE_TIME_FORMAT: DATE_TIME_FORMAT,
     };
   },
   created() {
@@ -273,16 +313,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #per-page-select {
   color: black;
 }
-
 #pagination /deep/ .page-link {
   color: black;
   font-size: 0.75rem;
 }
-#mutiple-request-area >>> button {
+#mutiple-request-area /deep/ button {
   margin: 0;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
 }
@@ -290,5 +329,15 @@ export default {
   position: fixed;
   margin: 1rem 0 0 0;
   width: 100%;
+}
+#list-received-ticket-table > .table-responsive {
+  max-height: 50vh;
+  /deep/ thead tr {
+    background: white;
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }
 </style>

@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.company.hrsystem.utils.DateUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,8 +36,7 @@ public abstract class PersonalInfoModel implements Serializable {
 
 	private String personalImage;
 
-	private String createdAt;
-
+	@JsonFormat(timezone=DateUtil.TIME_ZONE)
 	private Timestamp updatedAt;
 
 	public PersonalInfoModel(Integer personalInfoId, String personalName, Date personalBirthday,

@@ -16,27 +16,28 @@
           :options="requestOptions"
           value-field="requestTypeId"
           text-field="requestTypeName"
+          @change="isOpitonOT(insertTicketObj.request.requestTypeId)"
         />
       </div>
-      <div class="col-md-2 p-auto">
+      <div :class="isOT ? 'col-md-3 p-auto' : 'col-md-2 p-auto'">
         <base-input
           id="startDate"
           label="Start Date"
-          type="date"
+          :type="isOT ? 'datetime-local' : 'date'"
           v-model="insertTicketObj.requestEmployee.startDate"
           @change="calDuration"
         />
       </div>
-      <div class="col-md-2 p-auto">
+      <div :class="isOT ? 'col-md-3 p-auto' : 'col-md-2 p-auto'">
         <base-input
           id="endDate"
           label="End Date"
-          type="date"
+          :type="isOT ? 'datetime-local' : 'date'"
           v-model="insertTicketObj.requestEmployee.endDate"
           @change="calDuration"
         />
       </div>
-      <div class="col-md-2 p-auto">
+      <div class="col-md-2 p-auto" v-if="!isOT">
         <label class="control-label">Partial Day</label>
         <b-form-select
           class="form-control"
@@ -49,7 +50,7 @@
         <div class="form-control" id="duration">
           duration:
           <strong> {{ duration }} </strong>
-          days
+          {{ isOT ? "hours" : "days" }}
         </div>
       </div>
     </div>
@@ -172,7 +173,12 @@ import {
   findRequestType,
   insertRequestTicket,
 } from "@/api/business";
-import { ROLES, DATE_FORMAT, EVENT_BUS } from "@/constant/common";
+import {
+  ROLES,
+  DATE_FORMAT,
+  EVENT_BUS,
+  SPECIAL_VALUE,
+} from "@/constant/common";
 import {
   resetObject,
   isContainNullValue,
@@ -184,6 +190,7 @@ export default {
   name: "new-ticket",
   data() {
     return {
+      isOT: false,
       duration: 0,
       insertTicketObj: INSERT_TICKET,
       routerProps: FE_ROUTER_PROP,
@@ -212,9 +219,29 @@ export default {
     await findReason().then((res) => (this.reasonOptions = res.data));
     await findRequestType().then((res) => (this.requestOptions = res.data));
     this.initTimeObj();
+    this.insertTicketObj.requestEmployee.partialDate = PARTIAL_DAY.ALL_DAY;
     this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
   methods: {
+    isOpitonOT(optionID) {
+      this.requestOptions.forEach((el) => {
+        if (
+          el.requestTypeId === optionID &&
+          el.requestTypeName === SPECIAL_VALUE.OVER_TIME
+        ) {
+          this.isOT = true;
+          this.duration = 0;
+          this.insertTicketObj.requestEmployee.partialDate =
+            SPECIAL_VALUE.HOURS;
+        } else {
+          this.isOT = false;
+          // reset to init value
+          this.insertTicketObj.requestEmployee.partialDate =
+            PARTIAL_DAY.ALL_DAY;
+          this.calDuration();
+        }
+      });
+    },
     calDuration() {
       if (
         this.insertTicketObj.requestEmployee.startDate &&
@@ -242,6 +269,7 @@ export default {
         let ratio = 0;
         switch (this.insertTicketObj.requestEmployee.partialDate) {
           case PARTIAL_DAY.ALL_DAY:
+          case SPECIAL_VALUE.HOURS:
             ratio = 1;
             break;
           case PARTIAL_DAY.HALF_DAY:
@@ -250,8 +278,15 @@ export default {
           default:
             break;
         }
-        this.duration = (duration.asDays() + 1) * ratio;
-        if (this.duration < 0.5) {
+        if (!this.isOT) {
+          this.duration = (duration.asDays() + 1) * ratio;
+        } else {
+          this.duration = duration.hours();
+        }
+        if (
+          (this.duration < 0.5 && !this.isOT) ||
+          (this.duration < 0 && this.isOT)
+        ) {
           this.$notify({
             type: "warning",
             message: MESSAGE.INSERT_REQUEST_TICKET.ERR_DURATION,
@@ -367,6 +402,7 @@ export default {
       resetObject(this.insertTicketObj.requestEmployee);
       this.initTimeObj();
       this.duration = 0;
+      this.insertTicketObj.requestEmployee.partialDate = PARTIAL_DAY.ALL_DAY;
     },
     formatHour() {
       this.timeObj.hour = this.timeObj.hour.toString().padStart(2, "0");

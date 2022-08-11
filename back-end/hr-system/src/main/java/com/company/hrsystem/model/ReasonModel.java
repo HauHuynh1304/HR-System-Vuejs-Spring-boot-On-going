@@ -3,6 +3,9 @@ package com.company.hrsystem.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.company.hrsystem.utils.DateUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,9 +22,8 @@ public abstract class ReasonModel implements Serializable {
 	private String reasonName;
 
 	private Boolean deletedFlag;
-
-	private String createdAt;
-
+	
+	@JsonFormat(timezone=DateUtil.TIME_ZONE)
 	private Timestamp updatedAt;
 
 }

@@ -1,9 +1,9 @@
 package com.company.hrsystem.model;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.company.hrsystem.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
@@ -27,23 +27,24 @@ public abstract class RequestEmployeeModel implements Serializable {
 	
 	private Integer requesterActionId;
 
-	private Date startDate;
-
-	private Date endDate;
+	@JsonFormat(timezone=DateUtil.TIME_ZONE)
+	private Timestamp startDate;
+	
+	@JsonFormat(timezone=DateUtil.TIME_ZONE)
+	private Timestamp endDate;
 
 	private String partialDate;
 
 	private String requestDescription;
 	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern=DateUtil.DAY_HOUR_SECOND, timezone=DateUtil.TIME_ZONE)
 	private Timestamp expectedApproveDate;
 
 	private Double duration;
 
 	private String requestStatus;
 
-	private String createdAt;
-
+	@JsonFormat(timezone=DateUtil.TIME_ZONE)
 	private Timestamp updatedAt;
 
 	public RequestEmployeeModel(Integer requesterActionId ,Integer supervisorActionId, Integer approverActionId, String requestStatus,

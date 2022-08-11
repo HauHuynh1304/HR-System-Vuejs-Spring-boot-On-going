@@ -83,7 +83,7 @@
               <base-input
                 v-model.trim="requestTicket.requestEmployee.duration"
                 id="status"
-                label="duration (days)"
+                :label="isOTArea ? 'duration (hours)' : 'duration (days)'"
                 readonly
               />
             </div>
@@ -220,7 +220,12 @@ import { updateRequesterAction } from "@/api/business";
 import { resetObject } from "@/utils/objectUtil";
 import jwt_decode from "jwt-decode";
 import { getAccessToken } from "@/utils/cookies";
-import { DATE_FORMAT, EVENT_BUS } from "@/constant/common";
+import {
+  DATE_FORMAT,
+  DATE_TIME_FORMAT,
+  EVENT_BUS,
+  SPECIAL_VALUE,
+} from "@/constant/common";
 import moment from "moment";
 export default {
   components: { Comment },
@@ -242,6 +247,7 @@ export default {
       action: ACTION,
       userEmail: null,
       DATE_FORMAT: DATE_FORMAT,
+      isOTArea: false,
     };
   },
   async created() {
@@ -252,12 +258,16 @@ export default {
     getRequestedTicketData() {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
       findRequestedTicket(this.requestId).then((res) => {
+        res.data.requestEmployee.requestType === SPECIAL_VALUE.OVER_TIME
+          ? (this.isOTArea = true)
+          : (this.isOTArea = false);
         res.data.requestEmployee.startDate = moment(
           res.data.requestEmployee.startDate
-        ).format(DATE_FORMAT);
+        ).format(this.isOTArea ? DATE_TIME_FORMAT : DATE_FORMAT);
         res.data.requestEmployee.endDate = moment(
           res.data.requestEmployee.endDate
-        ).format(DATE_FORMAT);
+        ).format(this.isOTArea ? DATE_TIME_FORMAT : DATE_FORMAT);
+
         res.data.requesterAction.updatedAt = moment(
           res.data.requesterAction.updatedAt
         ).format(DATE_FORMAT);

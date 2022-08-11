@@ -20,11 +20,9 @@ export default {
   created() {
     this.$bus.on(EVENT_BUS.OPEN_LOADING_MODAL, () => {
       this.$refs["loading-modal"]?.show();
-      this.$emit(EVENT_BUS.DISABLE_ELEMENT);
     });
     this.$bus.on(EVENT_BUS.CLOSE_LOADING_MODAL, () => {
       this.$refs["loading-modal"]?.hide();
-      this.$emit(EVENT_BUS.DISABLE_ELEMENT);
     });
   },
 };

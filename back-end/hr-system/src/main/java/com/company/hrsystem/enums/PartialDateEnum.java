@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PartialDateEnum {
 
-	ALL_DAY("ALL DAY"), HALF_DAY("HALF DAY");
+	ALL_DAY("ALL DAY"), HALF_DAY("HALF DAY"), HOURS("HOURS");
 
 	private String value;
 

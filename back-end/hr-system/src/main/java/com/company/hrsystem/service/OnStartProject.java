@@ -115,9 +115,8 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 	/*
 	 * Created root account
 	 */
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public void createdRootAccount() {
-		SystemAccountDto dto = new SystemAccountDto(1, rootEmail, passwordEncoder.encode(password), false, null, null);
+		SystemAccountDto dto = new SystemAccountDto(1, rootEmail, passwordEncoder.encode(password), false, null);
 		Boolean isEmailInDb = systemAccountMapper.isEmailInDb(rootEmail);
 		if (!isEmailInDb) {
 			systemAccountMapper.insertSelective(dto);
@@ -134,7 +133,6 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 	/*
 	 * Created Role
 	 */
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public void createdRole() {
 		List<SystemRoleDto> dtos = systemRoleMapper.findAllRoles();
 		SystemRoleDto rootAmin = new SystemRoleDto(1, roleRootAmin);
