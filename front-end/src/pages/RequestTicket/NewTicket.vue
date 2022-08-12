@@ -220,6 +220,7 @@ export default {
     await findRequestType().then((res) => (this.requestOptions = res.data));
     this.initTimeObj();
     this.insertTicketObj.requestEmployee.partialDate = PARTIAL_DAY.ALL_DAY;
+    this.onReset();
     this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
   methods: {

@@ -1,5 +1,5 @@
 <template>
-  <card>
+  <div>
     <b-form ref="searchForm" id="searchForm" @submit.prevent="onSubmit">
       <div class="row">
         <div class="col-md-6 p-auto">
@@ -21,7 +21,7 @@
                 id="startDate"
                 label="From"
                 type="date"
-                v-model="submitObj.requestEmployee.startDate"
+                v-model="timeStampObj.startDate"
               />
             </div>
             <div class="col-md-6 p-auto">
@@ -29,7 +29,7 @@
                 id="endDate"
                 label="To"
                 type="date"
-                v-model="submitObj.requestEmployee.endDate"
+                v-model="timeStampObj.endDate"
               />
             </div>
           </div>
@@ -110,7 +110,7 @@
         </div>
       </div>
     </b-form>
-  </card>
+  </div>
 </template>
 
 <script>
@@ -120,7 +120,8 @@ import { findReportCaseSelected } from "@/api/humanResources";
 import { findAllAccounts } from "@/api/master";
 import { SEARCH_REQUESTED_TICKET } from "@/constant/requestTicket";
 import { resetObject } from "@/utils/objectUtil";
-import { EVENT_BUS } from "@/constant/common";
+import { EVENT_BUS, TIME_STAMP } from "@/constant/common";
+import { MESSAGE } from "@/constant/message";
 
 export default {
   components: { Card },
@@ -133,6 +134,10 @@ export default {
       initListAccounts: null,
       requestTypes: null,
       submitObj: SEARCH_REQUESTED_TICKET,
+      timeStampObj: {
+        startDate: null,
+        endDate: null,
+      },
     };
   },
   async created() {
@@ -144,6 +149,7 @@ export default {
       }
     });
     await findRequestType().then((res) => (this.requestTypes = res.data));
+    this.onReset();
     this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
   methods: {
@@ -151,16 +157,37 @@ export default {
       this.onSearch;
     },
     onSearch() {
-      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
+      let startDate = null;
+      let endDate = null;
+      if (this.timeStampObj.startDate) {
+        startDate = this.timeStampObj.startDate.concat(TIME_STAMP.BEGIN);
+      }
+      if (this.timeStampObj.endDate) {
+        endDate = this.timeStampObj.endDate.concat(TIME_STAMP.END);
+      }
+      this.submitObj.requestEmployee.startDate = startDate;
+      this.submitObj.requestEmployee.endDate = endDate;
       this.getSystemAccountIds();
-      findReportCaseSelected(this.submitObj).then((res) => {
-        this.$bus.emit(EVENT_BUS.FIND_REPORT_INFO, res.data);
-      });
+      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
+      findReportCaseSelected(this.submitObj)
+        .then((res) => {
+          this.$bus.emit(EVENT_BUS.FIND_REPORT_INFO, res.data);
+        })
+        .catch((err) => {
+          this.$notify({
+            type: "warning",
+            message: MESSAGE.CALL_API_ERR.ERR,
+            horizontalAlign: "center",
+          });
+          this.onReset();
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+        });
     },
     onReset() {
       this.submitObj.systemAccountIds = [];
       this.tag.tagEmail = [];
       this.submitObj.requestTypeId = null;
+      resetObject(this.timeStampObj);
       resetObject(this.submitObj.requestEmployee);
     },
     getSystemAccountIds() {

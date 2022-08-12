@@ -326,6 +326,7 @@ export default {
       this.originDocuments = res.data;
       this.originDocumentOptions = res.data.map((el) => el.documentName);
     });
+    this.resetForm();
     this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
   methods: {

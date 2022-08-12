@@ -218,7 +218,7 @@ export default {
   width: 100%;
 }
 #report-table > .table-responsive {
-  max-height: calc(100vh - 350px);
+  max-height: 50vh;
   thead th {
     background: white;
     position: -webkit-sticky; /* for Safari */

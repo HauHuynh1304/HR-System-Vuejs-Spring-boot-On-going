@@ -168,6 +168,7 @@ export default {
     await findAllAccounts().then((res) => (this.listAccounts = res.data));
     await findPositions().then((res) => (this.listPositions = res.data));
     await findRooms().then((res) => (this.listRooms = res.data));
+    this.onResetSearch();
     this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },
 };
