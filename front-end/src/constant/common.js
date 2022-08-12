@@ -59,9 +59,14 @@ export const ACTION = {
 
 export const DATE_FORMAT = "YYYY-MM-DD";
 
-export const DATE_TIME_FORMAT = "YYYY-MM-DD hh:mm:ss";
+export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 export const REPORT_TYPE = {
   LEAVE_REPORT: "Leave_Report.xlsx",
-  OT_REPORT: "OT_Report.xlsx"
+  OT_REPORT: "OT_Report.xlsx",
+};
+
+export const TIME_STAMP = {
+  BEGIN: "T00:00",
+  END: "T23:59",
 };
