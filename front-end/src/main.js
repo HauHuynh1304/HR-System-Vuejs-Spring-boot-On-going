@@ -1,19 +1,3 @@
-/*
- =========================================================
- * Vue White Dashboard Laravel - v1.1.0
- =========================================================
-
- * Product Page: https://www.creative-tim.com/product/vue-white-dashboard-laravel
- * Copyright Creative Tim (http://www.creative-tim.com) & UPDIVISION (https://www.updivision.com)
-
- 
- * Coded by www.creative-tim.com & www.updivision.com
-
- =========================================================
-
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
- */
 import Vue from "vue";
 import VueRouter from "vue-router";
 import RouterPrefetch from "vue-router-prefetch";
