@@ -1,7 +1,6 @@
 package com.company.hrsystem.utils;
 
 import java.io.Serializable;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,7 +110,7 @@ public class TokenUtil implements Serializable {
 		String token = Jwts.builder().setClaims(claims).setSubject(subject)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + mathUtil.calculateFromString(accessTokenValid)))
-				.signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encodeToString(sercret.getBytes())).compact();
+				.signWith(SignatureAlgorithm.HS512, sercret).compact();
 		cacheService.updateCache(tokenStore, subject, token);
 		return token;
 	}
