@@ -168,7 +168,7 @@
           hide-header
           @ok="forceLogout"
         >
-          <div class="text-center">{{ MESSAGE.REFRESH_TOKEN_EXPIRED.ERR }}</div>
+          <div class="text-center">{{ modal.mess }}</div>
           <template #modal-footer="{ ok}">
             <b-button variant="success" size="sm" @click="ok()">
               OK
@@ -223,6 +223,16 @@ export default {
       return this.capitalizeFirstLetter(name);
     },
   },
+  mounted() {
+    setTimeout(() => {
+      if (this.$store.state.alerts.tokenErr) {
+        console.log(this.$store.state.alerts.tokenErr)
+        this.$refs[this.modal.id.maxValidTime]?.show();
+        this.modal.mess = MESSAGE.SESSION_TIME_OUT.ERR;
+        this.isAnotherLogin = true;
+      }
+    }, 1000);
+  },
   data() {
     return {
       isAdminArea: false,
@@ -244,10 +254,12 @@ export default {
           id: "received-detail-modal-on-topnav",
           requestId: null,
         },
+        mess: null,
       },
       MESSAGE: MESSAGE,
       currentTime: new Date().getTime(),
       title: null,
+      isAnotherLogin: false,
     };
   },
   async created() {
@@ -258,14 +270,20 @@ export default {
     await this.findNotificationByReceiverId();
     setTimeout(() => {
       this.$refs[this.modal.id.maxValidTime]?.show();
+      this.modal.mess = MESSAGE.REFRESH_TOKEN_EXPIRED.ERR;
     }, parseInt(getMaxValidTime()) - this.currentTime);
   },
   methods: {
     forceLogout() {
       // If use login again by using another tag
       // Will not excute force logout
-      if (parseInt(getMaxValidTime()) - this.currentTime < 1) {
+      if (
+        parseInt(getMaxValidTime()) - this.currentTime < 1 ||
+        this.isAnotherLogin
+      ) {
         this.$store.dispatch("logout", false);
+        this.isAnotherLogin = false;
+        this.$store.dispatch("alerts/setTokenErr", false);
       }
     },
     async getProfile() {
@@ -285,13 +303,15 @@ export default {
         this.isAdminArea = true;
         return;
       }
-      findNotificationByReceiverId().then((res) => {
-        this.notificationData = res.data;
-        this.notificationData.findIndex((item) => item.readFlag === false) ===
-        -1
-          ? (this.isShowSysbolNewNotification = false)
-          : (this.isShowSysbolNewNotification = true);
-      });
+      findNotificationByReceiverId()
+        .then((res) => {
+          this.notificationData = res ? res.data : [];
+          this.notificationData.findIndex((item) => item.readFlag === false) ===
+          -1
+            ? (this.isShowSysbolNewNotification = false)
+            : (this.isShowSysbolNewNotification = true);
+        })
+        .catch((err) => {});
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);

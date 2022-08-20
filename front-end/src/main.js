@@ -5,6 +5,7 @@ import App from "./App";
 // TIP: change to import router from "./router/starterRouter"; to start with a clean layout
 import router from "./router/index";
 import store from "./store";
+import Vuex from 'vuex';
 
 import BlackDashboard from "./plugins/blackDashboard";
 import i18n from "./i18n";
@@ -21,7 +22,8 @@ Vue.use(VueMeta, { keyName: "head" });
 Vue.use(BootstrapVue);
 Vue.use(EventBus);
 Vue.use(_);
-Vue.use(BootstrapVueIcons)
+Vue.use(BootstrapVueIcons);
+Vue.use(Vuex);
 
 /* eslint-disable no-new */
 new Vue({

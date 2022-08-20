@@ -142,13 +142,17 @@ export default {
   },
   async created() {
     this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-    await findAllAccounts().then((res) => {
-      if (res.status === 200) {
-        this.initListAccounts = res.data;
-        this.tag.orginEmailOptions = res.data.map((el) => el.systemEmail);
-      }
-    });
-    await findRequestType().then((res) => (this.requestTypes = res.data));
+    await findAllAccounts()
+      .then((res) => {
+        if (res.status === 200) {
+          this.initListAccounts = res.data;
+          this.tag.orginEmailOptions = res.data.map((el) => el.systemEmail);
+        }
+      })
+      .catch((err) => {});
+    await findRequestType()
+      .then((res) => (this.requestTypes = res.data))
+      .catch((err) => {});
     this.onReset();
     this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },

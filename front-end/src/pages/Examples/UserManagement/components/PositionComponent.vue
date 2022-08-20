@@ -269,12 +269,17 @@ export default {
   },
   methods: {
     openInsertPositionsModal() {
-      findPositions().then((res) => {
-        this.originPositionObj = res.data;
-        this.tagPositionValue = this.positionObj.map((el) => el.positionName);
-        this.positionOption = res.data.map((el) => el.positionName);
-        this.$root.$emit("bv::show::modal", this.modalPosition.addPosition.id);
-      });
+      findPositions()
+        .then((res) => {
+          this.originPositionObj = res.data;
+          this.tagPositionValue = this.positionObj.map((el) => el.positionName);
+          this.positionOption = res.data.map((el) => el.positionName);
+          this.$root.$emit(
+            "bv::show::modal",
+            this.modalPosition.addPosition.id
+          );
+        })
+        .catch((err) => {});
     },
     updatePosition(action) {
       if (action === ACTION.UPDATE) {
@@ -320,10 +325,15 @@ export default {
         type: "application/json",
       });
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      updateEmployee(formData).then((res) => {
-        this.$root.$emit("bv::hide::modal", this.modalPosition.addPosition.id);
-        this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);
-      });
+      updateEmployee(formData)
+        .then((res) => {
+          this.$root.$emit(
+            "bv::hide::modal",
+            this.modalPosition.addPosition.id
+          );
+          this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);
+        })
+        .catch((err) => {});
     },
     setValueDeleteFlag(action, item, button) {
       if (action === ACTION.DELETE) {
