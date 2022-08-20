@@ -46,7 +46,7 @@ public class RequestFilter extends OncePerRequestFilter {
 
 	@Value("${jwt.secret}")
 	private String secret;
-	
+
 	@Value("${jwt.start}")
 	private String bearer;
 
@@ -90,10 +90,7 @@ public class RequestFilter extends OncePerRequestFilter {
 				String requestURL = request.getRequestURI().toString();
 				if (requestURL
 						.equals(StringUtil.apiBuilder(ApiUrlConstant.ROOT_API, ApiUrlConstant.AUTHEN_REFRESH_TOKEN))) {
-					if (!cacheService.isExistsStringInCache(tokenStore, e.getClaims().getSubject(), jwtToken)) {
-						responseErrAccessToken(response);
-						return;
-					} else {
+					if (cacheService.isExistsStringInCache(tokenStore, e.getClaims().getSubject(), jwtToken)) {
 						request.setAttribute(claims, e.getClaims());
 					}
 				} else {
@@ -128,14 +125,17 @@ public class RequestFilter extends OncePerRequestFilter {
 	public void responseErrAccessToken(HttpServletResponse response, Exception e) throws IOException {
 		LogUtil.warn(messageUtil.getMessagelangUS("not.valid.access.token"));
 		LogUtil.error(ExceptionUtils.getStackTrace(e));
-		HttpServletResponseUtil.ServletResponse(response, new ResponseTemplate(system, version,
-				HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value(), null, messageUtil.getMessagelangUS("not.valid.access.token"), null));
+		HttpServletResponseUtil.ServletResponse(response,
+				new ResponseTemplate(system, version, HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value(), null,
+						messageUtil.getMessagelangUS("not.valid.access.token"), null));
 	}
 
 	public void responseErrAccessToken(HttpServletResponse response) throws IOException {
 		LogUtil.warn(messageUtil.getMessagelangUS("not.in.cache.access.token"));
-		HttpServletResponseUtil.ServletResponse(response, new ResponseTemplate(system, version,
-				com.company.hrsystem.constants.HttpStatus.ACCESS_TOKEN_NOT_IN_CACHE, null, messageUtil.getMessagelangUS("not.valid.access.token"), null));
+		HttpServletResponseUtil.ServletResponse(response,
+				new ResponseTemplate(system, version,
+						com.company.hrsystem.constants.HttpStatus.ACCESS_TOKEN_NOT_IN_CACHE, null,
+						messageUtil.getMessagelangUS("not.in.cache.access.token"), null));
 	}
 
 }

@@ -148,11 +148,13 @@ export default {
     },
     getTabledata() {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      findAccounts().then((res) => {
-        this.items = res?.data;
-        this.totalRows = this.items?.length;
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-      });
+      findAccounts()
+        .then((res) => {
+          this.items = res?.data;
+          this.totalRows = this.items?.length;
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+        })
+        .catch((err) => {});
     },
   },
 };

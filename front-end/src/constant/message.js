@@ -20,6 +20,9 @@ export const MESSAGE = {
   REFRESH_TOKEN_EXPIRED: {
     ERR: "Out of time, please sign-in again!",
   },
+  SESSION_TIME_OUT:{
+    ERR: "Upgrade version or Your account was logged in by another user. \n Check your login action and contact administrator if necessary!"
+  },
   INSERT_EMPLOYEE: {
     ERR_EMPTY: "Only Submited Documents can be empty!",
     ERR_FORMAT: "Format of Email or Phone not correctly!",

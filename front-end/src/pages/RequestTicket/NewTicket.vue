@@ -210,14 +210,18 @@ export default {
   },
   async created() {
     this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-    await findAccountByRole(ROLES.SUPERVISOR).then(
-      (res) => (this.supervisorOptions = res.data)
-    );
-    await findAccountByRole(ROLES.MANAGER).then(
-      (res) => (this.approverOptions = res.data)
-    );
-    await findReason().then((res) => (this.reasonOptions = res.data));
-    await findRequestType().then((res) => (this.requestOptions = res.data));
+    await findAccountByRole(ROLES.SUPERVISOR)
+      .then((res) => (this.supervisorOptions = res.data))
+      .catch((err) => {});
+    await findAccountByRole(ROLES.MANAGER)
+      .then((res) => (this.approverOptions = res.data))
+      .catch((err) => {});
+    await findReason()
+      .then((res) => (this.reasonOptions = res.data))
+      .catch((err) => {});
+    await findRequestType()
+      .then((res) => (this.requestOptions = res.data))
+      .catch((err) => {});
     this.initTimeObj();
     this.insertTicketObj.requestEmployee.partialDate = PARTIAL_DAY.ALL_DAY;
     this.onReset();

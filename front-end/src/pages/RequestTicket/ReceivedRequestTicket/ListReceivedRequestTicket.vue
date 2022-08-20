@@ -225,25 +225,27 @@ export default {
         return;
       } else {
         this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-        mutipleUpdateRequestTicketStatus(this.mutipleUpdateData).then((res) => {
-          if (res.status === 200) {
-            this.$notify({
-              type: "success",
-              message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.UPDATE_SUCCESS,
-              icon: "tim-icons icon-bell-55",
-              horizontalAlign: "center",
-            });
-            this.$bus.emit(EVENT_BUS.REFRESH_RECEIVED_TICKET);
-          } else {
-            this.$notify({
-              type: "warning",
-              message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.APPROVE_ALL_ERR,
-              icon: "tim-icons icon-bell-55",
-              horizontalAlign: "center",
-            });
-          }
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-        });
+        mutipleUpdateRequestTicketStatus(this.mutipleUpdateData)
+          .then((res) => {
+            if (res.status === 200) {
+              this.$notify({
+                type: "success",
+                message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.UPDATE_SUCCESS,
+                icon: "tim-icons icon-bell-55",
+                horizontalAlign: "center",
+              });
+              this.$bus.emit(EVENT_BUS.REFRESH_RECEIVED_TICKET);
+            } else {
+              this.$notify({
+                type: "warning",
+                message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.APPROVE_ALL_ERR,
+                icon: "tim-icons icon-bell-55",
+                horizontalAlign: "center",
+              });
+            }
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          })
+          .catch((err) => {});
       }
     },
     rejectAll() {
@@ -258,25 +260,27 @@ export default {
         return;
       } else {
         this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-        mutipleUpdateRequestTicketStatus(this.mutipleUpdateData).then((res) => {
-          if (res.status === 200) {
-            this.$notify({
-              type: "success",
-              message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.UPDATE_SUCCESS,
-              icon: "tim-icons icon-bell-55",
-              horizontalAlign: "center",
-            });
-            this.$bus.emit(EVENT_BUS.REFRESH_RECEIVED_TICKET);
-          } else {
-            this.$notify({
-              type: "warning",
-              message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.REJECT_ALL_ERR,
-              icon: "tim-icons icon-bell-55",
-              horizontalAlign: "center",
-            });
-          }
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-        });
+        mutipleUpdateRequestTicketStatus(this.mutipleUpdateData)
+          .then((res) => {
+            if (res.status === 200) {
+              this.$notify({
+                type: "success",
+                message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.UPDATE_SUCCESS,
+                icon: "tim-icons icon-bell-55",
+                horizontalAlign: "center",
+              });
+              this.$bus.emit(EVENT_BUS.REFRESH_RECEIVED_TICKET);
+            } else {
+              this.$notify({
+                type: "warning",
+                message: MESSAGE.MUTIPLE_UPDATE_TICKET_STATUS.REJECT_ALL_ERR,
+                icon: "tim-icons icon-bell-55",
+                horizontalAlign: "center",
+              });
+            }
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          })
+          .catch((err) => {});
       }
     },
     setData(status) {

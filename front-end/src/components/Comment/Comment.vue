@@ -135,9 +135,11 @@ export default {
   },
   methods: {
     async findListComment() {
-      await findListComment(this.requestId).then((res) => {
-        this.comments = res.data;
-      });
+      await findListComment(this.requestId)
+        .then((res) => {
+          this.comments = res.data;
+        })
+        .catch((err) => {});
       // Scroll to the last comment
       let objDiv = document.getElementById("chat-box");
       objDiv.scrollTop = objDiv.scrollHeight;

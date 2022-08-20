@@ -1,41 +1,40 @@
-// import Swal from "sweetalert2";
+const state = {
+  tokenErr: false,
+};
 
-// const state = {};
+const mutations = {
+  SET_TOKEN_ERR: (state, value) => {
+    state.tokenErr = value;
+  },
+};
 
-// const mutations = {};
+const actions = {
+  //   success({ commit, dispatch }, message) {
+  //     this.$app.$notify({
+  //       timeout: 2500,
+  //       message: message,
+  //       horizontalAlign: "right",
+  //       verticalAlign: "top",
+  //       icon: "add_alert",
+  //       type: "success",
+  //     });
+  //   },
 
-// const actions = {
-//   success({commit, dispatch}, message) {
-//     this.$app.$notify({
-//       timeout: 2500,
-//       message: message,
-//       horizontalAlign: "right",
-//       verticalAlign: "top",
-//       icon: "add_alert",
-//       type: "success"
-//     });
-//   },
+  setTokenErr({ commit }, payload) {
+    commit("SET_TOKEN_ERR", payload);
+  },
+};
 
-//   error({commit, dispatch}, message) {
-//     this.$app.$notify({
-//       timeout: 2500,
-//       message: message,
-//       horizontalAlign: "right",
-//       verticalAlign: "top",
-//       icon: "add_alert",
-//       type: "warning"
-//     });
-//   }
-// };
+const getters = {
+  tokenErr: (state) => state.tokenErr,
+};
 
-// const getters = {};
+const alerts = {
+  namespaced: true,
+  state,
+  getters,
+  actions,
+  mutations,
+};
 
-// const alerts = {
-//   namespaced: true,
-//   state,
-//   getters,
-//   actions,
-//   mutations
-// };
-
-// export default alerts;
+export default alerts;

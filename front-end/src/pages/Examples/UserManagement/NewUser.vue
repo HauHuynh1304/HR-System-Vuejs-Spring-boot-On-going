@@ -314,18 +314,24 @@ export default {
   },
   async created() {
     this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-    await findAvailbleAccounts().then(
-      (res) => (this.originAccounts = res?.data)
-    );
-    await findRooms().then((res) => (this.originRooms = res.data));
-    await findPositions().then((res) => {
-      this.originPositions = res.data;
-      this.originPositionOptions = res.data.map((el) => el.positionName);
-    });
-    await findDocuments().then((res) => {
-      this.originDocuments = res.data;
-      this.originDocumentOptions = res.data.map((el) => el.documentName);
-    });
+    await findAvailbleAccounts()
+      .then((res) => (this.originAccounts = res?.data))
+      .catch((err) => {});
+    await findRooms()
+      .then((res) => (this.originRooms = res.data))
+      .catch((err) => {});
+    await findPositions()
+      .then((res) => {
+        this.originPositions = res.data;
+        this.originPositionOptions = res.data.map((el) => el.positionName);
+      })
+      .catch((err) => {});
+    await findDocuments()
+      .then((res) => {
+        this.originDocuments = res.data;
+        this.originDocumentOptions = res.data.map((el) => el.documentName);
+      })
+      .catch((err) => {});
     this.resetForm();
     this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
   },

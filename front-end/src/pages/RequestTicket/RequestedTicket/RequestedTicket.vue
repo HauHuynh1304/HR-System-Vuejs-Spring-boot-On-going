@@ -257,29 +257,31 @@ export default {
   methods: {
     getRequestedTicketData() {
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      findRequestedTicket(this.requestId).then((res) => {
-        res.data.requestEmployee.requestType === SPECIAL_VALUE.OVER_TIME
-          ? (this.isOTArea = true)
-          : (this.isOTArea = false);
-        res.data.requestEmployee.startDate = moment(
-          res.data.requestEmployee.startDate
-        ).format(this.isOTArea ? DATE_TIME_FORMAT : DATE_FORMAT);
-        res.data.requestEmployee.endDate = moment(
-          res.data.requestEmployee.endDate
-        ).format(this.isOTArea ? DATE_TIME_FORMAT : DATE_FORMAT);
+      findRequestedTicket(this.requestId)
+        .then((res) => {
+          res.data.requestEmployee.requestType === SPECIAL_VALUE.OVER_TIME
+            ? (this.isOTArea = true)
+            : (this.isOTArea = false);
+          res.data.requestEmployee.startDate = moment(
+            res.data.requestEmployee.startDate
+          ).format(this.isOTArea ? DATE_TIME_FORMAT : DATE_FORMAT);
+          res.data.requestEmployee.endDate = moment(
+            res.data.requestEmployee.endDate
+          ).format(this.isOTArea ? DATE_TIME_FORMAT : DATE_FORMAT);
 
-        res.data.requesterAction.updatedAt = moment(
-          res.data.requesterAction.updatedAt
-        ).format(DATE_FORMAT);
-        res.data.supervisorAction.updatedAt = moment(
-          res.data.supervisorAction.updatedAt
-        ).format(DATE_FORMAT);
-        res.data.approverAction.updatedAt = moment(
-          res.data.approverAction.updatedAt
-        ).format(DATE_FORMAT);
-        this.requestTicket = res.data;
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-      });
+          res.data.requesterAction.updatedAt = moment(
+            res.data.requesterAction.updatedAt
+          ).format(DATE_FORMAT);
+          res.data.supervisorAction.updatedAt = moment(
+            res.data.supervisorAction.updatedAt
+          ).format(DATE_FORMAT);
+          res.data.approverAction.updatedAt = moment(
+            res.data.approverAction.updatedAt
+          ).format(DATE_FORMAT);
+          this.requestTicket = res.data;
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+        })
+        .catch((err) => {});
     },
     cancelRequest() {
       if (
@@ -291,18 +293,20 @@ export default {
       this.action.requesterAction.requesterActionId = this.requestTicket.requesterAction.requesterActionId;
       this.action.requesterAction.actionType = this.ticketStatus.CANCEL;
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      updateRequesterAction(this.action).then((res) => {
-        this.getRequestedTicketData();
-        resetObject(this.action.requesterAction);
-        // force update special request in list ticket
-        this.emitEventToListTicket(
-          FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.PATH,
-          EVENT_BUS.REFRESH_SPECIAL_REQUESTED_TICKET,
-          this.requestId,
-          this.ticketStatus.CANCEL
-        );
-        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-      });
+      updateRequesterAction(this.action)
+        .then((res) => {
+          this.getRequestedTicketData();
+          resetObject(this.action.requesterAction);
+          // force update special request in list ticket
+          this.emitEventToListTicket(
+            FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_REQUESTED_TICKET.PATH,
+            EVENT_BUS.REFRESH_SPECIAL_REQUESTED_TICKET,
+            this.requestId,
+            this.ticketStatus.CANCEL
+          );
+          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+        })
+        .catch((err) => {});
     },
     approveRequest() {
       if (
@@ -317,27 +321,31 @@ export default {
       ) {
         this.action.supervisorAction.actionType = this.ticketStatus.APPROVED;
         this.action.supervisorAction.supervisorActionId = this.requestTicket.supervisorAction.supervisorActionId;
-        updateSupervisorAction(this.action).then((res) => {
-          this.getRequestedTicketData();
-          resetObject(this.action.supervisorAction);
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-        });
+        updateSupervisorAction(this.action)
+          .then((res) => {
+            this.getRequestedTicketData();
+            resetObject(this.action.supervisorAction);
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          })
+          .catch((err) => {});
       } else {
         this.action.approverAction.actionType = this.ticketStatus.APPROVED;
         this.action.approverAction.approverActionId = this.requestTicket.approverAction.approverActionId;
-        updateApproverAction(this.action).then((res) => {
-          this.getRequestedTicketData();
-          resetObject(this.action.approverAction);
-          // force update special request in list ticket
-          this.emitEventToListTicket(
-            FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
-              .PATH,
-            EVENT_BUS.REFRESH_SPECIAL_RECEIVED_TICKET,
-            this.requestId,
-            this.ticketStatus.APPROVED
-          );
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-        });
+        updateApproverAction(this.action)
+          .then((res) => {
+            this.getRequestedTicketData();
+            resetObject(this.action.approverAction);
+            // force update special request in list ticket
+            this.emitEventToListTicket(
+              FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN
+                .LIST_RECEIVED_REQUEST_TICKET.PATH,
+              EVENT_BUS.REFRESH_SPECIAL_RECEIVED_TICKET,
+              this.requestId,
+              this.ticketStatus.APPROVED
+            );
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          })
+          .catch((err) => {});
       }
     },
     rejectRequest() {
@@ -353,27 +361,31 @@ export default {
       ) {
         this.action.supervisorAction.actionType = this.ticketStatus.REJECT;
         this.action.supervisorAction.supervisorActionId = this.requestTicket.supervisorAction.supervisorActionId;
-        updateSupervisorAction(this.action).then((res) => {
-          this.getRequestedTicketData();
-          resetObject(this.action.supervisorAction);
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-        });
+        updateSupervisorAction(this.action)
+          .then((res) => {
+            this.getRequestedTicketData();
+            resetObject(this.action.supervisorAction);
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          })
+          .catch((err) => {});
       } else {
         this.action.approverAction.actionType = this.ticketStatus.REJECT;
         this.action.approverAction.approverActionId = this.requestTicket.approverAction.approverActionId;
-        updateApproverAction(this.action).then((res) => {
-          this.getRequestedTicketData();
-          resetObject(this.action.approverAction);
-          // force update special request in list ticket
-          this.emitEventToListTicket(
-            FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN.LIST_RECEIVED_REQUEST_TICKET
-              .PATH,
-            EVENT_BUS.REFRESH_SPECIAL_RECEIVED_TICKET,
-            this.requestId,
-            this.ticketStatus.REJECT
-          );
-          this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-        });
+        updateApproverAction(this.action)
+          .then((res) => {
+            this.getRequestedTicketData();
+            resetObject(this.action.approverAction);
+            // force update special request in list ticket
+            this.emitEventToListTicket(
+              FE_ROUTER_PROP.REQUEST_TICKET.CHILDREN
+                .LIST_RECEIVED_REQUEST_TICKET.PATH,
+              EVENT_BUS.REFRESH_SPECIAL_RECEIVED_TICKET,
+              this.requestId,
+              this.ticketStatus.REJECT
+            );
+            this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+          })
+          .catch((err) => {});
       }
     },
     emitEventToListTicket(path, event, requestId, ticketStatus) {

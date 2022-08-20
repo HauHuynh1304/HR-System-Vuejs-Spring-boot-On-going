@@ -24,7 +24,9 @@ if (windownProtocol.includes("localhost")) {
   URL_IMG = windownProtocol.concat(appServerPort, "/");
   baseURLParam = windownProtocol.concat(appServerPort, appBaseApiUrl);
 } else {
-  baseURLParam = process.env.VUE_APP_PRODUCT.concat(process.env.VUE_APP_BASE_API);
+  baseURLParam = process.env.VUE_APP_PRODUCT.concat(
+    process.env.VUE_APP_BASE_API
+  );
   URL_IMG = process.env.VUE_APP_PRODUCT.concat("/");
 }
 
@@ -96,12 +98,15 @@ request.interceptors.response.use((response) => {
         });
       } else {
         // when restart project
-        store.dispatch("logout", false);
+        store.dispatch("alerts/setTokenErr", true);
       }
+      break;
+    case 499:
+      store.dispatch("alerts/setTokenErr", true);
       break;
     case 404:
       if (originalRequest.url === API.AUTHEN.REFRESH_TOKEN) {
-        store.dispatch("logout", false);
+        store.dispatch("alerts/setTokenErr", true);
       }
       break;
     default:

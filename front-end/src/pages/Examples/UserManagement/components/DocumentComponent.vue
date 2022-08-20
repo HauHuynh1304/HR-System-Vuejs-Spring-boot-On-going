@@ -221,15 +221,17 @@ export default {
   },
   methods: {
     openInsertDocumentModal() {
-      findDocuments().then((res) => {
-        this.originDocumentObj = res.data;
-        this.tagDocumentValue = this.documentObj.map((el) => el.documentName);
-        this.documentOption = res.data.map((el) => el.documentName);
-        this.$root.$emit(
-          "bv::show::modal",
-          this.modalDocument.insertDocument.id
-        );
-      });
+      findDocuments()
+        .then((res) => {
+          this.originDocumentObj = res.data;
+          this.tagDocumentValue = this.documentObj.map((el) => el.documentName);
+          this.documentOption = res.data.map((el) => el.documentName);
+          this.$root.$emit(
+            "bv::show::modal",
+            this.modalDocument.insertDocument.id
+          );
+        })
+        .catch((err) => {});
     },
     setValueDeleteFlag(action, item, button) {
       if (action === ACTION.DELETE) {
@@ -288,13 +290,15 @@ export default {
         }
       );
       this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-      updateEmployee(formData).then((res) => {
-        this.$root.$emit(
-          "bv::hide::modal",
-          this.modalDocument.insertDocument.id
-        );
-        this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);
-      });
+      updateEmployee(formData)
+        .then((res) => {
+          this.$root.$emit(
+            "bv::hide::modal",
+            this.modalDocument.insertDocument.id
+          );
+          this.$bus.emit(EVENT_BUS.REFRESH_EMPLOYEE);
+        })
+        .catch((err) => {});
     },
     deleteDocumentAction(e) {
       this.updateDocument(ACTION.UPDATE);

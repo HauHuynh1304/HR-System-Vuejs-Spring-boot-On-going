@@ -86,10 +86,12 @@ export default {
   },
   async created() {
     this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
-    await findRequestType().then((res) => {
-      this.requestOptions = res.data;
-      this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
-    });
+    await findRequestType()
+      .then((res) => {
+        this.requestOptions = res.data;
+        this.$bus.emit(EVENT_BUS.CLOSE_LOADING_MODAL);
+      })
+      .catch((err) => {});
     this.onReset();
   },
   methods: {
