@@ -299,7 +299,7 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 				null, listObj);
 	}
 
-	public void saveHistoryLastInsertPositons(Integer inserterId, Integer employeeId,
+	private void saveHistoryLastInsertPositons(Integer inserterId, Integer employeeId,
 			HttpServletRequest servletRequest) {
 		Set<EmployeePositionDto> positionDtos = employeePositionMapper.findLastInsertListEmployeePosition(employeeId);
 		for (EmployeePositionDto obj : positionDtos) {
@@ -308,7 +308,7 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 		}
 	}
 
-	public void saveHistoryLastInsertDocuments(Integer inserterId, Integer employeeId,
+	private void saveHistoryLastInsertDocuments(Integer inserterId, Integer employeeId,
 			HttpServletRequest servletRequest) {
 		Set<EmployeeDocumentDto> documentDtos = employeeDocumentMapper.findLastInsertListEmployeeDocument(employeeId);
 		for (EmployeeDocumentDto obj : documentDtos) {
