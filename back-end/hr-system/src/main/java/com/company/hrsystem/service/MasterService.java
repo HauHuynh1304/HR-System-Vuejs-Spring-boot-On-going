@@ -5,13 +5,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import com.company.hrsystem.Exeption.NullPointRequestException;
+import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.DocumentDto;
@@ -42,12 +42,6 @@ import com.company.hrsystem.utils.MessageUtil;
 @Service
 public class MasterService implements MasterServiceInterface {
 
-	@Value("${system.name}")
-	private String system;
-
-	@Value("${system.version}")
-	private String version;
-
 	@Autowired
 	private SystemRoleMapper roleMapper;
 
@@ -70,9 +64,6 @@ public class MasterService implements MasterServiceInterface {
 	private SystemAccountMapper systemAccountMapper;
 
 	@Autowired
-	private MessageUtil messageUtil;
-
-	@Autowired
 	private HistoryActionService historyActionService;
 
 	@Transactional
@@ -80,9 +71,9 @@ public class MasterService implements MasterServiceInterface {
 		SystemRoleDto obj = request.getData().getSystemRole();
 		int inseartRows = CommonConstant.ZERO_VALUE;
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRoleName())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_INSERT_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_INSERT_NOT_NULL));
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_INSERT_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_INSERT_NOT_NULL));
 		}
 		try {
 			inseartRows = roleMapper.insertSystemRoleSelected(obj);
@@ -91,10 +82,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getSystemRoleId(), CommonConstant.TABLE_SYSTEM_ROLE, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(inseartRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(inseartRows)),
+				null, null);
 	}
 
 	@Transactional
@@ -103,9 +96,9 @@ public class MasterService implements MasterServiceInterface {
 		SystemRoleDto obj = request.getData().getSystemRole();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
 		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getSystemRoleId())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_UPDATE_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_UPDATE_NOT_NULL));
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_UPDATE_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_UPDATE_NOT_NULL));
 		}
 		try {
 			updateRows = roleMapper.updateSystemRoleSelected(obj);
@@ -113,10 +106,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getSystemRoleId(), CommonConstant.TABLE_SYSTEM_ROLE, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -124,8 +119,8 @@ public class MasterService implements MasterServiceInterface {
 		int inseartRows = CommonConstant.ZERO_VALUE;
 		DocumentDto obj = request.getData().getDocument();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getDocumentName())) {
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_INSERT_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_INSERT_NOT_NULL));
 		}
 		try {
 			inseartRows = documentMapper.insertDocument(obj);
@@ -133,10 +128,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getDocumentId(), CommonConstant.TABLE_DOCUMENT, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(inseartRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(inseartRows)),
+				null, null);
 	}
 
 	@Transactional
@@ -146,9 +143,9 @@ public class MasterService implements MasterServiceInterface {
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
 		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getDocumentId())) {
 			LogUtil.warn(
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_UPDATE_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_UPDATE_NOT_NULL));
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_UPDATE_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_UPDATE_NOT_NULL));
 		}
 		try {
 			updateRows = documentMapper.updateDocument(obj);
@@ -156,10 +153,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getDocumentId(), CommonConstant.TABLE_DOCUMENT, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -168,9 +167,9 @@ public class MasterService implements MasterServiceInterface {
 		PositionDto obj = request.getData().getPosition();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getPositionName())) {
 			LogUtil.warn(
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_INSERT_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_INSERT_NOT_NULL));
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_INSERT_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_INSERT_NOT_NULL));
 		}
 		try {
 			insertRows = positionMapper.insertPosition(obj);
@@ -178,10 +177,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getPositionId(), CommonConstant.TABLE_POSITION, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -191,9 +192,9 @@ public class MasterService implements MasterServiceInterface {
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
 		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getPositionId())) {
 			LogUtil.warn(
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_UPDATE_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_UPDATE_NOT_NULL));
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_UPDATE_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_UPDATE_NOT_NULL));
 		}
 		try {
 			updateRows = positionMapper.updatePosition(obj);
@@ -201,10 +202,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getPositionId(), CommonConstant.TABLE_POSITION, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -212,9 +215,9 @@ public class MasterService implements MasterServiceInterface {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		ReasonDto obj = request.getData().getReason();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getReasonName())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_INSERT_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_INSERT_NOT_NULL));
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_INSERT_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_INSERT_NOT_NULL));
 		}
 		try {
 			insertRows = reasonMapper.insertReason(obj);
@@ -222,10 +225,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getReasonId(), CommonConstant.TABLE_REASON, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -234,9 +239,9 @@ public class MasterService implements MasterServiceInterface {
 		ReasonDto obj = request.getData().getReason();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
 		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getReasonId())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_UPDATE_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_UPDATE_NOT_NULL));
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_UPDATE_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_UPDATE_NOT_NULL));
 		}
 		try {
 			updateRows = reasonMapper.updateReason(obj);
@@ -244,10 +249,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getReasonId(), CommonConstant.TABLE_REASON, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -255,10 +262,11 @@ public class MasterService implements MasterServiceInterface {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RequestTypeDto obj = request.getData().getRequestType();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRequestTypeName())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty",
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty",
 					CommonConstant.REQUEST_TYPE_INSERT_NOT_NULL));
-			throw new NullPointRequestException(system, version, messageUtil.getFlexMessageLangUS("null.request.empty",
-					CommonConstant.REQUEST_TYPE_INSERT_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty",
+							CommonConstant.REQUEST_TYPE_INSERT_NOT_NULL));
 		}
 		try {
 			insertRows = requestTypeMapper.insertRequestType(obj);
@@ -266,10 +274,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getRequestTypeId(), CommonConstant.TABLE_REQUEST_TYPE, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -278,10 +288,11 @@ public class MasterService implements MasterServiceInterface {
 		RequestTypeDto obj = request.getData().getRequestType();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
 		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getRequestTypeId())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty",
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty",
 					CommonConstant.REQUEST_TYPE_UPDATE_NOT_NULL));
-			throw new NullPointRequestException(system, version, messageUtil.getFlexMessageLangUS("null.request.empty",
-					CommonConstant.REQUEST_TYPE_UPDATE_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty",
+							CommonConstant.REQUEST_TYPE_UPDATE_NOT_NULL));
 		}
 		try {
 			updateRows = requestTypeMapper.updateRequestType(obj);
@@ -289,10 +300,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getRequestTypeId(), CommonConstant.TABLE_REQUEST_TYPE, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -300,9 +313,9 @@ public class MasterService implements MasterServiceInterface {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RoomDto obj = request.getData().getRoom();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRoomName())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
 		}
 		try {
 			insertRows = roomMapper.insertRoom(obj);
@@ -310,10 +323,12 @@ public class MasterService implements MasterServiceInterface {
 					obj.getRoomId(), CommonConstant.TABLE_ROOM, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null,
+				null);
 	}
 
 	@Transactional
@@ -322,9 +337,9 @@ public class MasterService implements MasterServiceInterface {
 		RoomDto obj = request.getData().getRoom();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
 		if (ObjectUtils.isEmpty(obj) || ObjectUtils.isEmpty(obj.getRoomId())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_UPDATE_NOT_NULL));
-			throw new NullPointRequestException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_UPDATE_NOT_NULL));
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_UPDATE_NOT_NULL));
+			throw new NullPointRequestException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_UPDATE_NOT_NULL));
 		}
 		try {
 			updateRows = roomMapper.updateRoom(obj);
@@ -332,55 +347,65 @@ public class MasterService implements MasterServiceInterface {
 					obj.getRoomId(), CommonConstant.TABLE_ROOM, servletRequest);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, e.getCause().getMessage());
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
+				null);
 	}
 
 	public ResponseTemplate findRoles() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, roleMapper.findRoles());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, roleMapper.findRoles());
 	}
 
 	public ResponseTemplate findAllRoles() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, roleMapper.findAllRoles());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				roleMapper.findAllRoles());
 	}
 
 	public ResponseTemplate findAllAccounts() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, systemAccountMapper.findAllAccount());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				systemAccountMapper.findAllAccount());
 	}
 
 	public ResponseTemplate findAllRooms() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findAllRooms());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				roomMapper.findAllRooms());
 	}
 
 	public ResponseTemplate findAllDocuments() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, documentMapper.findAllDocuments());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				documentMapper.findAllDocuments());
 	}
 
 	public ResponseTemplate findAvailbleAccounts() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, systemAccountMapper.findAvailbleAccounts());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				systemAccountMapper.findAvailbleAccounts());
 	}
 
 	public ResponseTemplate findAllRequestType() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, requestTypeMapper.findAllRequestType());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				requestTypeMapper.findAllRequestType());
 	}
 
 	public ResponseTemplate findAllPositions() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, positionMapper.findAllPositions());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				positionMapper.findAllPositions());
 	}
 
 	public ResponseTemplate findAllReason() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, reasonMapper.findAllReason());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				reasonMapper.findAllReason());
 	}
 
 }

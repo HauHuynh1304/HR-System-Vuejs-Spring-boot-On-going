@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.dto.EmployeeDto;
 import com.company.hrsystem.dto.PersonalInfoDto;
 import com.company.hrsystem.dto.RoomDto;
@@ -35,36 +35,6 @@ import com.company.hrsystem.utils.LogUtil;
 
 @Service
 public class OnStartProject implements ApplicationListener<ContextRefreshedEvent> {
-
-	@Value("${upload.employee.img.dir}")
-	private String uploadEmployeeImgDir;
-
-	@Value("${email}")
-	private String rootEmail;
-
-	@Value("${password}")
-	private String password;
-
-	@Value("${root.admin}")
-	private String roleRootAmin;
-
-	@Value("${admin}")
-	private String roleAdmin;
-
-	@Value("${employee}")
-	private String roleEmployee;
-
-	@Value("${supervisor}")
-	private String roleSupervisor;
-
-	@Value("${manager}")
-	private String roleManager;
-
-	@Value("${hr}")
-	private String roleHR;
-
-	@Value("${root.room}")
-	private String rootRoom;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -93,7 +63,7 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 		/*
 		 * Create direction for saving upload profile image
 		 */
-		Path saveToPath = Paths.get(uploadEmployeeImgDir);
+		Path saveToPath = Paths.get(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE);
 		if (!Files.exists(saveToPath)) {
 			try {
 				Files.createDirectory(saveToPath);
@@ -116,8 +86,9 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 	 * Created root account
 	 */
 	public void createdRootAccount() {
-		SystemAccountDto dto = new SystemAccountDto(1, rootEmail, passwordEncoder.encode(password), false, null);
-		Boolean isEmailInDb = systemAccountMapper.isEmailInDb(rootEmail);
+		SystemAccountDto dto = new SystemAccountDto(1, SystemProperties.SYSTEM_ROOT_ADMIN_EMAIL,
+				passwordEncoder.encode(SystemProperties.SYSTEM_ROOT_ADMIN_PASSWORD), false, null);
+		Boolean isEmailInDb = systemAccountMapper.isEmailInDb(SystemProperties.SYSTEM_ROOT_ADMIN_EMAIL);
 		if (!isEmailInDb) {
 			systemAccountMapper.insertSelective(dto);
 			Integer[] roleIds = { 1 };
@@ -135,12 +106,12 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 	 */
 	public void createdRole() {
 		List<SystemRoleDto> dtos = systemRoleMapper.findAllRoles();
-		SystemRoleDto rootAmin = new SystemRoleDto(1, roleRootAmin);
-		SystemRoleDto admin = new SystemRoleDto(2, roleAdmin);
-		SystemRoleDto employee = new SystemRoleDto(3, roleEmployee);
-		SystemRoleDto supervisor = new SystemRoleDto(4, roleSupervisor);
-		SystemRoleDto manager = new SystemRoleDto(5, roleManager);
-		SystemRoleDto hr = new SystemRoleDto(6, roleHR);
+		SystemRoleDto rootAmin = new SystemRoleDto(1, SystemProperties.SYSTEM_ROLE_ROOT_ADMIN);
+		SystemRoleDto admin = new SystemRoleDto(2, SystemProperties.SYSTEM_ROLE_ADMIN);
+		SystemRoleDto employee = new SystemRoleDto(3, SystemProperties.SYSTEM_ROLE_EMPLOYEE);
+		SystemRoleDto supervisor = new SystemRoleDto(4, SystemProperties.SYSTEM_ROLE_SUPERVISOR);
+		SystemRoleDto manager = new SystemRoleDto(5, SystemProperties.SYSTEM_ROLE_MANAGER);
+		SystemRoleDto hr = new SystemRoleDto(6, SystemProperties.SYSTEM_ROLE_HR);
 		if (CollectionUtils.isEmpty(dtos)) {
 			List<SystemRoleDto> insertDtos = new ArrayList<SystemRoleDto>();
 			insertDtos.add(rootAmin);
@@ -151,22 +122,22 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 			insertDtos.add(hr);
 			systemRoleMapper.insertListSystemRole(insertDtos);
 		} else {
-			if (!isExistRole(dtos, roleRootAmin)) {
+			if (!isExistRole(dtos, SystemProperties.SYSTEM_ROLE_ROOT_ADMIN)) {
 				systemRoleMapper.insertSystemRoleSelected(rootAmin);
 			}
-			if (!isExistRole(dtos, roleAdmin)) {
+			if (!isExistRole(dtos, SystemProperties.SYSTEM_ROLE_ADMIN)) {
 				systemRoleMapper.insertSystemRoleSelected(admin);
 			}
-			if (!isExistRole(dtos, roleEmployee)) {
+			if (!isExistRole(dtos, SystemProperties.SYSTEM_ROLE_EMPLOYEE)) {
 				systemRoleMapper.insertSystemRoleSelected(employee);
 			}
-			if (!isExistRole(dtos, roleSupervisor)) {
+			if (!isExistRole(dtos, SystemProperties.SYSTEM_ROLE_SUPERVISOR)) {
 				systemRoleMapper.insertSystemRoleSelected(supervisor);
 			}
-			if (!isExistRole(dtos, roleManager)) {
+			if (!isExistRole(dtos, SystemProperties.SYSTEM_ROLE_MANAGER)) {
 				systemRoleMapper.insertSystemRoleSelected(manager);
 			}
-			if (!isExistRole(dtos, roleHR)) {
+			if (!isExistRole(dtos, SystemProperties.SYSTEM_ROLE_HR)) {
 				systemRoleMapper.insertSystemRoleSelected(hr);
 			}
 		}
@@ -175,18 +146,18 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 
 	public void createdRoom() {
 		List<RoomDto> dtos = roomMapper.findAllRooms();
-		if (!isExistRoom(dtos, rootRoom)) {
-			RoomDto dto = new RoomDto(1, rootRoom);
+		if (!isExistRoom(dtos, SystemProperties.SYSTEM_ROOT_ROOM)) {
+			RoomDto dto = new RoomDto(1, SystemProperties.SYSTEM_ROOT_ROOM);
 			roomMapper.insertRoom(dto);
 		}
 
 	}
 
 	public void createPersonalInfo() {
-		if (!personnalInfoMapper.isExistPersonInfo(rootEmail)) {
+		if (!personnalInfoMapper.isExistPersonInfo(SystemProperties.SYSTEM_ROOT_ADMIN_EMAIL)) {
 			long millis = System.currentTimeMillis();
 			PersonalInfoDto dto = new PersonalInfoDto(1, "N/A", new Date(millis), "N/A", "N/A", "N/A", "N/A",
-					rootEmail);
+					SystemProperties.SYSTEM_ROOT_ADMIN_EMAIL);
 			personnalInfoMapper.insertPersonalInfo(dto);
 		}
 	}

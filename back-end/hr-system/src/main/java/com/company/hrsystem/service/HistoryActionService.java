@@ -24,16 +24,7 @@ import com.company.hrsystem.utils.StringUtil;
 public class HistoryActionService implements HistoryActionServiceInterface {
 
 	@Autowired
-	private ObjectUtil objectUtil;
-
-	@Autowired
-	private ClientUtil clientUtil;
-
-	@Autowired
 	private EmployeeMapper employeeMapper;
-
-	@Autowired
-	private AuthenUtil authenUtil;
 
 	@Autowired
 	private HistoryActionMapper historyActionMapper;
@@ -47,10 +38,10 @@ public class HistoryActionService implements HistoryActionServiceInterface {
 	public void saveHistoryAction(Object dto, Integer employeeId, String action, Integer rowId, String tableName,
 			HttpServletRequest request) {
 		HistoryActionDto history = new HistoryActionDto();
-		history.setComputerIp(clientUtil.getClientIpAddress(request));
+		history.setComputerIp(ClientUtil.getClientIpAddress(request));
 		history.setActionType(action);
 		if (employeeId == CommonConstant.ZERO_VALUE) {
-			employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+			employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		}
 		history.setEmployeeId(employeeId);
 		if (ObjectUtils.isNotEmpty(dto)) {
@@ -59,7 +50,7 @@ public class HistoryActionService implements HistoryActionServiceInterface {
 			// Initialize Nested Classes start
 			Set<HistoryActionDto.MutableObjValues> listObj = new HashSet<HistoryActionDto.MutableObjValues>();
 			// Initialize Nested Classes end
-			for (Map.Entry<String, Object> entry : objectUtil.objectToMap(dto).entrySet()) {
+			for (Map.Entry<String, Object> entry : ObjectUtil.objectToMap(dto).entrySet()) {
 				if (ObjectUtils.isNotEmpty(entry.getValue())) {
 					HistoryActionDto.MutableObjValues obj = history.new MutableObjValues();
 					obj.setTargetColumn(StringUtil.addUnderscoreAtEachUppercases(entry.getKey()));

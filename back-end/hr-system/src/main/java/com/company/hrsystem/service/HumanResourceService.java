@@ -12,7 +12,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.company.hrsystem.Exeption.GlobalException;
+import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.EmployeeDocumentDto;
 import com.company.hrsystem.dto.EmployeeDto;
@@ -54,15 +54,6 @@ import com.google.gson.GsonBuilder;
 @Service
 public class HumanResourceService implements HumanResourceServiceInterface {
 
-	@Value("${system.name}")
-	private String system;
-
-	@Value("${system.version}")
-	private String version;
-
-	@Value("${upload.employee.img.dir}")
-	private String uploadEmployeeImgDir;
-
 	@Autowired
 	private EmployeeMapper employeeMapper;
 
@@ -88,18 +79,6 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 	private RequestEmployeeMapper requestEmployeeMapper;
 
 	@Autowired
-	private MessageUtil messageUtil;
-
-	@Autowired
-	private ObjectUtil objectUtil;
-
-	@Autowired
-	private FileUtil fileUtil;
-
-	@Autowired
-	private AuthenUtil authenUtil;
-
-	@Autowired
 	private HistoryActionService historyActionService;
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
@@ -108,10 +87,10 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 		Gson gson = new GsonBuilder().setDateFormat(DateUtil.DAY).create();
 		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
 		String fileName = null;
-		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int inserterId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		try {
 			if (multipartFile != null) {
-				fileName = fileUtil.generateFileName(multipartFile);
+				fileName = FileUtil.generateFileName(multipartFile);
 			}
 
 			PersonalInfoDto personalInfo = request.getPersonalInfo();
@@ -137,19 +116,20 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 
 			if (!StringUtils.isAllEmpty(fileName)) {
 				try {
-					fileUtil.saveFile(
-							fileUtil.generateUploadDir(uploadEmployeeImgDir, personalInfo.getPersonalInfoId()),
-							fileName, multipartFile);
+					FileUtil.saveFile(FileUtil.generateUploadDir(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE,
+							personalInfo.getPersonalInfoId()), fileName, multipartFile);
 				} catch (IOException e) {
 					LogUtil.error(ExceptionUtils.getStackTrace(e));
-					throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+					throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+							MessageUtil.getMessagelangUS("value.not.correct"));
 				}
 			}
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getMessagelangUS("insert.employee.success"), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("insert.employee.success"), null, null);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("value.not.correct"));
 		}
 	}
 
@@ -163,7 +143,7 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 		List<EmployeeDocumentDto> documents = request.getDocuments();
 		List<EmployeePositionDto> positions = request.getPositions();
 		Timestamp updatedAt = DateUtil.getCurrentDayHourSecond();
-		int inserterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int inserterId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 
 		try {
 			/*
@@ -171,7 +151,7 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 			 * API update employee if only use ObjectUtil.isEmpty(employee) So, update
 			 * employee's API will be executive if not null parameter greater than 1
 			 */
-			if (objectUtil.countNotNullParamater(employee) > 1) {
+			if (ObjectUtil.countNotNullParamater(employee) > 1) {
 				employee.setUpdatedAt(updatedAt);
 				employeeMapper.updateEmployee(employee);
 				historyActionService.saveHistoryAction(employee, inserterId, CommonConstant.UPDATE_ACTION,
@@ -184,18 +164,18 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 			 * So, update updatePersonalInfo API will be executive if not null parameter
 			 * greater than 1
 			 */
-			if (objectUtil.countNotNullParamater(personalInfo) > 1 || multipartFile != null) {
+			if (ObjectUtil.countNotNullParamater(personalInfo) > 1 || multipartFile != null) {
 				personalInfo.setUpdatedAt(updatedAt);
 				if (multipartFile != null) {
-					String fileName = fileUtil.generateFileName(multipartFile);
+					String fileName = FileUtil.generateFileName(multipartFile);
 					personalInfo.setPersonalImage(fileName);
 					try {
-						fileUtil.saveFile(
-								fileUtil.generateUploadDir(uploadEmployeeImgDir, personalInfo.getPersonalInfoId()),
-								fileName, multipartFile);
+						FileUtil.saveFile(FileUtil.generateUploadDir(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE,
+								personalInfo.getPersonalInfoId()), fileName, multipartFile);
 					} catch (Exception e) {
 						LogUtil.error(ExceptionUtils.getStackTrace(e));
-						throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+						throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+								MessageUtil.getMessagelangUS("value.not.correct"));
 					}
 				}
 				personnalInfoMapper.updatePersonalInfo(personalInfo);
@@ -213,10 +193,10 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 				List<EmployeeDocumentDto> oldDocuments = new ArrayList<EmployeeDocumentDto>();
 				List<EmployeeDocumentDto> newDocuments = new ArrayList<EmployeeDocumentDto>();
 				documents.stream().forEach(e -> {
-					if (ObjectUtils.isNotEmpty(e.getEmployeeDocumentId()) && objectUtil.countNotNullParamater(e) > 1) {
+					if (ObjectUtils.isNotEmpty(e.getEmployeeDocumentId()) && ObjectUtil.countNotNullParamater(e) > 1) {
 						oldDocuments.add(e);
 					} else if (ObjectUtils.isEmpty(e.getEmployeeDocumentId())
-							&& objectUtil.countNotNullParamater(e) > 1) {
+							&& ObjectUtil.countNotNullParamater(e) > 1) {
 						newDocuments.add(e);
 					}
 				});
@@ -243,10 +223,10 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 				List<EmployeePositionDto> oldPositions = new ArrayList<EmployeePositionDto>();
 				List<EmployeePositionDto> newPositions = new ArrayList<EmployeePositionDto>();
 				positions.stream().forEach(e -> {
-					if (ObjectUtils.isNotEmpty(e.getEmployeePositionId()) && objectUtil.countNotNullParamater(e) > 1) {
+					if (ObjectUtils.isNotEmpty(e.getEmployeePositionId()) && ObjectUtil.countNotNullParamater(e) > 1) {
 						oldPositions.add(e);
 					} else if (ObjectUtils.isEmpty(e.getEmployeePositionId())
-							&& objectUtil.countNotNullParamater(e) > 1) {
+							&& ObjectUtil.countNotNullParamater(e) > 1) {
 						newPositions.add(e);
 					}
 				});
@@ -263,54 +243,60 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 				}
 			}
 
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getMessagelangUS("udpate.employee.success"), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("udpate.employee.success"), null, null);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("value.not.correct"));
 		}
 	}
 
 	public ResponseTemplate findListEmployees(FindListEmployeesRequest request) {
 		List<FindListEmployeesResponse> listEmployees = employeeMapper.findListEmployees(request.getData());
 		if (ObjectUtils.isEmpty(listEmployees)) {
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listEmployees.size())), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(),
+					MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listEmployees.size())), null, null);
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listEmployees.size())), null,
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(),
+				MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listEmployees.size())), null,
 				listEmployees);
 	}
 
 	public ResponseTemplate findEmployeeById(Integer id) {
 		FindEmployeeResponse info = employeeMapper.findEmployeeById(id);
-		info.getPersonalInfo().setPersonalImage(fileUtil.getUrlImg(uploadEmployeeImgDir,
+		info.getPersonalInfo().setPersonalImage(FileUtil.getUrlImg(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE,
 				info.getPersonalInfo().getPersonalInfoId(), info.getPersonalInfo().getPersonalImage()));
 		info.setDocuments(employeeDocumentMapper.findEmployeeDocumentsByEmployeeId(id));
 		info.setPositions(employeePositionMapper.findEmployeePositionsByEmployeeId(id));
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, info);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, info);
 	}
 
 	public ResponseTemplate findPositions() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, positionMapper.findPositions());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				positionMapper.findPositions());
 	}
 
 	public ResponseTemplate findDocuments() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, documentMapper.findDocuments());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				documentMapper.findDocuments());
 	}
 
 	public ResponseTemplate findRooms() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findRooms());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findRooms());
 	}
 
 	public ResponseTemplate findReportCaseSelected(FindListTicketRequest request) {
 		List<FindReportCaseSelectedResponse> listObj = requestEmployeeMapper.findReportCaseSelected(request.getData());
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
+				null, listObj);
 	}
 
 	public void saveHistoryLastInsertPositons(Integer inserterId, Integer employeeId,
