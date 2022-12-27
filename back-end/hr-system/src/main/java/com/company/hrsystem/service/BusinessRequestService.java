@@ -9,7 +9,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.company.hrsystem.Exeption.GlobalException;
+import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.ApproverActionDto;
 import com.company.hrsystem.dto.CommentDto;
@@ -67,15 +67,6 @@ import com.company.hrsystem.utils.MessageUtil;
 @Service
 public class BusinessRequestService implements BusinessRequestServiceInterface {
 
-	@Value("${system.name}")
-	private String system;
-
-	@Value("${system.version}")
-	private String version;
-
-	@Value("${upload.employee.img.dir}")
-	private String uploadEmployeeImgDir;
-
 	@Autowired
 	private RequestMapper requestMapper;
 
@@ -107,15 +98,6 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 	private NotificationMapper notificationMapper;
 
 	@Autowired
-	private MessageUtil messageUtil;
-
-	@Autowired
-	private AuthenUtil authenUtil;
-
-	@Autowired
-	private FileUtil fileUtil;
-
-	@Autowired
 	private HistoryActionService historyActionService;
 
 	@Autowired
@@ -133,23 +115,26 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate insertBusinessRequest(BusinessRequest request, HttpServletRequest httpServletRequest) {
 		if (ObjectUtils.isEmpty(request.getData())) {
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("value.not.correct"));
 		}
 		String partialDate = request.getData().getRequestEmployee().getPartialDate();
 		if (!PartialDateEnum.isExists(partialDate)) {
-			LogUtil.warn(messageUtil.getMessagelangUS("Partial.date.not.correct"));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+			LogUtil.warn(MessageUtil.getMessagelangUS("Partial.date.not.correct"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("value.not.correct"));
 		}
 		int insertRows = 0;
 		RequestEmployeeDto requestEmployee = request.getData().getRequestEmployee();
 		Timestamp startDate = request.getData().getRequestEmployee().getStartDate();
 		Timestamp endDate = request.getData().getRequestEmployee().getEndDate();
 		if (DateUtil.isPreviousMonthYear(startDate) || DateUtil.isPreviousMonthYear(endDate)) {
-			LogUtil.warn(messageUtil.getMessagelangUS("Partial.date.not.correct"));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("previous.month"));
+			LogUtil.warn(MessageUtil.getMessagelangUS("Partial.date.not.correct"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("previous.month"));
 		}
 		try {
-			int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+			int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 			RequestDto requestDto = request.getData().getRequest();
 			SupervisorActionDto supervisorActionDto = request.getData().getSupervisorAcction();
 			ApproverActionDto approverActionDto = request.getData().getApproverAction();
@@ -186,11 +171,13 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 			notificationMapper.insertNotification(
 					new NotificationDto(requestDto.getRequestId(), employeeId, approverActionDto.getApproverId()));
 
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)),
+					null, null);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("value.not.correct"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("value.not.correct"));
 		}
 	}
 
@@ -205,8 +192,9 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		// Check valid status from Client, ONLY CANCEL STATUS can be apply
 		if (StringUtils.isBlank(requestStatus) || BusinessRequestStatusEnum.isForbidentEmployee(requestStatus)
 				|| !BusinessRequestStatusEnum.isExists(requestStatus)) {
-			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
+			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("update.request.error"));
 		}
 
 		// Check current request status
@@ -217,7 +205,7 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
 
 		// Update requester action
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		requesterActionMapper.updateRequesterAction(requesterActionDto);
 		historyActionService.saveHistoryAction(requesterActionDto, employeeId, CommonConstant.UPDATE_ACTION,
 				requesterActionDto.getRequesterActionId(), CommonConstant.TABLE_REQUESTER_ACTION, httpServletRequest);
@@ -229,8 +217,8 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
 				resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
 
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("update.request.success"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
@@ -238,106 +226,111 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 			HttpServletRequest httpServletRequest) {
 		SupervisorActionDto supervisorActionDto = request.getData().getSupervisorAction();
 		updateSupervisorAction(supervisorActionDto, httpServletRequest);
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("update.request.success"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate updateApproverAction(ApproverActionRequest request, HttpServletRequest httpServletRequest) {
 		ApproverActionDto approverActionDto = request.getData().getApproverAction();
 		updateApproverAction(approverActionDto, httpServletRequest);
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("update.request.success"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate insertComment(CommentRequest request, HttpServletRequest httpServletRequest) {
 		if (StringUtils.isBlank(request.getData().getComment().getCommentDetail())) {
-			LogUtil.warn(messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.INSERT_COMMENT));
-			throw new GlobalException(system, version,
-					messageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.INSERT_COMMENT));
+			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.INSERT_COMMENT));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.INSERT_COMMENT));
 		}
 		CommentDto obj = request.getData().getComment();
 		int numberRecord = commentMapper.insertComment(obj);
 		isInsertUpdateSucess(numberRecord);
 		historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.INSERT_ACTION,
 				obj.getCommentId(), CommonConstant.TABLE_COMMENT, httpServletRequest);
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("comment.success"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("comment.success"), null, null);
 	}
 
 	public ResponseTemplate findListCreatedRequestTicket(FindListTicketRequest request) {
 		request.getData().getRequestEmployee()
-				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
 		List<FindListTicketResponse> listObj = requestEmployeeMapper.findListCreatedRequestTicket(request.getData());
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
+				null, listObj);
 	}
 
 	public ResponseTemplate findRequestTicketById(Integer id) {
 		FindTicketRequestByIdResponse obj = requestEmployeeMapper.findRequestTicketById(id,
-				employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+				employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
 		if (ObjectUtils.isEmpty(obj)) {
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, obj);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, obj);
 	}
 
 	public ResponseTemplate findListReceivedRequestTicket(FindListTicketRequest request) {
 		request.getData().getRequestEmployee()
-				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
 		List<FindListTicketResponse> listObj = requestEmployeeMapper.findListReceivedRequestTicket(request.getData());
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
+				null, listObj);
 	}
 
 	public ResponseTemplate findCurrentUser() {
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		FindEmployeeResponse obj = employeeMapper.findEmployeeById(employeeId);
-		obj.getPersonalInfo().setPersonalImage(fileUtil.getUrlImg(uploadEmployeeImgDir,
+		obj.getPersonalInfo().setPersonalImage(FileUtil.getUrlImg(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE,
 				obj.getPersonalInfo().getPersonalInfoId(), obj.getPersonalInfo().getPersonalImage()));
 		obj.setDocuments(employeeDocumentMapper.findEmployeeDocumentsByEmployeeId(employeeId));
 		obj.setPositions(employeePositionMapper.findEmployeePositionsByEmployeeId(employeeId));
 		obj.setHistoryActions(historyActionMapper.findHistoriesByEmployeeId(employeeId));
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, obj);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, obj);
 	}
 
 	public ResponseTemplate findAccountByRole(String role) {
 		List<SystemAccountDto> listObj = systemAccountMapper.findAccountByRole(role);
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
+				null, listObj);
 	}
 
 	public ResponseTemplate findReason() {
 		List<ReasonDto> listObj = reasonMapper.findReason();
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
+				null, listObj);
 	}
 
 	public ResponseTemplate findRequestType() {
 		List<RequestTypeDto> listObj = requestTypeMapper.findRequestType();
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())), null, listObj);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
+				null, listObj);
 	}
 
 	public ResponseTemplate findEmployeeId() {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null,
-				employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
+				employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
 	}
 
 	public ResponseTemplate findListComment(Integer id) {
 		List<CommentDto> listComment = commentMapper.findListComment(id,
-				employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId()));
+				employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
 		if (ObjectUtils.isEmpty(listComment)) {
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null, listComment);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, listComment);
 	}
 
 	public ResponseTemplate mutipleUpdateRequestTicketStatus(MutipleUpdateRequestTicketStatusRequest request,
@@ -351,57 +344,60 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 			List<ApproverActionDto> collection = request.getData().getApproverAction();
 			collection.stream().forEach(el -> updateApproverAction(el, httpServletRequest));
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("update.request.success"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
 
 	public ResponseTemplate findNotificationByReceiverId() {
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null,
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				notificationMapper.findNotificationByReceiverId(employeeId));
 	}
 
 	public ResponseTemplate markNotificationAsRead(NotificationRequest request) {
 		if (request.getData().getNotificationId().length > 0) {
 			notificationMapper.markNotificationAsRead(request.getData());
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getMessagelangUS("update.success"), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.success"), null, null);
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("value.not.correct"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("value.not.correct"), null, null);
 
 	}
 
 	public ResponseTemplate deleteNotificationByReceiver(NotificationRequest request) {
 		if (request.getData().getNotificationId().length > 0) {
 			notificationMapper.deleteNotificationByReceiver(request.getData());
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getMessagelangUS("update.success"), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.success"), null, null);
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("value.not.correct"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("value.not.correct"), null, null);
 	}
 
 	public void isErrorRequestManager(String status) {
 		if (StringUtils.isBlank(status) || BusinessRequestStatusEnum.isForbidenManager(status)
 				|| !BusinessRequestStatusEnum.isExists(status)) {
-			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
+			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("update.request.error"));
 		}
 	}
 
 	public void isInsertUpdateSucess(Integer number) {
 		if (number == 0) {
-			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
+			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("update.request.error"));
 		}
 	}
 
 	public void isForbidenByRequestStatus(String status) {
 		if (BusinessRequestStatusEnum.isForbidenByRequestStatus(status)) {
-			LogUtil.warn(messageUtil.getMessagelangUS("update.request.error"));
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.request.error"));
+			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("update.request.error"));
 		}
 	}
 
@@ -421,7 +417,7 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
 
 		// Update Supervisor Action
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		int numberRecord = supervisorAcctionMapper.updateActionBySupervisor(supervisorActionDto);
 		historyActionService.saveHistoryAction(supervisorActionDto, employeeId, CommonConstant.UPDATE_ACTION,
 				supervisorActionDto.getSupervisorActionId(), CommonConstant.TABLE_SUPERVISOR_ACTION,
@@ -456,7 +452,7 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
 
 		// Update Approver Action
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		int numberRecord = approverActionMapper.updateActionByApprover(approverActionDto);
 		historyActionService.saveHistoryAction(approverActionDto, employeeId, CommonConstant.UPDATE_ACTION,
 				approverActionDto.getApproverActionId(), CommonConstant.TABLE_APPROVER_ACTION, httpServletRequest);

@@ -12,10 +12,7 @@ import com.company.hrsystem.utils.MessageUtil;
 public class TaskScheduleService {
 	
 	@Autowired
-	NotificationMapper notificationMapper;
-
-	@Autowired
-	private MessageUtil messageUtil;
+	private NotificationMapper notificationMapper;
 
 	/*
 	 * Schedule for remove notification from DB.
@@ -24,7 +21,7 @@ public class TaskScheduleService {
 	 */
 	@Scheduled(cron = "0 0 0 L * *")
 	public void removeNotification() {
-		LogUtil.info(messageUtil.getMessagelangUS("remove.notification.by.schedule"));
+		LogUtil.info(MessageUtil.getMessagelangUS("remove.notification.by.schedule"));
 		notificationMapper.deleteBySchedule();
 	}
 	

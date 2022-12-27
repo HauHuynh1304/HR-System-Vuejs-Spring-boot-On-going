@@ -1,4 +1,4 @@
-package com.company.hrsystem.utils;
+package com.company.hrsystem.service;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,62 +10,24 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import com.company.hrsystem.service.CacheService;
-import com.company.hrsystem.service.UserDetailsImpl;
+import com.company.hrsystem.config.SystemProperties;
+import com.company.hrsystem.utils.MathUtil;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-@Component
-public class TokenUtil implements Serializable {
+@Service
+public class JWTService implements Serializable {
 
-	public static final long serialVersionUID = 1L;
-
-	@Value("${jwt.secret}")
-	private String sercret;
-
-	@Value("${jwt.accessValid}")
-	private String accessTokenValid;
-
-	@Value("${jwt.refreshValid}")
-	private String refreshTokenValid;
-
-	@Value("${token.store}")
-	private String tokenStore;
-
-	@Value("${token.authorization}")
-	private String tokenAuthorization;
-
-	@Value("${jwt.payload.id}")
-	private String id;
-
-	@Value("${jwt.payload.roles}")
-	private String roles;
-
-	@Value("${jwt.payload.maxValidTime}")
-	private String maxValidTime;
+	private static final long serialVersionUID = -3219569059042848051L;
 
 	@Autowired
 	private CacheService cacheService;
-
-	@Autowired
-	private MathUtil mathUtil;
-
-	// Decoded JWT
-	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser().setSigningKey(sercret).parseClaimsJws(token).getBody();
-	}
-
-	private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-		final Claims claims = getAllClaimsFromToken(token);
-		return claimsResolver.apply(claims);
-	}
 
 	// Get user name from JWT token
 	public String getUsernameFromToken(String token) {
@@ -94,9 +56,10 @@ public class TokenUtil implements Serializable {
 		final String authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.joining(","));
 		Map<String, Object> claims = new HashMap<>();
-		claims.put(id, userDetails.getId());
-		claims.put(roles, authorities);
-		claims.put(maxValidTime, mathUtil.calculateFromString(refreshTokenValid));
+		claims.put(SystemProperties.JWT_PAYLOAD_ID, userDetails.getId());
+		claims.put(SystemProperties.JWT_PAYLOAD_ROLES, authorities);
+		claims.put(SystemProperties.JWT_PAYLOAD_MAX_VALID_TIME, 
+				MathUtil.calculateFromString(SystemProperties.JWT_REFRESH_VALID_TIME));
 		return doGenerateJWT(claims, userDetails.getUsername());
 	}
 
@@ -109,18 +72,28 @@ public class TokenUtil implements Serializable {
 	public String doGenerateJWT(Map<String, Object> claims, String subject) {
 		String token = Jwts.builder().setClaims(claims).setSubject(subject)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + mathUtil.calculateFromString(accessTokenValid)))
-				.signWith(SignatureAlgorithm.HS512, sercret).compact();
-		cacheService.updateCache(tokenStore, subject, token);
+				.setExpiration(new Date(System.currentTimeMillis() + MathUtil.calculateFromString(SystemProperties.JWT_ACCESS_VALID_TIME)))
+				.signWith(SignatureAlgorithm.HS512, SystemProperties.JWT_SECRET).compact();
+		cacheService.updateCache(SystemProperties.TOKEN_STORE, subject, token);
 		return token;
 	}
 
 	public String getTokenFromHeader(HttpServletRequest request) {
-		return request.getHeader(tokenAuthorization).substring(7);
+		return request.getHeader(SystemProperties.TOKEN_AUTHORIZATION).substring(7);
 	}
 
 	public String getHeaderFromRequest(HttpServletRequest request) {
-		return request.getHeader(tokenAuthorization);
+		return request.getHeader(SystemProperties.TOKEN_AUTHORIZATION);
+	}
+
+	// Decoded JWT
+	private Claims getAllClaimsFromToken(String token) {
+		return Jwts.parser().setSigningKey(SystemProperties.JWT_SECRET).parseClaimsJws(token).getBody();
+	}
+
+	private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+		final Claims claims = getAllClaimsFromToken(token);
+		return claimsResolver.apply(claims);
 	}
 
 }

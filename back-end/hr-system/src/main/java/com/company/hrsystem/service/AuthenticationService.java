@@ -6,7 +6,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.company.hrsystem.Exeption.GlobalException;
+import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.AuthenAccountDto;
 import com.company.hrsystem.dto.AuthenRoleDto;
@@ -36,7 +36,6 @@ import com.company.hrsystem.request.SignUpRequest;
 import com.company.hrsystem.request.UpdateAccountRequest;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.serviceInterface.AuthenticationServiceInterface;
-import com.company.hrsystem.utils.TokenUtil;
 import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.MessageUtil;
@@ -45,38 +44,14 @@ import com.company.hrsystem.utils.ObjectUtil;
 @Service
 public class AuthenticationService implements AuthenticationServiceInterface {
 
-	@Value("${system.name}")
-	private String system;
-
-	@Value("${system.version}")
-	private String version;
-
-	@Value("${token.store}")
-	private String tokenStore;
-
-	@Value("${root.admin}")
-	private String roleRootAmin;
-
-	@Value("${admin}")
-	private String roleAdmin;
-
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
-	@Autowired
-	private TokenUtil tokenUtil;
 
 	@Autowired
 	private RefreshTokenService jwtRefreshService;
 
 	@Autowired
-	private MessageUtil messageUtil;
-
-	@Autowired
 	private CacheService cacheService;
-
-	@Autowired
-	private AuthenUtil authenUtil;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -97,7 +72,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 	private SystemAccountMapper systemAccountMapper;
 
 	@Autowired
-	private ObjectUtil objectUtil;
+	private JWTService jwtService;
 
 	public ResponseTemplate handleLogin(AuthenRequest req, HttpServletRequest servletRequest) {
 		String email = req.getData().getUsername();
@@ -106,20 +81,22 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 				.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
-		String accessToken = tokenUtil.generateJWT(userDetailsImpl);
+		String accessToken = jwtService.generateJWT(userDetailsImpl);
 		String refreshToken = jwtRefreshService.generateRefreshTokenByEmail(email).getRefreshTokenName();
 		historyActionService.saveHistoryAction(null, CommonConstant.ZERO_VALUE, CommonConstant.LOGIN_ACTION,
 				CommonConstant.ZERO_VALUE, null, servletRequest);
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("user.login.successful"), null, new JwtDto(accessToken, refreshToken));
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("user.login.successful"), null,
+				new JwtDto(accessToken, refreshToken));
 	}
 
 	public ResponseTemplate handleLogOut(HttpServletRequest request) {
-		cacheService.deleteCache(tokenStore, tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(request)));
+		cacheService.deleteCache(SystemProperties.TOKEN_STORE,
+				jwtService.getUsernameFromToken(jwtService.getTokenFromHeader(request)));
 		historyActionService.saveHistoryAction(null, CommonConstant.ZERO_VALUE, CommonConstant.LOGOUT_ACTION,
 				CommonConstant.ZERO_VALUE, null, request);
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("user.logout.successful"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("user.logout.successful"), null, null);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
@@ -131,12 +108,13 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 
 		// Only root account can insert new root account
 		Boolean isIncludesRoleRootAdmin = Arrays.stream(roleIds).anyMatch(roleId -> roleId == 1);
-		if (isIncludesRoleRootAdmin && !authenUtil.isAuthen(roleRootAmin)) {
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("insert.root.account.err"));
+		if (isIncludesRoleRootAdmin && !AuthenUtil.isAuthen(SystemProperties.SYSTEM_ROLE_ROOT_ADMIN)) {
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("insert.root.account.err"));
 		}
 
 		systemAccount.setSystemPassword(passwordEncoder.encode(systemAccount.getSystemPassword()));
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		accountMapper.insertSelective(systemAccount);
 		historyActionService.saveHistoryAction(systemAccount, employeeId, CommonConstant.INSERT_ACTION,
 				systemAccount.getSystemAccountId(), CommonConstant.TABLE_SYSTEM_ACCOUNT, servletRequest);
@@ -149,17 +127,17 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 					systemAccountRoleDto.getSystemAccountRoleId(), CommonConstant.TABLE_SYSTEM_ACCOUNT_ROLE,
 					servletRequest);
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("user.signup.successful"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("user.signup.successful"), null, null);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate handleChangePassword(HttpServletRequest servletRequest,
 			ChangePasswordRequest ChangePwRequest) {
-		String emailFromToken = tokenUtil.getUsernameFromToken(tokenUtil.getTokenFromHeader(servletRequest));
+		String emailFromToken = jwtService.getUsernameFromToken(jwtService.getTokenFromHeader(servletRequest));
 		String emailFromRequest = ChangePwRequest.getData().getAccount().getSystemEmail();
-		if (emailFromToken.equals(emailFromRequest) || authenUtil.isAuthen(roleAdmin)
-				|| authenUtil.isAuthen(roleRootAmin)) {
+		if (emailFromToken.equals(emailFromRequest) || AuthenUtil.isAuthen(SystemProperties.SYSTEM_ROLE_ADMIN)
+				|| AuthenUtil.isAuthen(SystemProperties.SYSTEM_ROLE_ROOT_ADMIN)) {
 			String password = passwordEncoder.encode(ChangePwRequest.getData().getAccount().getSystemPassword());
 			SystemAccountDto account = new SystemAccountDto(null, emailFromRequest, password, null,
 					DateUtil.getCurrentDayHourSecond());
@@ -167,38 +145,42 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 
 			int targetRowId = 0;
 			if (emailFromToken.equals(emailFromRequest)) {
-				targetRowId = authenUtil.getAccountId();
+				targetRowId = AuthenUtil.getAccountId();
 			}
-			if (authenUtil.isAuthen(roleAdmin) || authenUtil.isAuthen(roleRootAmin)) {
+			if (AuthenUtil.isAuthen(SystemProperties.SYSTEM_ROLE_ADMIN) || AuthenUtil.isAuthen(SystemProperties.SYSTEM_ROLE_ROOT_ADMIN)) {
 				targetRowId = systemAccountMapper.findSystemAccountIdByEmail(emailFromRequest);
 			}
 			historyActionService.saveHistoryAction(account, CommonConstant.ZERO_VALUE, CommonConstant.CHANGE_PW_ACTION,
 					targetRowId, CommonConstant.TABLE_SYSTEM_ACCOUNT, servletRequest);
-			return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-					messageUtil.getMessagelangUS("change.password.success"), null, null);
+			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("change.password.success"), null, null);
 		} else {
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("not.correct.email"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("not.correct.email"));
 		}
 	}
 
 	public ResponseTemplate findAccounts(HttpServletRequest servletRequest) {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("change.password.success"), null, systemAccountMapper.findAccounts());
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("change.password.success"), null,
+				systemAccountMapper.findAccounts());
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public ResponseTemplate updateAccount(UpdateAccountRequest accountRequest, HttpServletRequest servletRequest) {
-		int updaterId = employeeMapper.findEmployeeIdByAccountId(authenUtil.getAccountId());
+		int updaterId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		SystemAccountDto account = accountRequest.getData().getAccount();
 		// Only root_admin account can update root_admin account
 		AuthenAccountDto targetAccount = systemAccountMapper.findAuthenAccountById(account.getSystemAccountId());
 		Set<AuthenRoleDto> roles = targetAccount.getRoles();
-		Boolean isRootAdminTargetAccount = roles.stream().anyMatch(r -> r.getRoleName().equals(roleRootAmin));
-		if (isRootAdminTargetAccount && !authenUtil.isAuthen(roleRootAmin)) {
-			throw new GlobalException(system, version, messageUtil.getMessagelangUS("update.root.account.err"));
+		Boolean isRootAdminTargetAccount = roles.stream()
+				.anyMatch(r -> r.getRoleName().equals(SystemProperties.SYSTEM_ROLE_ROOT_ADMIN));
+		if (isRootAdminTargetAccount && !AuthenUtil.isAuthen(SystemProperties.SYSTEM_ROLE_ROOT_ADMIN)) {
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("update.root.account.err"));
 		}
 
-		if (objectUtil.countNotNullParamater(account) > 1) {
+		if (ObjectUtil.countNotNullParamater(account) > 1) {
 			if (ObjectUtils.isNotEmpty(account.getSystemPassword())) {
 				account.setSystemPassword(passwordEncoder.encode(account.getSystemPassword()));
 			}
@@ -232,13 +214,13 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 						servletRequest);
 			}
 		}
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("update.success"), null, null);
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.success"), null, null);
 	}
 
 	public ResponseTemplate isEmailInDb(IsEmailInDbRequest request) {
-		return new ResponseTemplate(system, version, HttpStatus.OK.value(),
-				messageUtil.getMessagelangUS("get.data.success"), null,
+		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				accountMapper.isEmailInDb(request.getData().getEmail()));
 	}
 

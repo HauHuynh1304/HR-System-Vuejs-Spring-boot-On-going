@@ -10,7 +10,7 @@ import com.company.hrsystem.serviceInterface.CacheServiceInterface;
 public class CacheService implements CacheServiceInterface {
 
 	@Autowired
-	CacheManager cacheManager;
+	private CacheManager cacheManager;
 
 	public void updateCache(String cacheName, String key, String value) {
 		cacheManager.getCache(cacheName).put(key, value);

@@ -2,9 +2,7 @@ package com.company.hrsystem.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Service;
 
-@Service
 public class ClientUtil {
 
 	private static final String[] HEADERS_TO_TRY = {
@@ -20,7 +18,7 @@ public class ClientUtil {
             "HTTP_VIA",
             "REMOTE_ADDR" };
 	
-	public String getClientIpAddress(HttpServletRequest request) {
+	public static String getClientIpAddress(HttpServletRequest request) {
 	    for (String header : HEADERS_TO_TRY) {
 	        String ip = request.getHeader(header);
 	        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {

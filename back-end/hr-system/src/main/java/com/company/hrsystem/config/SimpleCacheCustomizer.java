@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SimpleCacheCustomizer implements CacheManagerCustomizer<ConcurrentMapCacheManager> {
-	
+
 	@Value("${token.store}")
 	private String tokenStore;
 
@@ -17,4 +17,5 @@ public class SimpleCacheCustomizer implements CacheManagerCustomizer<ConcurrentM
 	public void customize(ConcurrentMapCacheManager cacheManager) {
 		cacheManager.setCacheNames(Arrays.asList(tokenStore));
 	}
+
 }

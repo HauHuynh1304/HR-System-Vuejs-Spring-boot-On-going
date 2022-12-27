@@ -2,30 +2,27 @@ package com.company.hrsystem.utils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
 import com.company.hrsystem.service.UserDetailsImpl;
 
-@Service
 public class AuthenUtil {
 
-	public Authentication authentication() {
+	public static Authentication authentication() {
 		return SecurityContextHolder.getContext().getAuthentication();
 	}
 
-	public Boolean isAuthen(String role) {
+	public static Boolean isAuthen(String role) {
 		return authentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role));
 	}
 
-	public UserDetailsImpl userDetails() {
+	public static UserDetailsImpl userDetails() {
 		return (UserDetailsImpl) authentication().getPrincipal();
 	}
 
-	public String getUsername() {
+	public static String getUsername() {
 		return userDetails().getUsername();
 	}
 
-	public Integer getAccountId() {
+	public static Integer getAccountId() {
 		return userDetails().getId();
 	}
 
