@@ -376,31 +376,6 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("value.not.correct"), null, null);
 	}
 
-	public void isErrorRequestManager(String status) {
-		if (StringUtils.isBlank(status) || BusinessRequestStatusEnum.isForbidenManager(status)
-				|| !BusinessRequestStatusEnum.isExists(status)) {
-			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
-			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-					MessageUtil.getMessagelangUS("update.request.error"));
-		}
-	}
-
-	public void isInsertUpdateSucess(Integer number) {
-		if (number == 0) {
-			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
-			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-					MessageUtil.getMessagelangUS("update.request.error"));
-		}
-	}
-
-	public void isForbidenByRequestStatus(String status) {
-		if (BusinessRequestStatusEnum.isForbidenByRequestStatus(status)) {
-			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
-			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-					MessageUtil.getMessagelangUS("update.request.error"));
-		}
-	}
-
 	public void updateSupervisorAction(SupervisorActionDto supervisorActionDto, HttpServletRequest httpServletRequest) {
 		Timestamp currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
 		String requestStatus = supervisorActionDto.getActionType();
@@ -465,6 +440,31 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		isInsertUpdateSucess(numberRecord);
 		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
 				resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+	}
+
+	private void isInsertUpdateSucess(Integer number) {
+		if (number == 0) {
+			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("update.request.error"));
+		}
+	}
+
+	private void isForbidenByRequestStatus(String status) {
+		if (BusinessRequestStatusEnum.isForbidenByRequestStatus(status)) {
+			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("update.request.error"));
+		}
+	}
+
+	private void isErrorRequestManager(String status) {
+		if (StringUtils.isBlank(status) || BusinessRequestStatusEnum.isForbidenManager(status)
+				|| !BusinessRequestStatusEnum.isExists(status)) {
+			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
+			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					MessageUtil.getMessagelangUS("update.request.error"));
+		}
 	}
 
 }

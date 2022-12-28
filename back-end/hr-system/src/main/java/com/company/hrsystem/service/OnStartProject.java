@@ -85,7 +85,7 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 	/*
 	 * Created root account
 	 */
-	public void createdRootAccount() {
+	private void createdRootAccount() {
 		SystemAccountDto dto = new SystemAccountDto(1, SystemProperties.SYSTEM_ROOT_ADMIN_EMAIL,
 				passwordEncoder.encode(SystemProperties.SYSTEM_ROOT_ADMIN_PASSWORD), false, null);
 		Boolean isEmailInDb = systemAccountMapper.isEmailInDb(SystemProperties.SYSTEM_ROOT_ADMIN_EMAIL);
@@ -104,7 +104,7 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 	/*
 	 * Created Role
 	 */
-	public void createdRole() {
+	private void createdRole() {
 		List<SystemRoleDto> dtos = systemRoleMapper.findAllRoles();
 		SystemRoleDto rootAmin = new SystemRoleDto(1, SystemProperties.SYSTEM_ROLE_ROOT_ADMIN);
 		SystemRoleDto admin = new SystemRoleDto(2, SystemProperties.SYSTEM_ROLE_ADMIN);
@@ -144,7 +144,7 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 
 	}
 
-	public void createdRoom() {
+	private void createdRoom() {
 		List<RoomDto> dtos = roomMapper.findAllRooms();
 		if (!isExistRoom(dtos, SystemProperties.SYSTEM_ROOT_ROOM)) {
 			RoomDto dto = new RoomDto(1, SystemProperties.SYSTEM_ROOT_ROOM);
@@ -153,7 +153,7 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 
 	}
 
-	public void createPersonalInfo() {
+	private void createPersonalInfo() {
 		if (!personnalInfoMapper.isExistPersonInfo(SystemProperties.SYSTEM_ROOT_ADMIN_EMAIL)) {
 			long millis = System.currentTimeMillis();
 			PersonalInfoDto dto = new PersonalInfoDto(1, "N/A", new Date(millis), "N/A", "N/A", "N/A", "N/A",
@@ -162,7 +162,7 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 		}
 	}
 
-	public Boolean isExistRole(List<SystemRoleDto> dtos, String role) {
+	private Boolean isExistRole(List<SystemRoleDto> dtos, String role) {
 		for (SystemRoleDto systemRoleDto : dtos) {
 			if (role.equals(systemRoleDto.getRoleName())) {
 				return true;
@@ -171,7 +171,7 @@ public class OnStartProject implements ApplicationListener<ContextRefreshedEvent
 		return false;
 	}
 
-	public Boolean isExistRoom(List<RoomDto> dtos, String room) {
+	private Boolean isExistRoom(List<RoomDto> dtos, String room) {
 		for (RoomDto romDto : dtos) {
 			if (room.equals(romDto.getRoomName())) {
 				return true;
