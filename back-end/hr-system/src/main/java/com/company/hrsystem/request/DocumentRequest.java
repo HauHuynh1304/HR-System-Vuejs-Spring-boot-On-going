@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DocumentRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7732317424221591893L;
 
 	private DocumentDto document;
 	

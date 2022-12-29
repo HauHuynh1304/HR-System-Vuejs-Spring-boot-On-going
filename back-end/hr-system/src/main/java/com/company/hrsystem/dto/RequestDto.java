@@ -14,6 +14,6 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class RequestDto extends RequestModel {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -5549768796611625399L;
 
 }

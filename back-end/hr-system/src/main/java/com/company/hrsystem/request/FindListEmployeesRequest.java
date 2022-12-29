@@ -16,8 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FindListEmployeesRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -3916042331936839035L;
+
 	private PersonalInfoDto personalInfo;
 	
 	private EmployeeDto employee;

@@ -14,7 +14,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class CommentDto extends CommentModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -7760109978625598746L;
 
 	private String requesterEmail;
 

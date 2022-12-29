@@ -13,8 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CommentRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 6422653625604908518L;
+
 	private CommentDto comment;
 
 	private CommentRequest data;

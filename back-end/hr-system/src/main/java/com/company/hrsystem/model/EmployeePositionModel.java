@@ -19,8 +19,8 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public abstract class EmployeePositionModel implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 6698184660479974312L;
+
 	private Integer employeePositionId;
 	
 	private Integer employeeId;

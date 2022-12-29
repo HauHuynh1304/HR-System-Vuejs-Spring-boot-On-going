@@ -11,8 +11,8 @@ import lombok.Setter;
 @Setter
 public class PositionRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 6340011871228083215L;
+
 	private PositionDto position;
 
 	private PositionRequest data;

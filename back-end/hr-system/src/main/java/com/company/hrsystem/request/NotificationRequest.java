@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class NotificationRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6358972790144081603L;
 
 	private Integer[] notificationId;
 

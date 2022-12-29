@@ -12,7 +12,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class TokenException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 7410075796052599309L;
 
 	private String system;
 

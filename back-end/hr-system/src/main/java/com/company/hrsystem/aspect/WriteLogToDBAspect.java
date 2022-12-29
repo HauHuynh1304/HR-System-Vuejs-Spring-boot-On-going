@@ -36,9 +36,9 @@ public class WriteLogToDBAspect {
 	public void annotationPointCutDefinition() {
 	}
 
-	@AfterReturning("annotationPointCutDefinition() && " + "args(dto, employeeId, action, rowId, tableName, request)")
+	@AfterReturning("annotationPointCutDefinition() && args(dto, employeeId, action, rowId, tableName, request)")
 	public void doWrite(Object dto, Integer employeeId, String action, Integer rowId, String tableName,
-			HttpServletRequest request) throws Throwable {
+			HttpServletRequest request) {
 		HistoryActionDto history = new HistoryActionDto();
 		history.setComputerIp(ClientUtil.getClientIpAddress(request));
 		history.setActionType(action);

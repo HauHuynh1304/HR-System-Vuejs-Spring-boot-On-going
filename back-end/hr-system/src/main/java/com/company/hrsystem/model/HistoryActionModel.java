@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public abstract class HistoryActionModel implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6787400402319382910L;
 
 	private Integer historyActionId;
 	

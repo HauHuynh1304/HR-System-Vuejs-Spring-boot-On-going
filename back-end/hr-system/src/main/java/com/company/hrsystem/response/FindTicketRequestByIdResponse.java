@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 public class FindTicketRequestByIdResponse implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -264778152296287817L;
 
 	private RequestEmployeeDto requestEmployee;
 

@@ -16,7 +16,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class SupervisorActionDto extends SupervisorActionModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4229063519008132511L;
 
 	public SupervisorActionDto(Integer supervisorActionId, String actionType, Timestamp updatedAt) {
 		super(supervisorActionId, actionType, updatedAt);

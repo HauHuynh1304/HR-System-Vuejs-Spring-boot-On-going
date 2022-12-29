@@ -11,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ReasonDto extends ReasonModel {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -3349617909759747148L;
 
 }

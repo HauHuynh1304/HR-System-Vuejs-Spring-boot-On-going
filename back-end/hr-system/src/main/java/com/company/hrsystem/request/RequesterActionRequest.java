@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RequesterActionRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1705590528824091911L;
 
 	private RequesterActionDto requesterAction;
 

@@ -14,8 +14,8 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class EmployeeDocumentDto extends EmployeeDocumentModel {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 4006413632061657552L;
+	
 	private String documentName;
 
 }

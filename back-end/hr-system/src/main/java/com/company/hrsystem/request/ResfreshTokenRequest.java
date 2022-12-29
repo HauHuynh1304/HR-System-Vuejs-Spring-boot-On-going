@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ResfreshTokenRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4614168610165319668L;
 
 	private String refreshTokenName;
 

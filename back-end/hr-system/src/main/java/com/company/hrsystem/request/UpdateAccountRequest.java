@@ -16,8 +16,8 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class UpdateAccountRequest implements Serializable{
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -8359461154058424390L;
+
 	private SystemAccountDto account;
 	
 	private Integer[] addNewRoleIds;

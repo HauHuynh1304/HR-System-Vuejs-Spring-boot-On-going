@@ -14,7 +14,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class RoomDto extends RoomModel {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8432755773151951351L;
 
 	public RoomDto(Integer roomId, String roomName) {
 		super(roomId, roomName);

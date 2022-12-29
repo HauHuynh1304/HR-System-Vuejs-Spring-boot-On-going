@@ -14,7 +14,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class NotificationDto extends NotificationModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -5124153193340147891L;
 
 	public NotificationDto(Integer requestId, Integer senderId, Integer receiverId) {
 		super(requestId, senderId, receiverId);

@@ -12,8 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FindReportCaseSelectedResponse implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -8248631351875091144L;
+
 	private String requester;
 	
 	private List<ReportInfo> reportInfo;
@@ -23,8 +23,8 @@ public class FindReportCaseSelectedResponse implements Serializable {
 	@NoArgsConstructor
 	public static class ReportInfo implements Serializable {
 		
-		private static final long serialVersionUID = 1L;
-		
+		private static final long serialVersionUID = 1483445707619333993L;
+
 		private String requestType;
 
 		private String reason;

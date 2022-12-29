@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public abstract class PersonalInfoModel implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -5363391140074094090L;
 
 	private Integer personalInfoId;
 

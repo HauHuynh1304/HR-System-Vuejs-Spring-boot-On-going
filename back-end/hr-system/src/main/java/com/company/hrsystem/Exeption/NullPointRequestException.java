@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class NullPointRequestException extends RuntimeException {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8499183947889750043L;
 
 	private String system;
 

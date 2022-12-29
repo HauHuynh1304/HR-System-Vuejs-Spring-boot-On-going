@@ -17,8 +17,8 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class HistoryActionDto extends HistoryActionModel {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = -90459940075456029L;
+	
 	private Set<MutableObjValues> mutableObjValues;
 
 	@Getter
@@ -26,7 +26,7 @@ public class HistoryActionDto extends HistoryActionModel {
 	@NoArgsConstructor
 	public class MutableObjValues implements Serializable {
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 7631230304963833476L;
 
 		private String targetColumn;
 
