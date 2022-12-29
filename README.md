@@ -42,6 +42,7 @@ Then, login will be available
  ┃ ┃ ┃ ┃ ┣ 📜application-dev.properties  
  ┃ ┃ ┃ ┃ ┣ 📜application-prod.properties  
  ┃ ┃ ┃ ┃ ┣ 📜application.properties  
+ ┃ ┃ ┃ ┃ ┣ 📜email.properties  
  ┃ ┃ ┃ ┃ ┣ 📜logback-spring.xml  
  ┃ ┃ ┃ ┃ ┣ 📜messages.properties  
  ┃ ┃ ┃ ┃ ┣ 📜MybatisGenerator.xml  
