@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Setter
 @NoArgsConstructor
 public class SystemAccountRoleDto extends SystemAccountRoleModel {
-
-	private static final long serialVersionUID = 1L;
-
+	
+	private static final long serialVersionUID = -2168406501010480232L;
+	
 }

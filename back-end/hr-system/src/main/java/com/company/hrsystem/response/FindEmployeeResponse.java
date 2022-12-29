@@ -23,8 +23,8 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class FindEmployeeResponse implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 4286288649186523184L;
+
 	private String systemEmail;
 	
 	private PersonalInfoDto personalInfo;

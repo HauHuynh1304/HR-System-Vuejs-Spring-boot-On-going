@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public abstract class CommentModel implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -8939611984208575528L;
+
 	private Integer commentId;
 
 	private Integer supervisorActionId;

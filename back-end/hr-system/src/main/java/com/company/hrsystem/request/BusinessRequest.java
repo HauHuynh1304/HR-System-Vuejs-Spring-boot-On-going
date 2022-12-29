@@ -16,8 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BusinessRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 4713163192724499747L;
+
 	private RequestDto request;
 
 	private RequestEmployeeDto requestEmployee;

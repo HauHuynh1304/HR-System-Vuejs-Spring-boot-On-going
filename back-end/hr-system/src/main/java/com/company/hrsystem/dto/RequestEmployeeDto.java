@@ -16,7 +16,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class RequestEmployeeDto extends RequestEmployeeModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -567324589956952357L;
 
 	public RequestEmployeeDto(Integer requesterActionId, Integer supervisorActionId, Integer approverActionId,
 			String requestStatus, Timestamp updatedAt) {

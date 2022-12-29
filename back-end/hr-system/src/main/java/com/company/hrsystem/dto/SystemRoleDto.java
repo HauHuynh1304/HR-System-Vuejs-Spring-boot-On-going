@@ -14,7 +14,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class SystemRoleDto extends SystemRoleModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3234347141134407719L;
 
 	public SystemRoleDto(Integer systemRoleId, String roleName) {
 		super(systemRoleId, roleName);

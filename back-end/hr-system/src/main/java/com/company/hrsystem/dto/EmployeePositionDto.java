@@ -10,8 +10,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class EmployeePositionDto extends EmployeePositionModel {
-
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = -397173623168956383L;
 	
 	private String positionName;
 

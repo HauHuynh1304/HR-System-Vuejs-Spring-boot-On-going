@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class EmployeeRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8531961047958775451L;
 
 	private EmployeeDto employee;
 

@@ -16,7 +16,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class SystemAccountDto extends SystemAccountModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7492830020484800687L;
 
 	public SystemAccountDto(Integer systemAccountId, String systemEmail, String systemPassword, Boolean deletedFlag, Timestamp updatedAt) {
 		super(systemAccountId, systemEmail, systemPassword, deletedFlag, updatedAt);

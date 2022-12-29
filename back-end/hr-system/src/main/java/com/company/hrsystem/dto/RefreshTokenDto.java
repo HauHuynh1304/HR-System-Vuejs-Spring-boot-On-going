@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RefreshTokenDto extends RefreshTokenModel {
-
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = -8179556259826199396L;
 
 }

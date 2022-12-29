@@ -14,8 +14,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public abstract class SystemAccountModel implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 6471388587128542020L;
 
 	private Integer systemAccountId;
 

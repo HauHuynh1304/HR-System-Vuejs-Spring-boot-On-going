@@ -10,8 +10,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public abstract class RefreshTokenModel implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 8174336802335886036L;
 
 	private Integer refreshTokenId;
 

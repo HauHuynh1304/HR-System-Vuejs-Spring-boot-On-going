@@ -15,8 +15,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MutipleUpdateRequestTicketStatusRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -7897173261705176982L;
+
 	private List<SupervisorActionDto> supervisorAction;
 
 	private List<ApproverActionDto> approverAction;

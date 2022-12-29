@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public abstract class DocumentModel implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2636604370909336102L;
 
 	private Integer documentId;
 

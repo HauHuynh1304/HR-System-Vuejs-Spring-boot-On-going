@@ -16,7 +16,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class PersonalInfoDto extends PersonalInfoModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6948419213324767844L;
 
 	public PersonalInfoDto(Integer personalInfoId, String personalName, Date personalBirthday, String personalAddress,
 			String personalPhoneNumber, String personalSex, String personalIdCard, String personalEmail) {

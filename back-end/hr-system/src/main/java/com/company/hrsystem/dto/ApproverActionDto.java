@@ -16,7 +16,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class ApproverActionDto extends ApproverActionModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 636214183400934854L;
 
 	public ApproverActionDto(Integer approverActionId, String actionType, Timestamp updatedAt) {
 		super(approverActionId, actionType, updatedAt);

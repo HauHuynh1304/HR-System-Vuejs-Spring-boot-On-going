@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class RoomRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6662968398151544956L;
 
 	private RoomDto room;
 

@@ -16,7 +16,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class EmployeeDto extends EmployeeModel {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6840215157600030365L;
 
 	public EmployeeDto(Integer employeeId, String employeeProfileId, Integer roomId, Integer systemAccountId,
 			Date employeeStartDate) {

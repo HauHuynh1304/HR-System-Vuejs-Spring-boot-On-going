@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public abstract class ApproverActionModel implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3693079795234627837L;
 
 	private Integer approverActionId;
 

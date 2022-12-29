@@ -16,8 +16,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AuthenRequest implements Serializable{
 	
-	private static final long serialVersionUID = 5926468583005150707L;
-	
+	private static final long serialVersionUID = 2684018965748360199L;
+
 	private String username;
 	
 	private String password;

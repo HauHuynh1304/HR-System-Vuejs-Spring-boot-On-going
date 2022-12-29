@@ -13,8 +13,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class RequesterActionDto extends RequesterActionModel {
-
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = 6078701841083159381L;
 	
 	private String requesterEmail;
+	
 }

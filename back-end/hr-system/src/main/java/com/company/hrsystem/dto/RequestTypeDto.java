@@ -11,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RequestTypeDto extends RequestTypeModel {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 67273255756317600L;
 
 }

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class ChangePasswordRequest implements Serializable{
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -7705127877008974049L;
 
 	private SystemAccountDto account;
 	

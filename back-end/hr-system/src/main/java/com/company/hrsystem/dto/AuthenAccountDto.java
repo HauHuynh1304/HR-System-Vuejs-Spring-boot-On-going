@@ -16,8 +16,8 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class AuthenAccountDto extends SystemAccountModel {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 5636900598946715134L;
+	
 	private Set<AuthenRoleDto> roles;
 
 }

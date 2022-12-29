@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class RequestTypeRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4875301591321613028L;
 
 	private RequestTypeDto requestType;
 

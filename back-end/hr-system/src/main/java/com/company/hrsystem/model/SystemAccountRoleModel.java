@@ -14,9 +14,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public abstract class SystemAccountRoleModel implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 	
+	private static final long serialVersionUID = 8505828295302963494L;
+
 	private Integer systemAccountRoleId;
 
 	private Integer systemAccountId;

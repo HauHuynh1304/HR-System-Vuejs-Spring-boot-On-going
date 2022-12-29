@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SignUpRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 438829947573371297L;
 
 	private SystemAccountDto account;
 

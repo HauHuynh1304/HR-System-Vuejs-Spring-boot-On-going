@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DocumentDto extends DocumentModel {
-
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = -796481424283542548L;
 
 }

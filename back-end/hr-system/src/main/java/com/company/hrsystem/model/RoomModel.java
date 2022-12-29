@@ -14,8 +14,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public abstract class RoomModel implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 6154681553050482073L;
 
 	private Integer roomId;
 

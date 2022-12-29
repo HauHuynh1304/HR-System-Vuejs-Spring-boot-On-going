@@ -15,9 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class PositionDto extends PositionModel {
-
-	private static final long serialVersionUID = 1L;
 	
+	private static final long serialVersionUID = -7725365259429505110L;
+
 	private Date startDate;
 	
 	private Date endDate;
