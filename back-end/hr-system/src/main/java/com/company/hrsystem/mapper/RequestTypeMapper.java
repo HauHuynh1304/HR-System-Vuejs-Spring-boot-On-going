@@ -16,5 +16,7 @@ public interface RequestTypeMapper {
 	List<RequestTypeDto> findAllRequestType();
 	
 	List<RequestTypeDto> findRequestType();
+	
+	String findRequestTypeById(Integer requestTypeId);
 
 }

@@ -63,4 +63,6 @@ public interface SystemAccountMapper {
 	
 	List<SystemAccountDto> findAccountByRole(String role);
 	
+	String findSystemEmailByEmployeeId(Integer employeeId);
+	
 }

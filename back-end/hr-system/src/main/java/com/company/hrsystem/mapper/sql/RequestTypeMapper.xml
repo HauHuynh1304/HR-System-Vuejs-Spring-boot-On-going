@@ -54,4 +54,10 @@
 			request_type
 		ORDER BY request_type_id DESC
 	</select>
+	
+	<select id="findRequestTypeById" parameterType="INTEGER" resultType="STRING">
+		SELECT request_type_name
+		FROM request_type
+		WHERE request_type_id = #{requestTypeId, jdbcType=INTEGER}
+	</select>
 </mapper>

@@ -3,9 +3,14 @@ package com.company.hrsystem.config;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.stereotype.Component;
 
 @Component
+@PropertySources({ 
+	@PropertySource("classpath:application.properties"), 
+	@PropertySource("classpath:email.properties") })
 public class SystemProperties {
 
 	// JWT info
@@ -40,6 +45,17 @@ public class SystemProperties {
 
 	// Folder path info
 	public static String PATH_SAVE_EMPLOYEE_IMAGE;
+
+	// Email properties
+	public static String MAIL_USER_NAME;
+	public static String MAIL_PASSWORD;
+	public static String MAIL_HOST;
+	public static Integer MAIL_PORT;
+	public static String MAIL_PROTOCOL;
+	public static String MAIL_DEFAUL_ENCODING;
+	public static Boolean MAIL_AUTH;
+	public static Boolean MAIL_STARTTLS_ENABLE;
+	public static Boolean MAIL_TEST_CONNECTING;
 
 	// start setting data
 	@Value("${jwt.secret}")
@@ -155,6 +171,51 @@ public class SystemProperties {
 	@Value("${upload.employee.img.dir}")
 	private void setPathSaveEmployeeImage(final String pathSaveEmployeeImage) {
 		PATH_SAVE_EMPLOYEE_IMAGE = pathSaveEmployeeImage;
+	}
+
+	@Value("${spring.mail.username}")
+	private void setUsername(final String username) {
+		MAIL_USER_NAME = username;
+	}
+
+	@Value("${spring.mail.password}")
+	private void setPassword(final String password) {
+		MAIL_PASSWORD = password;
+	}
+
+	@Value("${spring.mail.host}")
+	private void setMailHost(final String mailHost) {
+		MAIL_HOST = mailHost;
+	}
+
+	@Value("${spring.mail.port}")
+	private void setMailPort(final Integer mailPort) {
+		MAIL_PORT = mailPort;
+	}
+
+	@Value("${spring.mail.protocol}")
+	private void setMailProtocol(final String mailProtocol) {
+		MAIL_PROTOCOL = mailProtocol;
+	}
+
+	@Value("${spring.mail.default-encoding}")
+	private void setDefaultEncoding(final String defaltEncoding) {
+		MAIL_DEFAUL_ENCODING = defaltEncoding;
+	}
+
+	@Value("${spring.mail.properties.mail.smtp.auth}")
+	private void setMailAuth(final Boolean mailAuth) {
+		MAIL_AUTH = mailAuth;
+	}
+
+	@Value("${spring.mail.properties.mail.smtp.starttls.enable}")
+	private void setMailStarttls(final Boolean mailStarttls) {
+		MAIL_STARTTLS_ENABLE = mailStarttls;
+	}
+
+	@Value("${spring.mail.test-connection}")
+	private void setMailTestConnecting(final Boolean mailTestConnecting) {
+		MAIL_TEST_CONNECTING = mailTestConnecting;
 	}
 
 }

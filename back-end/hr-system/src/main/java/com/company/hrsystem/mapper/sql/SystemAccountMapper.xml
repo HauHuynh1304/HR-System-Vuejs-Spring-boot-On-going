@@ -385,4 +385,15 @@
 				ELSE false
 			END	
 	</select>
+	
+	<select id="findSystemEmailByEmployeeId" parameterType="INTEGER" resultType="STRING">
+		SELECT
+			sa.system_email
+		FROM
+			system_account sa
+			LEFT JOIN employee emp
+				ON sa.system_account_id = emp.system_account_id
+		WHERE
+			emp.employee_id = #{employeeId, jdbcType=INTEGER}
+	</select>
 </mapper>
