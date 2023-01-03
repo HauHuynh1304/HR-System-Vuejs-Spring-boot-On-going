@@ -35,5 +35,9 @@ public class StringUtil {
 	public static String addUnderscoreAtEachUppercases(String string) {
 		return string.replaceAll(ADD_UNDERSCORE_SYMBOL_AT_UPPERCASES_PATTERN, "$1_$2").toLowerCase();
 	}
+	
+	public static String subStringByEmailSign(String email) {
+		return email.substring(0, email.indexOf("@"));
+	}
 
 }

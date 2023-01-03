@@ -8,5 +8,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface SendEmail {
+
+	public String mailType() default "";
+
 	public String subject() default "Notification from HR-System Demo";
+
 }

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.company.hrsystem.Exeption.GlobalException;
+import com.company.hrsystem.annotations.SendEmail;
 import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.ApproverActionDto;
@@ -112,7 +113,8 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 	@Autowired
 	private RequesterActionMapper requesterActionMapper;
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	@Transactional
+	@SendEmail(mailType = CommonConstant.EMAIL_NEW_REQUEST_TYPE, subject = CommonConstant.EMAIL_SUBJECT_NEW_REQUEST)
 	public ResponseTemplate insertBusinessRequest(BusinessRequest request, HttpServletRequest httpServletRequest) {
 		if (ObjectUtils.isEmpty(request.getData())) {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,

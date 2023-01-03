@@ -3,6 +3,9 @@ package com.company.hrsystem.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.company.hrsystem.dto.ApproverActionDto;
 import com.company.hrsystem.dto.RequestDto;
@@ -16,7 +19,8 @@ import com.company.hrsystem.request.FindListTicketRequest;
 
 @Mapper
 public interface RequestEmployeeMapper {
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	int insertRequestEmployee(RequestDto requestDto, SupervisorActionDto supervisorActionDto,
 			ApproverActionDto approverActionDto, RequestEmployeeDto requestEmployeeDto,
 			RequesterActionDto requesterActionDto);
