@@ -1,6 +1,7 @@
 package com.company.hrsystem.request;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import com.company.hrsystem.constants.JsonRequestProperty;
 import com.company.hrsystem.dto.SystemAccountDto;
@@ -25,5 +26,10 @@ public class SignUpRequest implements Serializable {
 
 	@JsonProperty(JsonRequestProperty.JSON_REQUEST_PROPERTY)
 	SignUpRequest data;
+
+	@Override
+	public String toString() {
+		return "[account=" + account + ", roleIds=" + Arrays.toString(roleIds) + "]";
+	}
 
 }

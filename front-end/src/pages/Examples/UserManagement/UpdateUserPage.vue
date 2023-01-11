@@ -340,10 +340,10 @@ export default {
         });
         return;
       }
-      this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
+     
       let copyEmployeeObj = Object.assign({}, this.employeeObj.employee);
       diff(copyEmployeeObj, this.originEmployeeObj);
-      if (!isAllNullValue(copyEmployeeObj)) {
+      if (!isAllNullValue(copyEmployeeObj) || copyRoomObj.roomId !== null) {
         copyEmployeeObj.employeeId = this.originEmployeeObj.employeeId;
       }
 
@@ -365,6 +365,7 @@ export default {
         let submitdata = Object.assign({}, UPDATE_EMPLOYEE_OBJECT);
         submitdata.employee = copyEmployeeObj;
         submitdata.personalInfo = copyPersonalInfoObj;
+        submitdata.employee.roomId = copyRoomObj.roomId;
         let formData = new FormData();
         formData.append(
           "formEmployee",
@@ -376,6 +377,7 @@ export default {
         if (this.imageObj.file) {
           formData.append("image", this.imageObj.file);
         }
+        this.$bus.emit(EVENT_BUS.OPEN_LOADING_MODAL);
         updateEmployee(formData)
           .then((res) => {
             this.$notify({

@@ -17,13 +17,13 @@ public interface AuthenticationServiceInterface {
 
 	public ResponseTemplate handleSignUp(SignUpRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate handleChangePassword(HttpServletRequest servletRequest,
-			ChangePasswordRequest ChangePwRequest);
+	public ResponseTemplate handleChangePassword(ChangePasswordRequest changePwRequest,
+			HttpServletRequest servletRequest);
 
 	public ResponseTemplate updateAccount(UpdateAccountRequest accountRequest, HttpServletRequest servletRequest);
 
 	public ResponseTemplate findAccounts(HttpServletRequest servletRequest);
-	
+
 	public ResponseTemplate isEmailInDb(IsEmailInDbRequest request);
 
 }

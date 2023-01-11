@@ -70,44 +70,6 @@
   <sql id="Base_Column_List">
     system_account_id, system_email, system_password, deleted_flag, created_at, updated_at
   </sql>
-  <select id="selectByExample" parameterType="com.company.hrsystem.model.SystemAccountExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from system_account
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from system_account
-    where system_account_id = #{systemAccountId,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from system_account
-    where system_account_id = #{systemAccountId,jdbcType=INTEGER}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.company.hrsystem.model.SystemAccountExample">
-    delete from system_account
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.company.hrsystem.dto.AuthenAccountDto">
-    insert into system_account (system_account_id, system_email, system_password, 
-      deleted_flag, created_at, updated_at
-      )
-    values (#{systemAccountId,jdbcType=INTEGER}, #{systemEmail,jdbcType=VARCHAR}, #{systemPassword,jdbcType=VARCHAR}, 
-      #{deletedFlag,jdbcType=BIT}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
-      )
-  </insert>
   <insert id="insertSelective" parameterType="com.company.hrsystem.dto.SystemAccountDto"
   	useGeneratedKeys="true" keyProperty="systemAccountId" keyColumn="system_account_id">
     insert into system_account
@@ -152,50 +114,6 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.company.hrsystem.model.SystemAccountExample" resultType="java.lang.Long">
-    select count(*) from system_account
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map">
-    update system_account
-    <set>
-      <if test="row.systemAccountId != null">
-        system_account_id = #{row.systemAccountId,jdbcType=INTEGER},
-      </if>
-      <if test="row.systemEmail != null">
-        system_email = #{row.systemEmail,jdbcType=VARCHAR},
-      </if>
-      <if test="row.systemPassword != null">
-        system_password = #{row.systemPassword,jdbcType=VARCHAR},
-      </if>
-      <if test="row.deletedFlag != null">
-        deleted_flag = #{row.deletedFlag,jdbcType=BIT},
-      </if>
-      <if test="row.createdAt != null">
-        created_at = #{row.createdAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="row.updatedAt != null">
-        updated_at = #{row.updatedAt,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    <if test="example != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map">
-    update system_account
-    set system_account_id = #{row.systemAccountId,jdbcType=INTEGER},
-      system_email = #{row.systemEmail,jdbcType=VARCHAR},
-      system_password = #{row.systemPassword,jdbcType=VARCHAR},
-      deleted_flag = #{row.deletedFlag,jdbcType=BIT},
-      created_at = #{row.createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{row.updatedAt,jdbcType=TIMESTAMP}
-    <if test="example != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
   <update id="updateByEmailSelective" parameterType="com.company.hrsystem.dto.AuthenAccountDto">
     update system_account
     <set>
@@ -210,15 +128,6 @@
       </if>
     </set>
     where system_email = #{systemEmail,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.company.hrsystem.dto.AuthenAccountDto">
-    update system_account
-    set system_email = #{systemEmail,jdbcType=VARCHAR},
-      system_password = #{systemPassword,jdbcType=VARCHAR},
-      deleted_flag = #{deletedFlag,jdbcType=BIT},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
-    where system_account_id = #{systemAccountId,jdbcType=INTEGER}
   </update>
   
   
@@ -326,6 +235,7 @@
 				ON sar.system_role_id = sr.system_role_id
 		WHERE 
 			sa.system_account_id = #{id, jdbcType=INTEGER}
+				AND sar.deleted_flag = false
 	</select>
 	
 	<resultMap type="com.company.hrsystem.dto.AuthenAccountDto" id="findAccounts">
@@ -334,7 +244,7 @@
 		<result property="createdAt" jdbcType="TIMESTAMP" column="created_at"/>
 		<result property="deletedFlag" jdbcType="TIMESTAMP" column="deleted_flag"/>
 		<collection property="roles" ofType="com.company.hrsystem.dto.AuthenRoleDto">
-			<id property="systemAccountRoleId" jdbcType="INTEGER" column="system_account_role_id"/>
+			<id jdbcType="INTEGER" column="system_account_role_id"/>
 			<result property="systemRoleId" jdbcType="INTEGER" column="system_role_id"/>
 			<result property="roleName" jdbcType="VARCHAR" column="role_name"/>
 		</collection>

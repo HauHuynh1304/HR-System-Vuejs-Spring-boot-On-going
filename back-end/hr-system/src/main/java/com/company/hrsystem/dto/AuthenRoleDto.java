@@ -15,7 +15,5 @@ import lombok.Setter;
 public class AuthenRoleDto extends SystemRoleModel {
 	
 	private static final long serialVersionUID = 5867851719978981829L;
-	
-	private Integer systemAccountRoleId;
 
 }

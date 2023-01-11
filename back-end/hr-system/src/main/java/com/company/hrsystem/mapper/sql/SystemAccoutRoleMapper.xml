@@ -11,38 +11,33 @@
 		</foreach>
 	</insert>
 	
-	<resultMap type="com.company.hrsystem.dto.SystemAccountRoleDto" 
-		id="findNewestRecordsByCurrentUser">
-		<result column="system_account_role_id" jdbcType="INTEGER" property="systemAccountRoleId"/>
-		<result column="system_account_id" jdbcType="INTEGER" property="systemAccountId"/>
-		<result column="system_role_id" jdbcType="INTEGER" property="systemRoleId"/>
-	</resultMap>
-	<select id="findNewestRecordsByCurrentUser" parameterType="INTEGER"
-		resultMap="findNewestRecordsByCurrentUser">
-		SELECT 
-			sar.system_account_role_id,
-			sar.system_account_id,
-			sar.system_role_id
-		FROM system_account_role sar
-		WHERE sar.system_account_id = #{systemAccountId}
-			AND created_at = (
-				SELECT ssar.created_at
-				FROM system_account_role ssar
-				WHERE ssar.system_account_id = #{systemAccountId}
-				ORDER BY ssar.system_account_role_id DESC 
-				LIMIT 1
-			)
-	</select>
-	
 	<update id="delAccoutRoleById">
 		UPDATE system_account_role
-		SET deleted_flag = true
-		WHERE system_account_role_id 
-			IN 
-				<foreach item="item" index="index" collection="systemRoleIds"
+		SET deleted_flag = true,
+			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+		WHERE system_account_id = #{systemAccount.systemAccountId, jdbcType=INTEGER} AND 
+			system_role_id IN 
+				<foreach item="item" index="index" collection="roleIds"
 		             open="(" separator="," close=")">
 		        	#{item, jdbcType=INTEGER}
         		</foreach>	
 	</update>
 	
+	<update id="enableAccoutRoleById">
+		UPDATE system_account_role
+		SET deleted_flag = false,
+			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+		WHERE system_account_id = #{systemAccount.systemAccountId, jdbcType=INTEGER} AND 
+			system_role_id IN 
+				<foreach item="item" index="index" collection="roleIds"
+		             open="(" separator="," close=")">
+		        	#{item, jdbcType=INTEGER}
+        		</foreach>	
+	</update>
+	
+	<select id="findRolesBySystemAccountId" resultType="INTEGER">
+		SELECT sar.system_role_id
+		FROM system_account_role sar
+		WHERE sar.system_account_id = #{systemAccountId, jdbcType=INTEGER}
+	</select>
 </mapper>

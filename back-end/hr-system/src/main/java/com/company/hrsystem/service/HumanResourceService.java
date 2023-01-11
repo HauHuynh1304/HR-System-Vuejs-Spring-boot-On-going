@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,26 +13,24 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.company.hrsystem.Exeption.GlobalException;
+import com.company.hrsystem.annotations.WriteLogToDB;
 import com.company.hrsystem.config.SystemProperties;
-import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.EmployeeDocumentDto;
 import com.company.hrsystem.dto.EmployeeDto;
 import com.company.hrsystem.dto.EmployeePositionDto;
 import com.company.hrsystem.dto.PersonalInfoDto;
-import com.company.hrsystem.mapper.DocumentMapper;
-import com.company.hrsystem.mapper.EmployeeDocumentMapper;
-import com.company.hrsystem.mapper.EmployeeMapper;
-import com.company.hrsystem.mapper.EmployeePositionMapper;
-import com.company.hrsystem.mapper.PersonnalInfoMapper;
-import com.company.hrsystem.mapper.PositionMapper;
-import com.company.hrsystem.mapper.RequestEmployeeMapper;
-import com.company.hrsystem.mapper.RoomMapper;
+import com.company.hrsystem.mapper.Impl.DocumentMapperImpl;
+import com.company.hrsystem.mapper.Impl.EmployeeDocumentMapperImpl;
+import com.company.hrsystem.mapper.Impl.EmployeeMapperImpl;
+import com.company.hrsystem.mapper.Impl.EmployeePositionMapperImpl;
+import com.company.hrsystem.mapper.Impl.PersonnalInfoMapperImpl;
+import com.company.hrsystem.mapper.Impl.PositionMapperImpl;
+import com.company.hrsystem.mapper.Impl.RequestEmployeeMapperImpl;
+import com.company.hrsystem.mapper.Impl.RoomMapperImpl;
 import com.company.hrsystem.request.EmployeeRequest;
 import com.company.hrsystem.request.FindListEmployeesRequest;
 import com.company.hrsystem.request.FindListTicketRequest;
@@ -42,7 +39,6 @@ import com.company.hrsystem.response.FindListEmployeesResponse;
 import com.company.hrsystem.response.FindReportCaseSelectedResponse;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.serviceInterface.HumanResourceServiceInterface;
-import com.company.hrsystem.utils.AuthenUtil;
 import com.company.hrsystem.utils.DateUtil;
 import com.company.hrsystem.utils.FileUtil;
 import com.company.hrsystem.utils.LogUtil;
@@ -55,39 +51,37 @@ import com.google.gson.GsonBuilder;
 public class HumanResourceService implements HumanResourceServiceInterface {
 
 	@Autowired
-	private EmployeeMapper employeeMapper;
+	private EmployeeMapperImpl employeeMapperImpl;
 
 	@Autowired
-	private PersonnalInfoMapper personnalInfoMapper;
+	private PersonnalInfoMapperImpl personnalInfoMapperImpl;
 
 	@Autowired
-	private EmployeeDocumentMapper employeeDocumentMapper;
+	private EmployeeDocumentMapperImpl employeeDocumentMapperImpl;
 
 	@Autowired
-	private EmployeePositionMapper employeePositionMapper;
+	private EmployeePositionMapperImpl employeePositionMapperImpl;
 
 	@Autowired
-	private PositionMapper positionMapper;
+	private PositionMapperImpl positionMapperImpl;
 
 	@Autowired
-	private DocumentMapper documentMapper;
+	private DocumentMapperImpl documentMapperImpl;
 
 	@Autowired
-	private RoomMapper roomMapper;
+	private RoomMapperImpl roomMapperImpl;
 
 	@Autowired
-	private RequestEmployeeMapper requestEmployeeMapper;
+	private RequestEmployeeMapperImpl requestEmployeeMapperImpl;
 
-	@Autowired
-	private HistoryActionService historyActionService;
-
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	// TODO: add annotation sendEmail
+	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate insertEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
 		Gson gson = new GsonBuilder().setDateFormat(DateUtil.DAY).create();
 		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
 		String fileName = null;
-		int inserterId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		try {
 			if (multipartFile != null) {
 				fileName = FileUtil.generateFileName(multipartFile);
@@ -95,25 +89,19 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 
 			PersonalInfoDto personalInfo = request.getPersonalInfo();
 			personalInfo.setPersonalImage(fileName);
-			personnalInfoMapper.insertPersonalInfo(personalInfo);
-			historyActionService.saveHistoryAction(personalInfo, inserterId, CommonConstant.INSERT_ACTION,
-					personalInfo.getPersonalInfoId(), CommonConstant.TABLE_PERSONAL, servletRequest);
-
+			personnalInfoMapperImpl.insertPersonalInfo(personalInfo);
+			
 			EmployeeDto employeeDto = request.getEmployee();
-			employeeMapper.insertEmployee(personalInfo, employeeDto);
-			historyActionService.saveHistoryAction(employeeDto, inserterId, CommonConstant.INSERT_ACTION,
-					employeeDto.getEmployeeId(), CommonConstant.TABLE_EMPLOYEE, servletRequest);
-
+			employeeMapperImpl.insertEmployee(personalInfo, employeeDto);
+			
 			List<EmployeeDocumentDto> listEmployeeDocument = request.getDocuments();
 			if (ObjectUtils.isNotEmpty(listEmployeeDocument)) {
-				employeeDocumentMapper.insertEmployeeDocument(employeeDto, listEmployeeDocument);
-				saveHistoryLastInsertDocuments(inserterId, employeeDto.getEmployeeId(), servletRequest);
+				employeeDocumentMapperImpl.insertEmployeeDocument(employeeDto, listEmployeeDocument);
 			}
 
 			List<EmployeePositionDto> listEmployeePosition = request.getPositions();
-			employeePositionMapper.insertEmployeePosition(employeeDto, listEmployeePosition);
-			saveHistoryLastInsertPositons(inserterId, employeeDto.getEmployeeId(), servletRequest);
-
+			employeePositionMapperImpl.insertEmployeePosition(employeeDto, listEmployeePosition);
+			
 			if (!StringUtils.isAllEmpty(fileName)) {
 				try {
 					FileUtil.saveFile(FileUtil.generateUploadDir(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE,
@@ -133,7 +121,8 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 		}
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updateEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
 		Gson gson = new GsonBuilder().setDateFormat(DateUtil.DAY).create();
@@ -143,7 +132,6 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 		List<EmployeeDocumentDto> documents = request.getDocuments();
 		List<EmployeePositionDto> positions = request.getPositions();
 		Timestamp updatedAt = DateUtil.getCurrentDayHourSecond();
-		int inserterId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 
 		try {
 			/*
@@ -153,9 +141,7 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 			 */
 			if (ObjectUtil.countNotNullParamater(employee) > 1) {
 				employee.setUpdatedAt(updatedAt);
-				employeeMapper.updateEmployee(employee);
-				historyActionService.saveHistoryAction(employee, inserterId, CommonConstant.UPDATE_ACTION,
-						employee.getEmployeeId(), CommonConstant.TABLE_EMPLOYEE, servletRequest);
+				employeeMapperImpl.updateEmployee(employee);
 			}
 
 			/*
@@ -178,9 +164,7 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 								MessageUtil.getMessagelangUS("value.not.correct"));
 					}
 				}
-				personnalInfoMapper.updatePersonalInfo(personalInfo);
-				historyActionService.saveHistoryAction(personalInfo, inserterId, CommonConstant.UPDATE_ACTION,
-						personalInfo.getPersonalInfoId(), CommonConstant.TABLE_PERSONAL, servletRequest);
+				personnalInfoMapperImpl.updatePersonalInfo(personalInfo);
 			}
 
 			/*
@@ -201,15 +185,10 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 					}
 				});
 				if (ObjectUtils.isNotEmpty(oldDocuments)) {
-					employeeDocumentMapper.updateEmployeeDocument(oldDocuments, updatedAt);
-					for (EmployeeDocumentDto obj : oldDocuments) {
-						historyActionService.saveHistoryAction(obj, inserterId, CommonConstant.UPDATE_ACTION,
-								obj.getEmployeeDocumentId(), CommonConstant.TABLE_EMPLOYEE_DOCUMENT, servletRequest);
-					}
+					employeeDocumentMapperImpl.updateEmployeeDocument(oldDocuments, updatedAt);
 				}
 				if (ObjectUtils.isNotEmpty(newDocuments)) {
-					employeeDocumentMapper.insertEmployeeDocument(employee, newDocuments);
-					saveHistoryLastInsertDocuments(inserterId, employee.getEmployeeId(), servletRequest);
+					employeeDocumentMapperImpl.insertEmployeeDocument(employee, newDocuments);
 				}
 			}
 
@@ -231,15 +210,11 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 					}
 				});
 				if (ObjectUtils.isNotEmpty(oldPositions)) {
-					employeePositionMapper.updateEmployeePosition(oldPositions, updatedAt);
-					for (EmployeePositionDto obj : oldPositions) {
-						historyActionService.saveHistoryAction(obj, inserterId, CommonConstant.UPDATE_ACTION,
-								obj.getEmployeePositionId(), CommonConstant.TABLE_EMPLOYEE_POSITION, servletRequest);
-					}
+					employeePositionMapperImpl.updateEmployeePosition(oldPositions, updatedAt);
+					
 				}
 				if (ObjectUtils.isNotEmpty(newPositions)) {
-					employeePositionMapper.insertEmployeePosition(employee, newPositions);
-					saveHistoryLastInsertPositons(inserterId, employee.getEmployeeId(), servletRequest);
+					employeePositionMapperImpl.insertEmployeePosition(employee, newPositions);
 				}
 			}
 
@@ -253,7 +228,7 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 	}
 
 	public ResponseTemplate findListEmployees(FindListEmployeesRequest request) {
-		List<FindListEmployeesResponse> listEmployees = employeeMapper.findListEmployees(request.getData());
+		List<FindListEmployeesResponse> listEmployees = employeeMapperImpl.findListEmployees(request.getData());
 		if (ObjectUtils.isEmpty(listEmployees)) {
 			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(),
@@ -266,11 +241,11 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 	}
 
 	public ResponseTemplate findEmployeeById(Integer id) {
-		FindEmployeeResponse info = employeeMapper.findEmployeeById(id);
+		FindEmployeeResponse info = employeeMapperImpl.findEmployeeById(id);
 		info.getPersonalInfo().setPersonalImage(FileUtil.getUrlImg(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE,
 				info.getPersonalInfo().getPersonalInfoId(), info.getPersonalInfo().getPersonalImage()));
-		info.setDocuments(employeeDocumentMapper.findEmployeeDocumentsByEmployeeId(id));
-		info.setPositions(employeePositionMapper.findEmployeePositionsByEmployeeId(id));
+		info.setDocuments(employeeDocumentMapperImpl.findEmployeeDocumentsByEmployeeId(id));
+		info.setPositions(employeePositionMapperImpl.findEmployeePositionsByEmployeeId(id));
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, info);
 	}
@@ -278,43 +253,25 @@ public class HumanResourceService implements HumanResourceServiceInterface {
 	public ResponseTemplate findPositions() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				positionMapper.findPositions());
+				positionMapperImpl.findPositions());
 	}
 
 	public ResponseTemplate findDocuments() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				documentMapper.findDocuments());
+				documentMapperImpl.findDocuments());
 	}
 
 	public ResponseTemplate findRooms() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, roomMapper.findRooms());
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, roomMapperImpl.findRooms());
 	}
 
 	public ResponseTemplate findReportCaseSelected(FindListTicketRequest request) {
-		List<FindReportCaseSelectedResponse> listObj = requestEmployeeMapper.findReportCaseSelected(request.getData());
+		List<FindReportCaseSelectedResponse> listObj = requestEmployeeMapperImpl.findReportCaseSelected(request.getData());
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
 				null, listObj);
-	}
-
-	private void saveHistoryLastInsertPositons(Integer inserterId, Integer employeeId,
-			HttpServletRequest servletRequest) {
-		Set<EmployeePositionDto> positionDtos = employeePositionMapper.findLastInsertListEmployeePosition(employeeId);
-		for (EmployeePositionDto obj : positionDtos) {
-			historyActionService.saveHistoryAction(obj, inserterId, CommonConstant.INSERT_ACTION,
-					obj.getEmployeePositionId(), CommonConstant.TABLE_EMPLOYEE_POSITION, servletRequest);
-		}
-	}
-
-	private void saveHistoryLastInsertDocuments(Integer inserterId, Integer employeeId,
-			HttpServletRequest servletRequest) {
-		Set<EmployeeDocumentDto> documentDtos = employeeDocumentMapper.findLastInsertListEmployeeDocument(employeeId);
-		for (EmployeeDocumentDto obj : documentDtos) {
-			historyActionService.saveHistoryAction(obj, inserterId, CommonConstant.INSERT_ACTION,
-					obj.getEmployeeDocumentId(), CommonConstant.TABLE_EMPLOYEE_DOCUMENT, servletRequest);
-		}
 	}
 
 }

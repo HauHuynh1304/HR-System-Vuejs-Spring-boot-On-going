@@ -57,8 +57,8 @@ public class AuthenticationController {
 
 	@PostMapping(ApiUrlConstant.AUTHEN_CHANGE_PASSWORD)
 	public ResponseEntity<?> changePassword(HttpServletRequest servletRequest,
-			@RequestBody ChangePasswordRequest ChangePwRequest) {
-		return ResponseEntity.ok(authenService.handleChangePassword(servletRequest, ChangePwRequest));
+			@RequestBody ChangePasswordRequest changePwRequest) {
+		return ResponseEntity.ok(authenService.handleChangePassword(changePwRequest, servletRequest));
 	}
 
 	@PostMapping(ApiUrlConstant.AUTHEN_FIND_ACCOUNTS)

@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.company.hrsystem.dto.RefreshTokenDto;
 
 @Mapper
-public interface ResfreshTokenMapper {
+public interface RefreshTokenMapper {
 
 	public RefreshTokenDto findRefreshTokenByEmail(String email);
 	
