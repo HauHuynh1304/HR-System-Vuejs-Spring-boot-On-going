@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.company.hrsystem.mapper.HistoryActionMapper">
+	<insert id="insertHistoryAction"
+		parameterType="com.company.hrsystem.dto.HistoryActionDto">
+		<if test="mutableObjValues != null">
+			<foreach collection="mutableObjValues" item="item" open=" "
+				separator=";" close=" ">
+				INSERT INTO history_action
+					(
+						employee_id, action_type, computer_ip, 
+						target_table, target_column, target_value
+					)
+				VALUES 
+					(
+						#{employeeId}, #{actionType}, #{computerIp}, 
+						#{targetTable}, #{item.targetColumn}, #{item.targetValue}
+					)
+			</foreach>
+		</if>
+		<if test="mutableObjValues == null or mutableObjValues.isEmpty()">
+				INSERT INTO history_action
+					<trim prefix="(" suffix=")" suffixOverrides=",">
+						<if test="employeeId != null and employeeId != '' ">
+							employee_id, 
+						</if>
+						<if test="actionType != null and actionType != '' ">
+							action_type, 
+						</if>
+						<if test="computerIp != null and computerIp != '' ">
+							computer_ip, 
+						</if>
+						<if test="targetTable != null and targetTable != '' ">
+							target_table, 
+						</if>
+						<if test="targetValue != null and targetValue != '' ">
+							target_value, 
+						</if>
+					</trim>
+				VALUES 
+					<trim prefix="(" suffix=")" suffixOverrides=",">
+						<if test="employeeId != null and employeeId != '' ">
+							#{employeeId},
+						</if>
+						<if test="actionType != null and actionType != '' ">
+							#{actionType},
+						</if>
+						<if test="computerIp != null and computerIp != '' ">
+							#{computerIp}, 
+						</if>
+						<if test="targetTable != null and targetTable != '' ">
+							#{targetTable},
+						</if>
+						<if test="targetValue != null and targetValue != '' ">
+							#{targetValue},
+						</if>
+					</trim>
+		</if>
+	</insert>
+	
+	<resultMap type="com.company.hrsystem.dto.HistoryActionDto" 
+		id="findHistoriesByEmployeeId">
+        <id column="history_action_id" jdbcType="INTEGER" property="historyActionId"/>
+		<result column="action_type" jdbcType="VARCHAR" property="actionType"/>
+		<result column="computer_ip" jdbcType="VARCHAR" property="computerIp"/>
+		<result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+	</resultMap>
+	<select id="findHistoriesByEmployeeId" 
+		resultMap="findHistoriesByEmployeeId" parameterType="Integer">
+		SELECT
+			ha.action_type,
+			ha.computer_ip,
+			ha.created_at
+		FROM 
+			history_action ha
+		WHERE 
+			ha.employee_id = #{id, jdbcType=INTEGER} 
+			AND ha.action_type IN (
+				'LOG IN', 
+				'LOG OUT' ,
+				'CHANGE PASSWORD')
+		ORDER BY
+			ha.history_action_id DESC
+		LIMIT 20
+	</select>
+</mapper>

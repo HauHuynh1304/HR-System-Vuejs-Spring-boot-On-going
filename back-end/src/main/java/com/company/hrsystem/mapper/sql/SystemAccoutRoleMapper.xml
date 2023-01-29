@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.company.hrsystem.mapper.SystemAccountRoleMapper">
+	<insert id="insertAccountRole">
+		INSERT INTO System_account_role (system_account_id, system_role_id)
+		VALUES
+		<foreach collection="roleIds" item="item" open="("
+			separator="),(" close=")">
+			#{systemAccount.systemAccountId, jdbcType=INTEGER}, #{item, jdbcType=INTEGER}
+		</foreach>
+	</insert>
+	
+	<update id="delAccoutRoleById">
+		UPDATE system_account_role
+		SET deleted_flag = true,
+			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+		WHERE system_account_id = #{systemAccount.systemAccountId, jdbcType=INTEGER} AND 
+			system_role_id IN 
+				<foreach item="item" index="index" collection="roleIds"
+		             open="(" separator="," close=")">
+		        	#{item, jdbcType=INTEGER}
+        		</foreach>	
+	</update>
+	
+	<update id="enableAccoutRoleById">
+		UPDATE system_account_role
+		SET deleted_flag = false,
+			updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+		WHERE system_account_id = #{systemAccount.systemAccountId, jdbcType=INTEGER} AND 
+			system_role_id IN 
+				<foreach item="item" index="index" collection="roleIds"
+		             open="(" separator="," close=")">
+		        	#{item, jdbcType=INTEGER}
+        		</foreach>	
+	</update>
+	
+	<select id="findRolesBySystemAccountId" resultType="INTEGER">
+		SELECT sar.system_role_id
+		FROM system_account_role sar
+		WHERE sar.system_account_id = #{systemAccountId, jdbcType=INTEGER}
+	</select>
+</mapper>

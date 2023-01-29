@@ -64,7 +64,7 @@
       @hidden="resetDocumentModal"
     >
       <h5 class="text-center">
-        Want to delete
+        Want to {{ deleteState ? "delete" : "re-open"}}
         <strong>{{ modalDocument.documentName }}</strong>
       </h5>
       <template #modal-footer="{ ok, cancel}">
@@ -179,6 +179,7 @@ export default {
   },
   data() {
     return {
+      deleteState: null,
       originDocumentObj: null,
       documentOption: [],
       tagDocumentValue: [],
@@ -251,9 +252,11 @@ export default {
     },
     clickDelDocument(item, index, button) {
       this.setValueDeleteFlag(ACTION.DELETE, item, button);
+      this.deleteState = true;
     },
     clickUnDelDocument(item, index, button) {
       this.setValueDeleteFlag(ACTION.UNDELETE, item, button);
+      this.deleteState = false;
     },
     updateDocument(action) {
       if (action === ACTION.UPDATE) {

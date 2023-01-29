@@ -22,6 +22,7 @@ export const UPDATE_EMPLOYEE_OBJECT = {
   employee: {
     employeeId: null,
     employeeProfileId: null,
+    roomId: null,
     deletedFlag: null,
     employeeStartDate: null,
     employeeEndDate: null,

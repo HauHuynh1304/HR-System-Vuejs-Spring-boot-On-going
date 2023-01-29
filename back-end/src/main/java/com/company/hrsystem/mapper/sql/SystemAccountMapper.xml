@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.hrsystem.mapper.SystemAccountMapper">
+  <resultMap id="BaseResultMap" type="com.company.hrsystem.dto.AuthenAccountDto">
+    <id column="system_account_id" jdbcType="INTEGER" property="systemAccountId" />
+    <result column="system_email" jdbcType="VARCHAR" property="systemEmail" />
+    <result column="system_password" jdbcType="VARCHAR" property="systemPassword" />
+    <result column="deleted_flag" jdbcType="BIT" property="deletedFlag" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    system_account_id, system_email, system_password, deleted_flag, created_at, updated_at
+  </sql>
+  <insert id="insertSelective" parameterType="com.company.hrsystem.dto.SystemAccountDto"
+  	useGeneratedKeys="true" keyProperty="systemAccountId" keyColumn="system_account_id">
+    insert into system_account
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="systemAccountId != null">
+        system_account_id,
+      </if>
+      <if test="systemEmail != null">
+        system_email,
+      </if>
+      <if test="systemPassword != null">
+        system_password,
+      </if>
+      <if test="deletedFlag != null">
+        deleted_flag,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="systemAccountId != null">
+        #{systemAccountId,jdbcType=INTEGER},
+      </if>
+      <if test="systemEmail != null">
+        #{systemEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="systemPassword != null">
+        #{systemPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedFlag != null">
+        #{deletedFlag,jdbcType=BIT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByEmailSelective" parameterType="com.company.hrsystem.dto.AuthenAccountDto">
+    update system_account
+    <set>
+      <if test="systemPassword != null">
+        system_password = #{systemPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedFlag != null">
+        deleted_flag = #{deletedFlag,jdbcType=BIT},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where system_email = #{systemEmail,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <resultMap id="findAllAccount" type="com.company.hrsystem.dto.SystemAccountDto">
+    <id column="system_account_id" jdbcType="INTEGER" property="systemAccountId" />
+    <result column="system_email" jdbcType="VARCHAR" property="systemEmail" />
+  </resultMap>
+  <select id="findAllAccount" resultMap="findAllAccount">
+  	SELECT
+		sa.system_account_id,
+		sa.system_email
+	FROM system_account sa
+	ORDER BY
+		sa.system_account_id DESC
+  </select>
+  <select id="findAvailbleAccounts" resultMap="findAllAccount">
+		SELECT
+			sa.system_account_id,
+			sa.system_email
+		FROM 
+			system_account sa
+		WHERE 
+			sa.system_account_id 
+				NOT IN
+					(
+						SELECT e.system_account_id
+						FROM employee e
+					)
+			AND sa.deleted_flag = false
+		ORDER BY 
+			sa.system_account_id DESC
+	</select>
+  <select id="findAccountByRole" resultMap="findAllAccount"  parameterType="java.lang.String">
+		SELECT DISTINCT
+			e.employee_id AS system_account_id,
+			sa.system_email
+		FROM 
+			system_account sa
+			LEFT JOIN system_account_role sar
+				ON sa.system_account_id = sar.system_account_id
+			LEFT JOIN system_role sr
+				ON sar.system_role_id = sr.system_role_id
+			LEFT JOIN employee e
+				ON e.system_account_id = sa.system_account_id
+		WHERE 
+			<if test="role == 'ROLE_SUPERVISOR'">
+				sr.role_name = #{role, jdbcType=VARCHAR}
+			</if>
+			<if test="role == 'ROLE_MANAGER'">
+				sr.role_name = #{role, jdbcType=VARCHAR}
+			</if>
+			AND e.employee_id IS NOT NULL
+			AND sar.deleted_flag = false
+		ORDER BY 
+			e.employee_id DESC
+	</select>
+  
+	<select id="findSystemAccountIdByEmail" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT
+    		sa.system_account_id
+    	FROM 
+    		system_account sa
+    	WHERE
+    		sa.system_email = #{email, jdbcType = VARCHAR} 
+	</select>
+  
+ 	<resultMap type="com.company.hrsystem.dto.AuthenAccountDto" id="authenResult">
+ 		<id property="systemAccountId" jdbcType="INTEGER" column="system_account_id"/>
+		<result property="systemEmail" jdbcType="VARCHAR" column="system_email"/>
+		<result property="systemPassword" jdbcType="VARCHAR" column="system_password"/>
+		
+		<!-- map to list property in java class -->
+		<collection property="roles" ofType="com.company.hrsystem.dto.AuthenRoleDto">
+			<id jdbcType="INTEGER" column="system_role_id"/>
+			<result property="roleName" jdbcType="VARCHAR" column="role_name"/>
+		</collection>
+	</resultMap>
+	<select id="findAuthenAccountByEmail" resultMap="authenResult" parameterType="java.lang.String">
+		SELECT
+			sa.system_account_id,
+			sa.system_email,
+			sa.system_password,
+			sr.system_role_id,
+			sr.role_name
+		FROM system_account sa
+			LEFT JOIN system_account_role sar
+				ON sa.system_account_id = sar.system_account_id
+			LEFT JOIN system_role sr
+				ON sar.system_role_id = sr.system_role_id
+		WHERE 
+			sa.system_email = #{accEmail, jdbcType = VARCHAR}
+			AND sa.deleted_flag = false
+			AND sar.deleted_flag = false
+			AND sr.deleted_flag = false
+	</select>
+	<select id="findAuthenAccountById" resultMap="authenResult" parameterType="INTEGER">
+		SELECT
+			sa.system_account_id,
+			sr.system_role_id,
+			sr.role_name
+		FROM system_account sa
+			LEFT JOIN system_account_role sar
+				ON sa.system_account_id = sar.system_account_id
+			LEFT JOIN system_role sr
+				ON sar.system_role_id = sr.system_role_id
+		WHERE 
+			sa.system_account_id = #{id, jdbcType=INTEGER}
+				AND sar.deleted_flag = false
+	</select>
+	
+	<resultMap type="com.company.hrsystem.dto.AuthenAccountDto" id="findAccounts">
+		<id property="systemAccountId" jdbcType="INTEGER" column="system_account_id"/>
+		<result property="systemEmail" jdbcType="VARCHAR" column="system_email"/>
+		<result property="createdAt" jdbcType="TIMESTAMP" column="created_at"/>
+		<result property="deletedFlag" jdbcType="TIMESTAMP" column="deleted_flag"/>
+		<collection property="roles" ofType="com.company.hrsystem.dto.AuthenRoleDto">
+			<id jdbcType="INTEGER" column="system_account_role_id"/>
+			<result property="systemRoleId" jdbcType="INTEGER" column="system_role_id"/>
+			<result property="roleName" jdbcType="VARCHAR" column="role_name"/>
+		</collection>
+	</resultMap>
+	<select id="findAccounts" resultMap="findAccounts">
+		SELECT
+			sa.system_account_id,
+			sa.system_email,
+			sa.created_at,
+			sa.deleted_flag,
+			sr.role_name,
+			sr.system_role_id,
+			sar.system_account_role_id
+		FROM system_account sa
+			LEFT JOIN system_account_role sar
+				ON sa.system_account_id = sar.system_account_id
+			LEFT JOIN system_role sr
+				ON sar.system_role_id = sr.system_role_id
+		WHERE 
+			sar.deleted_flag = false
+			AND sr.deleted_flag = false
+		ORDER BY 
+			sa.system_account_id DESC
+	</select>
+	
+	<update id="updateAccount" parameterType="com.company.hrsystem.dto.SystemAccountDto">
+		UPDATE system_account
+		<set>
+			<if test="systemPassword != null and systemPassword != ''">
+				system_password = #{systemPassword, jdbcType=VARCHAR},
+			</if>
+			<if test="deletedFlag != null">
+				deleted_flag = #{deletedFlag, jdbcType=BIT},
+			</if>
+		</set>
+		WHERE system_account_id = #{systemAccountId, jdbcType=INTEGER}
+	</update>
+	
+	<select id="isEmailInDb" parameterType="STRING" resultType="BOOLEAN">
+		SELECT
+			CASE
+				WHEN EXISTS (
+						SELECT sa.system_email
+						FROM system_account sa
+						WHERE sa.system_email = #{email, jdbcType=VARCHAR}
+					)
+				THEN true
+				ELSE false
+			END	
+	</select>
+	
+	<select id="findSystemEmailByEmployeeId" parameterType="INTEGER" resultType="STRING">
+		SELECT
+			sa.system_email
+		FROM
+			system_account sa
+			LEFT JOIN employee emp
+				ON sa.system_account_id = emp.system_account_id
+		WHERE
+			emp.employee_id = #{employeeId, jdbcType=INTEGER}
+	</select>
+</mapper>
