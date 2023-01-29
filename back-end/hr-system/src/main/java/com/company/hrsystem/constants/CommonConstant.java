@@ -57,8 +57,10 @@ public class CommonConstant {
 	public static final String TABLE_REQUEST_EMPLOYEE = "request_employee";
 	public static final String TABLE_COMMENT = "comment";
 	
-	// EMAIL TYPE
+	// EMAIL Constant
 	public static final String EMAIL_SUBJECT_NEW_REQUEST = "New request";
+	public static final String EMAIL_SUBJECT_UPDATE_REQUEST = "Update request";
 	public static final String EMAIL_NEW_REQUEST_TYPE = "New request type";
+	public static final String EMAIL_UPDATE_REQUEST_TYPE = "Update request type";
 
 }

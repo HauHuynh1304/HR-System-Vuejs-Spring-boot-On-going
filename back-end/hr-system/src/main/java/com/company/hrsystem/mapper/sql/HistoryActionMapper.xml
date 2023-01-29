@@ -10,24 +10,52 @@
 				INSERT INTO history_action
 					(
 						employee_id, action_type, computer_ip, 
-						target_table, target_row_id, target_column, target_value
+						target_table, target_column, target_value
 					)
 				VALUES 
 					(
 						#{employeeId}, #{actionType}, #{computerIp}, 
-						#{targetTable}, #{targetRowId}, #{item.targetColumn}, #{item.targetValue}
+						#{targetTable}, #{item.targetColumn}, #{item.targetValue}
 					)
 			</foreach>
 		</if>
 		<if test="mutableObjValues == null or mutableObjValues.isEmpty()">
 				INSERT INTO history_action
-					(
-						employee_id, action_type, computer_ip
-					)
+					<trim prefix="(" suffix=")" suffixOverrides=",">
+						<if test="employeeId != null and employeeId != '' ">
+							employee_id, 
+						</if>
+						<if test="actionType != null and actionType != '' ">
+							action_type, 
+						</if>
+						<if test="computerIp != null and computerIp != '' ">
+							computer_ip, 
+						</if>
+						<if test="targetTable != null and targetTable != '' ">
+							target_table, 
+						</if>
+						<if test="targetValue != null and targetValue != '' ">
+							target_value, 
+						</if>
+					</trim>
 				VALUES 
-					(
-						#{employeeId}, #{actionType}, #{computerIp}
-					)
+					<trim prefix="(" suffix=")" suffixOverrides=",">
+						<if test="employeeId != null and employeeId != '' ">
+							#{employeeId},
+						</if>
+						<if test="actionType != null and actionType != '' ">
+							#{actionType},
+						</if>
+						<if test="computerIp != null and computerIp != '' ">
+							#{computerIp}, 
+						</if>
+						<if test="targetTable != null and targetTable != '' ">
+							#{targetTable},
+						</if>
+						<if test="targetValue != null and targetValue != '' ">
+							#{targetValue},
+						</if>
+					</trim>
 		</if>
 	</insert>
 	

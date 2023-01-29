@@ -11,13 +11,12 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.company.hrsystem.Exeption.GlobalException;
 import com.company.hrsystem.annotations.SendEmail;
+import com.company.hrsystem.annotations.WriteLogToDB;
 import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.ApproverActionDto;
@@ -32,20 +31,20 @@ import com.company.hrsystem.dto.SupervisorActionDto;
 import com.company.hrsystem.dto.SystemAccountDto;
 import com.company.hrsystem.enums.BusinessRequestStatusEnum;
 import com.company.hrsystem.enums.PartialDateEnum;
-import com.company.hrsystem.mapper.ApproverActionMapper;
-import com.company.hrsystem.mapper.CommentMapper;
-import com.company.hrsystem.mapper.EmployeeDocumentMapper;
-import com.company.hrsystem.mapper.EmployeeMapper;
-import com.company.hrsystem.mapper.EmployeePositionMapper;
 import com.company.hrsystem.mapper.HistoryActionMapper;
-import com.company.hrsystem.mapper.NotificationMapper;
-import com.company.hrsystem.mapper.ReasonMapper;
-import com.company.hrsystem.mapper.RequestEmployeeMapper;
-import com.company.hrsystem.mapper.RequestMapper;
-import com.company.hrsystem.mapper.RequestTypeMapper;
-import com.company.hrsystem.mapper.RequesterActionMapper;
-import com.company.hrsystem.mapper.SupervisorAcctionMapper;
-import com.company.hrsystem.mapper.SystemAccountMapper;
+import com.company.hrsystem.mapper.Impl.ApproverActionMapperImpl;
+import com.company.hrsystem.mapper.Impl.CommentMapperImpl;
+import com.company.hrsystem.mapper.Impl.EmployeeDocumentMapperImpl;
+import com.company.hrsystem.mapper.Impl.EmployeeMapperImpl;
+import com.company.hrsystem.mapper.Impl.EmployeePositionMapperImpl;
+import com.company.hrsystem.mapper.Impl.NotificationMapperImpl;
+import com.company.hrsystem.mapper.Impl.ReasonMapperImpl;
+import com.company.hrsystem.mapper.Impl.RequestEmployeeMapperImpl;
+import com.company.hrsystem.mapper.Impl.RequestMapperImpl;
+import com.company.hrsystem.mapper.Impl.RequestTypeMapperImpl;
+import com.company.hrsystem.mapper.Impl.RequesterActionMapperImpl;
+import com.company.hrsystem.mapper.Impl.SupervisorAcctionMapperImpl;
+import com.company.hrsystem.mapper.Impl.SystemAccountMapperImpl;
 import com.company.hrsystem.request.ApproverActionRequest;
 import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
@@ -69,51 +68,58 @@ import com.company.hrsystem.utils.MessageUtil;
 public class BusinessRequestService implements BusinessRequestServiceInterface {
 
 	@Autowired
-	private RequestMapper requestMapper;
+	private SupervisorAcctionMapperImpl supervisorAcctionMapperImpl;
 
 	@Autowired
-	private SupervisorAcctionMapper supervisorAcctionMapper;
+	private ApproverActionMapperImpl approverActionMapperImpl;
 
 	@Autowired
-	private ApproverActionMapper approverActionMapper;
+	private RequestEmployeeMapperImpl requestEmployeeMapperImpl;
 
 	@Autowired
-	private RequestEmployeeMapper requestEmployeeMapper;
+	private EmployeeMapperImpl employeeMapperImpl;
 
 	@Autowired
-	private EmployeeMapper employeeMapper;
+	private CommentMapperImpl commentMapperImpl;
 
 	@Autowired
-	private CommentMapper commentMapper;
+	private ReasonMapperImpl reasonMapperImpl;
 
 	@Autowired
-	private ReasonMapper reasonMapper;
+	private SystemAccountMapperImpl systemAccountMapperImpl;
 
 	@Autowired
-	private SystemAccountMapper systemAccountMapper;
+	private RequestTypeMapperImpl requestTypeMapperImpl;
 
 	@Autowired
-	private RequestTypeMapper requestTypeMapper;
+	private NotificationMapperImpl notificationMapperImpl;
 
 	@Autowired
-	private NotificationMapper notificationMapper;
+	private EmployeeDocumentMapperImpl employeeDocumentMapperImpl;
 
 	@Autowired
-	private HistoryActionService historyActionService;
-
-	@Autowired
-	private EmployeeDocumentMapper employeeDocumentMapper;
-
-	@Autowired
-	private EmployeePositionMapper employeePositionMapper;
+	private EmployeePositionMapperImpl employeePositionMapperImpl;
 
 	@Autowired
 	private HistoryActionMapper historyActionMapper;
 
 	@Autowired
-	private RequesterActionMapper requesterActionMapper;
+	private RequesterActionMapperImpl requesterActionMapperImpl;
+
+	@Autowired
+	private RequestMapperImpl requestMapperImp;
+
+	@Autowired
+	private RequesterActionMapperImpl requesterActionMapperImp;
+
+	@Autowired
+	private SupervisorAcctionMapperImpl supervisorAcctionMapperImp;
+
+	@Autowired
+	private ApproverActionMapperImpl approverActionMapperImp;
 
 	@Transactional
+	@WriteLogToDB
 	@SendEmail(mailType = CommonConstant.EMAIL_NEW_REQUEST_TYPE, subject = CommonConstant.EMAIL_SUBJECT_NEW_REQUEST)
 	public ResponseTemplate insertBusinessRequest(BusinessRequest request, HttpServletRequest httpServletRequest) {
 		if (ObjectUtils.isEmpty(request.getData())) {
@@ -136,41 +142,29 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 					MessageUtil.getMessagelangUS("previous.month"));
 		}
 		try {
-			int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
+			int employeeId = employeeMapperImpl.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 			RequestDto requestDto = request.getData().getRequest();
 			SupervisorActionDto supervisorActionDto = request.getData().getSupervisorAcction();
 			ApproverActionDto approverActionDto = request.getData().getApproverAction();
 			requestEmployee.setDuration(DateUtil.caculateDuration(partialDate, startDate, endDate));
 			requestEmployee.setEmployeeId(employeeId);
 
-			requestMapper.insertRequest(requestDto);
-			historyActionService.saveHistoryAction(requestDto, employeeId, CommonConstant.INSERT_ACTION,
-					requestDto.getRequestId(), CommonConstant.TABLE_REQUEST_TICKET, httpServletRequest);
+			requestMapperImp.insertRequest(requestDto);
 
 			RequesterActionDto requesterActionDto = new RequesterActionDto();
 			requesterActionDto.setRequesterId(employeeId);
-			requesterActionMapper.insertRequesterAction(requesterActionDto);
-			historyActionService.saveHistoryAction(requesterActionDto, employeeId, CommonConstant.INSERT_ACTION,
-					requesterActionDto.getRequesterActionId(), CommonConstant.TABLE_REQUESTER_ACTION,
-					httpServletRequest);
-
-			supervisorAcctionMapper.insertSupervisorAction(supervisorActionDto);
-			historyActionService.saveHistoryAction(supervisorActionDto, employeeId, CommonConstant.INSERT_ACTION,
-					supervisorActionDto.getSupervisorActionId(), CommonConstant.TABLE_SUPERVISOR_ACTION,
-					httpServletRequest);
-
-			approverActionMapper.insertApproverAction(approverActionDto);
-			historyActionService.saveHistoryAction(approverActionDto, employeeId, CommonConstant.INSERT_ACTION,
-					approverActionDto.getApproverActionId(), CommonConstant.TABLE_APPROVER_ACTION, httpServletRequest);
-
-			insertRows = requestEmployeeMapper.insertRequestEmployee(requestDto, supervisorActionDto, approverActionDto,
+			requesterActionMapperImp.insertRequesterAction(requesterActionDto);
+			supervisorAcctionMapperImp.insertSupervisorAction(supervisorActionDto);
+			approverActionMapperImp.insertApproverAction(approverActionDto);
+			
+			request.getData().setRequesterActionDto(requesterActionDto); // just a trick for saving log
+			
+			insertRows = requestEmployeeMapperImpl.insertRequestEmployee(requestDto, supervisorActionDto, approverActionDto,
 					requestEmployee, requesterActionDto);
-			historyActionService.saveHistoryAction(requestEmployee, employeeId, CommonConstant.INSERT_ACTION,
-					requestDto.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
 
-			notificationMapper.insertNotification(
+			notificationMapperImpl.insertNotification(
 					new NotificationDto(requestDto.getRequestId(), employeeId, supervisorActionDto.getSupervisorId()));
-			notificationMapper.insertNotification(
+			notificationMapperImpl.insertNotification(
 					new NotificationDto(requestDto.getRequestId(), employeeId, approverActionDto.getApproverId()));
 
 			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -183,7 +177,8 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		}
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updateRequesterAction(RequesterActionRequest request,
 			HttpServletRequest httpServletRequest) {
 		RequesterActionDto requesterActionDto = request.getData().getRequesterAction();
@@ -202,45 +197,43 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		// Check current request status
 		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
 		paramRequestEmployee.setRequesterActionId(requesterActionDto.getRequesterActionId());
-		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
+		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapperImpl
 				.findCurrentRequestEmployee(paramRequestEmployee);
 		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
 
 		// Update requester action
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
-		requesterActionMapper.updateRequesterAction(requesterActionDto);
-		historyActionService.saveHistoryAction(requesterActionDto, employeeId, CommonConstant.UPDATE_ACTION,
-				requesterActionDto.getRequesterActionId(), CommonConstant.TABLE_REQUESTER_ACTION, httpServletRequest);
-
+		requesterActionMapperImpl.updateRequesterAction(requesterActionDto);
+	
 		// Force update request status
 		RequestEmployeeDto obj = new RequestEmployeeDto(requesterActionDto.getRequesterActionId(), null, null,
 				requestStatus, currentDayHourSecond);
-		requestEmployeeMapper.updateRequestEmployee(obj);
-		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
-				resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+		requestEmployeeMapperImpl.updateRequestEmployee(obj);
 
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	@Transactional
+	@WriteLogToDB
+	@SendEmail(mailType = CommonConstant.EMAIL_UPDATE_REQUEST_TYPE, subject = CommonConstant.EMAIL_SUBJECT_UPDATE_REQUEST)
 	public ResponseTemplate updateSupervisorAction(SupervisorActionRequest request,
 			HttpServletRequest httpServletRequest) {
 		SupervisorActionDto supervisorActionDto = request.getData().getSupervisorAction();
-		updateSupervisorAction(supervisorActionDto, httpServletRequest);
+		updateSupervisorAction(supervisorActionDto);
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updateApproverAction(ApproverActionRequest request, HttpServletRequest httpServletRequest) {
 		ApproverActionDto approverActionDto = request.getData().getApproverAction();
-		updateApproverAction(approverActionDto, httpServletRequest);
+		updateApproverAction(approverActionDto);
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	@Transactional
 	public ResponseTemplate insertComment(CommentRequest request, HttpServletRequest httpServletRequest) {
 		if (StringUtils.isBlank(request.getData().getComment().getCommentDetail())) {
 			LogUtil.warn(MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.INSERT_COMMENT));
@@ -248,26 +241,23 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.INSERT_COMMENT));
 		}
 		CommentDto obj = request.getData().getComment();
-		int numberRecord = commentMapper.insertComment(obj);
-		isInsertUpdateSucess(numberRecord);
-		historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.INSERT_ACTION,
-				obj.getCommentId(), CommonConstant.TABLE_COMMENT, httpServletRequest);
+		commentMapperImpl.insertComment(obj);
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("comment.success"), null, null);
 	}
 
 	public ResponseTemplate findListCreatedRequestTicket(FindListTicketRequest request) {
 		request.getData().getRequestEmployee()
-				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
-		List<FindListTicketResponse> listObj = requestEmployeeMapper.findListCreatedRequestTicket(request.getData());
+				.setEmployeeId(employeeMapperImpl.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
+		List<FindListTicketResponse> listObj = requestEmployeeMapperImpl.findListCreatedRequestTicket(request.getData());
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
 				null, listObj);
 	}
 
 	public ResponseTemplate findRequestTicketById(Integer id) {
-		FindTicketRequestByIdResponse obj = requestEmployeeMapper.findRequestTicketById(id,
-				employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
+		FindTicketRequestByIdResponse obj = requestEmployeeMapperImpl.findRequestTicketById(id,
+				employeeMapperImpl.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
 		if (ObjectUtils.isEmpty(obj)) {
 			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
@@ -278,41 +268,41 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 
 	public ResponseTemplate findListReceivedRequestTicket(FindListTicketRequest request) {
 		request.getData().getRequestEmployee()
-				.setEmployeeId(employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
-		List<FindListTicketResponse> listObj = requestEmployeeMapper.findListReceivedRequestTicket(request.getData());
+				.setEmployeeId(employeeMapperImpl.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
+		List<FindListTicketResponse> listObj = requestEmployeeMapperImpl.findListReceivedRequestTicket(request.getData());
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
 				null, listObj);
 	}
 
 	public ResponseTemplate findCurrentUser() {
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
-		FindEmployeeResponse obj = employeeMapper.findEmployeeById(employeeId);
+		int employeeId = employeeMapperImpl.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
+		FindEmployeeResponse obj = employeeMapperImpl.findEmployeeById(employeeId);
 		obj.getPersonalInfo().setPersonalImage(FileUtil.getUrlImg(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE,
 				obj.getPersonalInfo().getPersonalInfoId(), obj.getPersonalInfo().getPersonalImage()));
-		obj.setDocuments(employeeDocumentMapper.findEmployeeDocumentsByEmployeeId(employeeId));
-		obj.setPositions(employeePositionMapper.findEmployeePositionsByEmployeeId(employeeId));
+		obj.setDocuments(employeeDocumentMapperImpl.findEmployeeDocumentsByEmployeeId(employeeId));
+		obj.setPositions(employeePositionMapperImpl.findEmployeePositionsByEmployeeId(employeeId));
 		obj.setHistoryActions(historyActionMapper.findHistoriesByEmployeeId(employeeId));
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, obj);
 	}
 
 	public ResponseTemplate findAccountByRole(String role) {
-		List<SystemAccountDto> listObj = systemAccountMapper.findAccountByRole(role);
+		List<SystemAccountDto> listObj = systemAccountMapperImpl.findAccountByRole(role);
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
 				null, listObj);
 	}
 
 	public ResponseTemplate findReason() {
-		List<ReasonDto> listObj = reasonMapper.findReason();
+		List<ReasonDto> listObj = reasonMapperImpl.findReason();
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
 				null, listObj);
 	}
 
 	public ResponseTemplate findRequestType() {
-		List<RequestTypeDto> listObj = requestTypeMapper.findRequestType();
+		List<RequestTypeDto> listObj = requestTypeMapperImpl.findRequestType();
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
 				null, listObj);
@@ -321,12 +311,12 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 	public ResponseTemplate findEmployeeId() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
+				employeeMapperImpl.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
 	}
 
 	public ResponseTemplate findListComment(Integer id) {
-		List<CommentDto> listComment = commentMapper.findListComment(id,
-				employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
+		List<CommentDto> listComment = commentMapperImpl.findListComment(id,
+				employeeMapperImpl.findEmployeeIdByAccountId(AuthenUtil.getAccountId()));
 		if (ObjectUtils.isEmpty(listComment)) {
 			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(0)), null, null);
@@ -335,31 +325,33 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, listComment);
 	}
 
+	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate mutipleUpdateRequestTicketStatus(MutipleUpdateRequestTicketStatusRequest request,
 			HttpServletRequest httpServletRequest) {
 		if (!CollectionUtils.isEmpty(request.getData().getSupervisorAction())) {
 			List<SupervisorActionDto> collection = request.getData().getSupervisorAction();
-			collection.stream().forEach(el -> updateSupervisorAction(el, httpServletRequest));
+			collection.stream().forEach(el -> updateSupervisorAction(el));
 		}
 
 		if (!CollectionUtils.isEmpty(request.getData().getApproverAction())) {
 			List<ApproverActionDto> collection = request.getData().getApproverAction();
-			collection.stream().forEach(el -> updateApproverAction(el, httpServletRequest));
+			collection.stream().forEach(el -> updateApproverAction(el));
 		}
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.request.success"), null, null);
 	}
 
 	public ResponseTemplate findNotificationByReceiverId() {
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
+		int employeeId = employeeMapperImpl.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				notificationMapper.findNotificationByReceiverId(employeeId));
+				notificationMapperImpl.findNotificationByReceiverId(employeeId));
 	}
 
 	public ResponseTemplate markNotificationAsRead(NotificationRequest request) {
 		if (request.getData().getNotificationId().length > 0) {
-			notificationMapper.markNotificationAsRead(request.getData());
+			notificationMapperImpl.markNotificationAsRead(request.getData());
 			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.success"), null, null);
 		}
@@ -370,7 +362,7 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 
 	public ResponseTemplate deleteNotificationByReceiver(NotificationRequest request) {
 		if (request.getData().getNotificationId().length > 0) {
-			notificationMapper.deleteNotificationByReceiver(request.getData());
+			notificationMapperImpl.deleteNotificationByReceiver(request.getData());
 			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.success"), null, null);
 		}
@@ -378,7 +370,7 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("value.not.correct"), null, null);
 	}
 
-	public void updateSupervisorAction(SupervisorActionDto supervisorActionDto, HttpServletRequest httpServletRequest) {
+	private void updateSupervisorAction(SupervisorActionDto supervisorActionDto) {
 		Timestamp currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
 		String requestStatus = supervisorActionDto.getActionType();
 		supervisorActionDto.setUpdatedAt(currentDayHourSecond);
@@ -389,31 +381,23 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		// Check current request status
 		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
 		paramRequestEmployee.setSupervisorActionId(supervisorActionDto.getSupervisorActionId());
-		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
+		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapperImpl
 				.findCurrentRequestEmployee(paramRequestEmployee);
 		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
 
 		// Update Supervisor Action
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
-		int numberRecord = supervisorAcctionMapper.updateActionBySupervisor(supervisorActionDto);
-		historyActionService.saveHistoryAction(supervisorActionDto, employeeId, CommonConstant.UPDATE_ACTION,
-				supervisorActionDto.getSupervisorActionId(), CommonConstant.TABLE_SUPERVISOR_ACTION,
-				httpServletRequest);
-		isInsertUpdateSucess(numberRecord);
+		supervisorAcctionMapperImpl.updateActionBySupervisor(supervisorActionDto);
 
 		// update request status of employee to REJECT when
 		// supervisor reject request from employee
 		if (requestStatus.toLowerCase().equals(BusinessRequestStatusEnum.REJECT.toString().toLowerCase())) {
 			RequestEmployeeDto obj = new RequestEmployeeDto(null, supervisorActionDto.getSupervisorActionId(), null,
 					requestStatus, currentDayHourSecond);
-			numberRecord = requestEmployeeMapper.updateRequestBySupervisor(obj);
-			isInsertUpdateSucess(numberRecord);
-			historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
-					resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
+			requestEmployeeMapperImpl.updateRequestBySupervisor(obj);
 		}
 	}
 
-	public void updateApproverAction(ApproverActionDto approverActionDto, HttpServletRequest httpServletRequest) {
+	private void updateApproverAction(ApproverActionDto approverActionDto) {
 		String requestStatus = approverActionDto.getActionType();
 		Timestamp currentDayHourSecond = DateUtil.getCurrentDayHourSecond();
 		approverActionDto.setUpdatedAt(currentDayHourSecond);
@@ -424,32 +408,18 @@ public class BusinessRequestService implements BusinessRequestServiceInterface {
 		// Check current request status
 		RequestEmployeeDto paramRequestEmployee = new RequestEmployeeDto();
 		paramRequestEmployee.setApproverActionId(approverActionDto.getApproverActionId());
-		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapper
+		RequestEmployeeDto resultRequestEmployee = requestEmployeeMapperImpl
 				.findCurrentRequestEmployee(paramRequestEmployee);
 		isForbidenByRequestStatus(resultRequestEmployee.getRequestStatus());
 
 		// Update Approver Action
-		int employeeId = employeeMapper.findEmployeeIdByAccountId(AuthenUtil.getAccountId());
-		int numberRecord = approverActionMapper.updateActionByApprover(approverActionDto);
-		historyActionService.saveHistoryAction(approverActionDto, employeeId, CommonConstant.UPDATE_ACTION,
-				approverActionDto.getApproverActionId(), CommonConstant.TABLE_APPROVER_ACTION, httpServletRequest);
-		isInsertUpdateSucess(numberRecord);
+		approverActionMapperImpl.updateActionByApprover(approverActionDto);
 
 		// force update request status
 		RequestEmployeeDto obj = new RequestEmployeeDto(null, null, approverActionDto.getApproverActionId(),
 				requestStatus, currentDayHourSecond);
-		numberRecord = requestEmployeeMapper.updateRequestByApprover(obj);
-		isInsertUpdateSucess(numberRecord);
-		historyActionService.saveHistoryAction(obj, employeeId, CommonConstant.UPDATE_ACTION,
-				resultRequestEmployee.getRequestId(), CommonConstant.TABLE_REQUEST_EMPLOYEE, httpServletRequest);
-	}
-
-	private void isInsertUpdateSucess(Integer number) {
-		if (number == 0) {
-			LogUtil.warn(MessageUtil.getMessagelangUS("update.request.error"));
-			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-					MessageUtil.getMessagelangUS("update.request.error"));
-		}
+		requestEmployeeMapperImpl.updateRequestByApprover(obj);
+		
 	}
 
 	private void isForbidenByRequestStatus(String status) {

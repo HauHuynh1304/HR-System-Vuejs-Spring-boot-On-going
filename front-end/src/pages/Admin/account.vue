@@ -390,10 +390,10 @@ export default {
       this.updateLogicProperties.originRoles.forEach((el) => {
         return deletedTags.includes(el.roleName)
           ? this.dataUpdateAccount.deleteRoleIds.includes(
-              el.systemAccountRoleId
+              el.systemRoleId
             )
             ? null
-            : this.dataUpdateAccount.deleteRoleIds.push(el.systemAccountRoleId)
+            : this.dataUpdateAccount.deleteRoleIds.push(el.systemRoleId)
           : null;
       });
       // Get account status

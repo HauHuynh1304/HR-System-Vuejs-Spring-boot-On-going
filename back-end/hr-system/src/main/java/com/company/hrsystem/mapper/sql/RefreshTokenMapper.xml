@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.company.hrsystem.mapper.ResfreshTokenMapper">
+<mapper namespace="com.company.hrsystem.mapper.RefreshTokenMapper">
 	<resultMap type="com.company.hrsystem.dto.RefreshTokenDto" id="getRefreshToken">
 		<result property="systemAccountId" column="system_account_id" jdbcType="INTEGER"/>
 		<result property="refreshTokenName" column="refresh_token_name" jdbcType="VARCHAR"/>

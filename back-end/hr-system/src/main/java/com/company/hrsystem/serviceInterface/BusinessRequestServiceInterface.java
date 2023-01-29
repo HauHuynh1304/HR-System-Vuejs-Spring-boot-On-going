@@ -2,8 +2,6 @@ package com.company.hrsystem.serviceInterface;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.company.hrsystem.dto.ApproverActionDto;
-import com.company.hrsystem.dto.SupervisorActionDto;
 import com.company.hrsystem.request.ApproverActionRequest;
 import com.company.hrsystem.request.BusinessRequest;
 import com.company.hrsystem.request.CommentRequest;
@@ -54,9 +52,5 @@ public interface BusinessRequestServiceInterface {
 	public ResponseTemplate markNotificationAsRead(NotificationRequest request);
 
 	public ResponseTemplate deleteNotificationByReceiver(NotificationRequest request);
-
-	public void updateSupervisorAction(SupervisorActionDto supervisorActionDto, HttpServletRequest httpServletRequest);
-
-	public void updateApproverAction(ApproverActionDto approverActionDto, HttpServletRequest httpServletRequest);
 
 }

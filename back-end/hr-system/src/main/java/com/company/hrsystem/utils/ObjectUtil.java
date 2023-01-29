@@ -24,5 +24,9 @@ public class ObjectUtil {
 		}
 		return countNotNullParamater;
 	}
+	
+	public static String dataToString(Object object) {
+		return objectToMap(object).toString();
+	}
 
 }

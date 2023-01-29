@@ -3,11 +3,10 @@ package com.company.hrsystem.service;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
-
-import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import com.company.hrsystem.Exeption.TokenException;
 import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.dto.JwtDto;
 import com.company.hrsystem.dto.RefreshTokenDto;
-import com.company.hrsystem.mapper.ResfreshTokenMapper;
+import com.company.hrsystem.mapper.Impl.RefreshTokkenMapperImpl;
 import com.company.hrsystem.request.ResfreshTokenRequest;
 import com.company.hrsystem.response.ResponseTemplate;
 import com.company.hrsystem.serviceInterface.RefreshTokenServiceInterface;
@@ -32,17 +31,17 @@ import io.jsonwebtoken.impl.DefaultClaims;
 public class RefreshTokenService implements RefreshTokenServiceInterface {
 
 	@Autowired
-	private ResfreshTokenMapper refreshTokenMapper;
+	private RefreshTokkenMapperImpl refreshTokenMapperImpl;
 
 	@Autowired
 	JWTService jwtService;
 
 	public RefreshTokenDto findRefreshTokenByEmail(String email) {
-		return refreshTokenMapper.findRefreshTokenByEmail(email);
+		return refreshTokenMapperImpl.findRefreshTokenByEmail(email);
 	}
 
 	public RefreshTokenDto findRefreshTokenByToken(String token) {
-		return refreshTokenMapper.findRefreshTokenByToken(token);
+		return refreshTokenMapperImpl.findRefreshTokenByToken(token);
 	}
 
 	public RefreshTokenDto generateRefreshTokenByEmail(String email) {
@@ -54,10 +53,10 @@ public class RefreshTokenService implements RefreshTokenServiceInterface {
 		obj.setRefreshTokenName(UUID.randomUUID().toString());
 		if (ObjectUtils.isEmpty(model)) {
 			// create new refresh token at the first time login
-			refreshTokenMapper.insertRefreshToken(obj);
+			refreshTokenMapperImpl.insertRefreshToken(obj);
 		} else {
 			// update new refresh token when login from second time
-			refreshTokenMapper.updateRefreshToken(obj);
+			refreshTokenMapperImpl.updateRefreshToken(obj);
 		}
 		return obj;
 	}

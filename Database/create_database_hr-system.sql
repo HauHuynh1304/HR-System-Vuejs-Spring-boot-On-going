@@ -253,7 +253,7 @@ CREATE TABLE IF NOT EXISTS history_action (
     target_table varchar(255) NOT NULL default 'N/A',
     target_row_id int(11) NOT NULL default 0,
     target_column varchar(255) NOT NULL default 'N/A',
-    target_value varchar(255) NOT NULL default 'N/A',
+    target_value MEDIUMTEXT NOT NULL,
     created_at datetime NOT NULL default current_timestamp(),
     primary key (`history_action_id`), 
     CONSTRAINT `fk_history_action_employee` FOREIGN KEY (employee_id)  

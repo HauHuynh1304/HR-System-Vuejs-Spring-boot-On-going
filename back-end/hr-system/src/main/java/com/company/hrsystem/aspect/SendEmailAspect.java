@@ -40,34 +40,34 @@ public class SendEmailAspect {
 	public void doSendEmail(SendEmail sendEmail, Object request, HttpServletRequest httpServletRequest) {
 		EmailDto emailInfo = new EmailDto();
 		switch (sendEmail.mailType()) {
-		case CommonConstant.EMAIL_NEW_REQUEST_TYPE:
-			BusinessRequest businessRequest = (BusinessRequest) request;
-			List<String> cc = new ArrayList<>();
-			String receiverEmail = systemAccountMapper.findSystemEmailByEmployeeId(
-					businessRequest.getData().getSupervisorAcction().getSupervisorId());
-			String senderEmail = systemAccountMapper
-					.findSystemEmailByEmployeeId(businessRequest.getData().getRequestEmployee().getEmployeeId());
-
-			emailInfo.setTo(receiverEmail);
-
-			cc.add(systemAccountMapper
-					.findSystemEmailByEmployeeId(businessRequest.getData().getApproverAction().getApproverId()));
-			cc.add(senderEmail);
-			emailInfo.setCc(cc.stream().toArray(String[]::new));
-
-			emailInfo.setEmailTemplate("NewRequestTicketNotification.ftlh");
-
-			emailInfo.setReceiverName(StringUtil.subStringByEmailSign(receiverEmail));
-
-			emailInfo.setSenderName(StringUtil.subStringByEmailSign(senderEmail));
-
-			emailInfo.setRequestType(
-					requestTypeMapper.findRequestTypeById(businessRequest.getData().getRequest().getRequestTypeId()));
-			
-			emailInfo.setSubject(sendEmail.subject());
-			break;
-		default:
-			break;
+			case CommonConstant.EMAIL_NEW_REQUEST_TYPE:
+				BusinessRequest businessRequest = (BusinessRequest) request;
+				List<String> cc = new ArrayList<>();
+				String receiverEmail = systemAccountMapper.findSystemEmailByEmployeeId(
+						businessRequest.getData().getSupervisorAcction().getSupervisorId());
+				String senderEmail = systemAccountMapper
+						.findSystemEmailByEmployeeId(businessRequest.getData().getRequestEmployee().getEmployeeId());
+	
+				emailInfo.setTo(receiverEmail);
+	
+				cc.add(systemAccountMapper
+						.findSystemEmailByEmployeeId(businessRequest.getData().getApproverAction().getApproverId()));
+				cc.add(senderEmail);
+				emailInfo.setCc(cc.stream().toArray(String[]::new));
+	
+				emailInfo.setEmailTemplate("NewRequestTicketNotification.ftlh");
+	
+				emailInfo.setReceiverName(StringUtil.subStringByEmailSign(receiverEmail));
+	
+				emailInfo.setSenderName(StringUtil.subStringByEmailSign(senderEmail));
+	
+				emailInfo.setRequestType(
+						requestTypeMapper.findRequestTypeById(businessRequest.getData().getRequest().getRequestTypeId()));
+				
+				emailInfo.setSubject(sendEmail.subject());
+				break;
+			default:
+				break;
 		}
 		try {
 			SendEmailUtil.sendSimpleEmail(emailInfo);

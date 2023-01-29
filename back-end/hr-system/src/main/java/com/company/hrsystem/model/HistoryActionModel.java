@@ -23,10 +23,6 @@ public abstract class HistoryActionModel implements Serializable {
 
 	private String targetTable;
 
-	private Integer targetRowId;
-
-	private String targetColumn;
-
 	private String targetValue;
 
 	private String createdAt;

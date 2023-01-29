@@ -10,9 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import com.company.hrsystem.Exeption.NullPointRequestException;
-import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.Exeption.GlobalException;
+import com.company.hrsystem.Exeption.NullPointRequestException;
+import com.company.hrsystem.annotations.WriteLogToDB;
+import com.company.hrsystem.config.SystemProperties;
 import com.company.hrsystem.constants.CommonConstant;
 import com.company.hrsystem.dto.DocumentDto;
 import com.company.hrsystem.dto.PositionDto;
@@ -20,13 +21,13 @@ import com.company.hrsystem.dto.ReasonDto;
 import com.company.hrsystem.dto.RequestTypeDto;
 import com.company.hrsystem.dto.RoomDto;
 import com.company.hrsystem.dto.SystemRoleDto;
-import com.company.hrsystem.mapper.DocumentMapper;
-import com.company.hrsystem.mapper.PositionMapper;
-import com.company.hrsystem.mapper.ReasonMapper;
-import com.company.hrsystem.mapper.RequestTypeMapper;
-import com.company.hrsystem.mapper.RoomMapper;
-import com.company.hrsystem.mapper.SystemAccountMapper;
-import com.company.hrsystem.mapper.SystemRoleMapper;
+import com.company.hrsystem.mapper.Impl.DocumentMapperImpl;
+import com.company.hrsystem.mapper.Impl.PositionMapperImpl;
+import com.company.hrsystem.mapper.Impl.ReasonMapperImpl;
+import com.company.hrsystem.mapper.Impl.RequestTypeMapperImpl;
+import com.company.hrsystem.mapper.Impl.RoomMapperImpl;
+import com.company.hrsystem.mapper.Impl.SystemAccountMapperImpl;
+import com.company.hrsystem.mapper.Impl.SystemRoleMapperImpl;
 import com.company.hrsystem.request.DocumentRequest;
 import com.company.hrsystem.request.PositionRequest;
 import com.company.hrsystem.request.ReasonRequest;
@@ -43,30 +44,28 @@ import com.company.hrsystem.utils.MessageUtil;
 public class MasterService implements MasterServiceInterface {
 
 	@Autowired
-	private SystemRoleMapper roleMapper;
+	private SystemRoleMapperImpl roleMapperImpl;
 
 	@Autowired
-	private DocumentMapper documentMapper;
+	private DocumentMapperImpl documentMapperImpl;
 
 	@Autowired
-	private PositionMapper positionMapper;
+	private PositionMapperImpl positionMapperImpl;
 
 	@Autowired
-	private ReasonMapper reasonMapper;
+	private ReasonMapperImpl reasonMapperImpl;
 
 	@Autowired
-	private RequestTypeMapper requestTypeMapper;
+	private RequestTypeMapperImpl requestTypeMapperImpl;
 
 	@Autowired
-	private RoomMapper roomMapper;
+	private RoomMapperImpl roomMapperImpl;
 
 	@Autowired
-	private SystemAccountMapper systemAccountMapper;
-
-	@Autowired
-	private HistoryActionService historyActionService;
+	private SystemAccountMapperImpl systemAccountMapperImpl;
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate insertSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest) {
 		SystemRoleDto obj = request.getData().getSystemRole();
 		int inseartRows = CommonConstant.ZERO_VALUE;
@@ -76,10 +75,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_INSERT_NOT_NULL));
 		}
 		try {
-			inseartRows = roleMapper.insertSystemRoleSelected(obj);
-			// Save history action
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.INSERT_ACTION,
-					obj.getSystemRoleId(), CommonConstant.TABLE_SYSTEM_ROLE, servletRequest);
+			inseartRows = roleMapperImpl.insertSystemRoleSelected(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -91,6 +87,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updateSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		SystemRoleDto obj = request.getData().getSystemRole();
@@ -101,9 +98,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROLE_UPDATE_NOT_NULL));
 		}
 		try {
-			updateRows = roleMapper.updateSystemRoleSelected(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.UPDATE_ACTION,
-					obj.getSystemRoleId(), CommonConstant.TABLE_SYSTEM_ROLE, servletRequest);
+			updateRows = roleMapperImpl.updateSystemRoleSelected(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -115,6 +110,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate insertDocument(DocumentRequest request, HttpServletRequest servletRequest) {
 		int inseartRows = CommonConstant.ZERO_VALUE;
 		DocumentDto obj = request.getData().getDocument();
@@ -123,9 +119,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_INSERT_NOT_NULL));
 		}
 		try {
-			inseartRows = documentMapper.insertDocument(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.INSERT_ACTION,
-					obj.getDocumentId(), CommonConstant.TABLE_DOCUMENT, servletRequest);
+			inseartRows = documentMapperImpl.insertDocument(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -137,6 +131,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updateDocument(DocumentRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		DocumentDto obj = request.getData().getDocument();
@@ -148,9 +143,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.DOCUMENT_UPDATE_NOT_NULL));
 		}
 		try {
-			updateRows = documentMapper.updateDocument(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.UPDATE_ACTION,
-					obj.getDocumentId(), CommonConstant.TABLE_DOCUMENT, servletRequest);
+			updateRows = documentMapperImpl.updateDocument(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -162,6 +155,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate insertPosition(PositionRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		PositionDto obj = request.getData().getPosition();
@@ -172,9 +166,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_INSERT_NOT_NULL));
 		}
 		try {
-			insertRows = positionMapper.insertPosition(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.INSERT_ACTION,
-					obj.getPositionId(), CommonConstant.TABLE_POSITION, servletRequest);
+			insertRows = positionMapperImpl.insertPosition(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -186,6 +178,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updatePosition(PositionRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		PositionDto obj = request.getData().getPosition();
@@ -197,9 +190,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.POSITION_UPDATE_NOT_NULL));
 		}
 		try {
-			updateRows = positionMapper.updatePosition(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.UPDATE_ACTION,
-					obj.getPositionId(), CommonConstant.TABLE_POSITION, servletRequest);
+			updateRows = positionMapperImpl.updatePosition(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -211,6 +202,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate insertReason(ReasonRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		ReasonDto obj = request.getData().getReason();
@@ -220,9 +212,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_INSERT_NOT_NULL));
 		}
 		try {
-			insertRows = reasonMapper.insertReason(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.INSERT_ACTION,
-					obj.getReasonId(), CommonConstant.TABLE_REASON, servletRequest);
+			insertRows = reasonMapperImpl.insertReason(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -234,6 +224,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updateReason(ReasonRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		ReasonDto obj = request.getData().getReason();
@@ -244,9 +235,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.REASON_UPDATE_NOT_NULL));
 		}
 		try {
-			updateRows = reasonMapper.updateReason(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.UPDATE_ACTION,
-					obj.getReasonId(), CommonConstant.TABLE_REASON, servletRequest);
+			updateRows = reasonMapperImpl.updateReason(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -258,6 +247,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate insertRequestType(RequestTypeRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RequestTypeDto obj = request.getData().getRequestType();
@@ -269,9 +259,7 @@ public class MasterService implements MasterServiceInterface {
 							CommonConstant.REQUEST_TYPE_INSERT_NOT_NULL));
 		}
 		try {
-			insertRows = requestTypeMapper.insertRequestType(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.INSERT_ACTION,
-					obj.getRequestTypeId(), CommonConstant.TABLE_REQUEST_TYPE, servletRequest);
+			insertRows = requestTypeMapperImpl.insertRequestType(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -283,6 +271,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updateRequestType(RequestTypeRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		RequestTypeDto obj = request.getData().getRequestType();
@@ -295,9 +284,7 @@ public class MasterService implements MasterServiceInterface {
 							CommonConstant.REQUEST_TYPE_UPDATE_NOT_NULL));
 		}
 		try {
-			updateRows = requestTypeMapper.updateRequestType(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.UPDATE_ACTION,
-					obj.getRequestTypeId(), CommonConstant.TABLE_REQUEST_TYPE, servletRequest);
+			updateRows = requestTypeMapperImpl.updateRequestType(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -309,6 +296,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate insertRoom(RoomRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RoomDto obj = request.getData().getRoom();
@@ -318,9 +306,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_INSERT_NOT_NULL));
 		}
 		try {
-			insertRows = roomMapper.insertRoom(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.INSERT_ACTION,
-					obj.getRoomId(), CommonConstant.TABLE_ROOM, servletRequest);
+			insertRows = roomMapperImpl.insertRoom(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -332,6 +318,7 @@ public class MasterService implements MasterServiceInterface {
 	}
 
 	@Transactional
+	@WriteLogToDB
 	public ResponseTemplate updateRoom(RoomRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		RoomDto obj = request.getData().getRoom();
@@ -342,9 +329,7 @@ public class MasterService implements MasterServiceInterface {
 					MessageUtil.getFlexMessageLangUS("null.request.empty", CommonConstant.ROOM_UPDATE_NOT_NULL));
 		}
 		try {
-			updateRows = roomMapper.updateRoom(obj);
-			historyActionService.saveHistoryAction(obj, CommonConstant.ZERO_VALUE, CommonConstant.UPDATE_ACTION,
-					obj.getRoomId(), CommonConstant.TABLE_ROOM, servletRequest);
+			updateRows = roomMapperImpl.updateRoom(obj);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -357,55 +342,55 @@ public class MasterService implements MasterServiceInterface {
 
 	public ResponseTemplate findRoles() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, roleMapper.findRoles());
+				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, roleMapperImpl.findRoles());
 	}
 
 	public ResponseTemplate findAllRoles() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				roleMapper.findAllRoles());
+				roleMapperImpl.findAllRoles());
 	}
 
 	public ResponseTemplate findAllAccounts() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				systemAccountMapper.findAllAccount());
+				systemAccountMapperImpl.findAllAccount());
 	}
 
 	public ResponseTemplate findAllRooms() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				roomMapper.findAllRooms());
+				roomMapperImpl.findAllRooms());
 	}
 
 	public ResponseTemplate findAllDocuments() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				documentMapper.findAllDocuments());
+				documentMapperImpl.findAllDocuments());
 	}
 
 	public ResponseTemplate findAvailbleAccounts() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				systemAccountMapper.findAvailbleAccounts());
+				systemAccountMapperImpl.findAvailbleAccounts());
 	}
 
 	public ResponseTemplate findAllRequestType() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				requestTypeMapper.findAllRequestType());
+				requestTypeMapperImpl.findAllRequestType());
 	}
 
 	public ResponseTemplate findAllPositions() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				positionMapper.findAllPositions());
+				positionMapperImpl.findAllPositions());
 	}
 
 	public ResponseTemplate findAllReason() {
 		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
-				reasonMapper.findAllReason());
+				reasonMapperImpl.findAllReason());
 	}
 
 }

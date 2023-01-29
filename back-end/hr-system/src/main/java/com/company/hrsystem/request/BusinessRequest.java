@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.company.hrsystem.dto.ApproverActionDto;
 import com.company.hrsystem.dto.RequestDto;
 import com.company.hrsystem.dto.RequestEmployeeDto;
+import com.company.hrsystem.dto.RequesterActionDto;
 import com.company.hrsystem.dto.SupervisorActionDto;
 
 import lombok.Getter;
@@ -21,6 +22,8 @@ public class BusinessRequest implements Serializable {
 	private RequestDto request;
 
 	private RequestEmployeeDto requestEmployee;
+	
+	private RequesterActionDto requesterActionDto;
 
 	private SupervisorActionDto supervisorAcction;
 

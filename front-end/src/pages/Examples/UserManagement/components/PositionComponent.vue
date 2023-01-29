@@ -142,7 +142,7 @@
       @hidden="resetPositionsModal"
     >
       <h5 class="text-center">
-        Want to delete
+        Want to {{ deleteState ? "delete" : "re-open"}}
         <strong>{{ modalPosition.positionName }}</strong>
       </h5>
       <template #modal-footer="{ ok, cancel}">
@@ -215,6 +215,7 @@ export default {
   },
   data() {
     return {
+      deleteState: null,
       originPositionObj: null,
       positionOption: [],
       tagPositionValue: [],
@@ -353,9 +354,11 @@ export default {
     },
     del(item, index, button) {
       this.setValueDeleteFlag(ACTION.DELETE, item, button);
+      this.deleteState = true;
     },
     undel(item, index, button) {
       this.setValueDeleteFlag(ACTION.UNDELETE, item, button);
+      this.deleteState = false;
     },
     edit(item, index, button) {
       this.modalPosition.oldObj.startDate = item.startDate;
