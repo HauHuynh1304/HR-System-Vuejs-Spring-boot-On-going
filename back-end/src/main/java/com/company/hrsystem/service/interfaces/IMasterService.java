@@ -8,50 +8,50 @@ import com.company.hrsystem.request.ReasonRequest;
 import com.company.hrsystem.request.RequestTypeRequest;
 import com.company.hrsystem.request.RoomRequest;
 import com.company.hrsystem.request.SystemRoleRequest;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 
 public interface IMasterService {
 
-	public ResponseTemplate insertSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest);
+	public ResponseData insertSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate updateSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest);
+	public ResponseData updateSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate insertDocument(DocumentRequest request, HttpServletRequest servletRequest);
+	public ResponseData insertDocument(DocumentRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate updateDocument(DocumentRequest request, HttpServletRequest servletRequest);
+	public ResponseData updateDocument(DocumentRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate insertPosition(PositionRequest request, HttpServletRequest servletRequest);
+	public ResponseData insertPosition(PositionRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate updatePosition(PositionRequest request, HttpServletRequest servletRequest);
+	public ResponseData updatePosition(PositionRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate insertReason(ReasonRequest request, HttpServletRequest servletRequest);
+	public ResponseData insertReason(ReasonRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate updateReason(ReasonRequest request, HttpServletRequest servletRequest);
+	public ResponseData updateReason(ReasonRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate insertRequestType(RequestTypeRequest request, HttpServletRequest servletRequest);
+	public ResponseData insertRequestType(RequestTypeRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate updateRequestType(RequestTypeRequest request, HttpServletRequest servletRequest);
+	public ResponseData updateRequestType(RequestTypeRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate insertRoom(RoomRequest request, HttpServletRequest servletRequest);
+	public ResponseData insertRoom(RoomRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate updateRoom(RoomRequest request, HttpServletRequest servletRequest);
+	public ResponseData updateRoom(RoomRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate findRoles();
+	public ResponseData findRoles();
 
-	public ResponseTemplate findAllRoles();
+	public ResponseData findAllRoles();
 
-	public ResponseTemplate findAllAccounts();
+	public ResponseData findAllAccounts();
 
-	public ResponseTemplate findAllRooms();
+	public ResponseData findAllRooms();
 
-	public ResponseTemplate findAllDocuments();
+	public ResponseData findAllDocuments();
 
-	public ResponseTemplate findAvailbleAccounts();
+	public ResponseData findAvailbleAccounts();
 
-	public ResponseTemplate findAllRequestType();
+	public ResponseData findAllRequestType();
 
-	public ResponseTemplate findAllPositions();
+	public ResponseData findAllPositions();
 
-	public ResponseTemplate findAllReason();
+	public ResponseData findAllReason();
 
 }

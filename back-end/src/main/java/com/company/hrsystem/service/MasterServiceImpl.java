@@ -37,7 +37,7 @@ import com.company.hrsystem.request.ReasonRequest;
 import com.company.hrsystem.request.RequestTypeRequest;
 import com.company.hrsystem.request.RoomRequest;
 import com.company.hrsystem.request.SystemRoleRequest;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 import com.company.hrsystem.service.interfaces.IMasterService;
 
 @Service
@@ -66,7 +66,7 @@ public class MasterServiceImpl implements IMasterService {
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate insertSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest) {
+	public ResponseData insertSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest) {
 		SystemRoleDto obj = request.getData().getSystemRole();
 		int inseartRows = CommonConstant.ZERO_VALUE;
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRoleName())) {
@@ -81,14 +81,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(inseartRows)),
 				null, null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate updateSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest) {
+	public ResponseData updateSystemRole(SystemRoleRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		SystemRoleDto obj = request.getData().getSystemRole();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
@@ -104,14 +104,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate insertDocument(DocumentRequest request, HttpServletRequest servletRequest) {
+	public ResponseData insertDocument(DocumentRequest request, HttpServletRequest servletRequest) {
 		int inseartRows = CommonConstant.ZERO_VALUE;
 		DocumentDto obj = request.getData().getDocument();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getDocumentName())) {
@@ -125,14 +125,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(inseartRows)),
 				null, null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate updateDocument(DocumentRequest request, HttpServletRequest servletRequest) {
+	public ResponseData updateDocument(DocumentRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		DocumentDto obj = request.getData().getDocument();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
@@ -149,14 +149,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate insertPosition(PositionRequest request, HttpServletRequest servletRequest) {
+	public ResponseData insertPosition(PositionRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		PositionDto obj = request.getData().getPosition();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getPositionName())) {
@@ -172,14 +172,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate updatePosition(PositionRequest request, HttpServletRequest servletRequest) {
+	public ResponseData updatePosition(PositionRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		PositionDto obj = request.getData().getPosition();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
@@ -196,14 +196,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate insertReason(ReasonRequest request, HttpServletRequest servletRequest) {
+	public ResponseData insertReason(ReasonRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		ReasonDto obj = request.getData().getReason();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getReasonName())) {
@@ -218,14 +218,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate updateReason(ReasonRequest request, HttpServletRequest servletRequest) {
+	public ResponseData updateReason(ReasonRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		ReasonDto obj = request.getData().getReason();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
@@ -241,14 +241,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate insertRequestType(RequestTypeRequest request, HttpServletRequest servletRequest) {
+	public ResponseData insertRequestType(RequestTypeRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RequestTypeDto obj = request.getData().getRequestType();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRequestTypeName())) {
@@ -265,14 +265,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate updateRequestType(RequestTypeRequest request, HttpServletRequest servletRequest) {
+	public ResponseData updateRequestType(RequestTypeRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		RequestTypeDto obj = request.getData().getRequestType();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
@@ -290,14 +290,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate insertRoom(RoomRequest request, HttpServletRequest servletRequest) {
+	public ResponseData insertRoom(RoomRequest request, HttpServletRequest servletRequest) {
 		int insertRows = CommonConstant.ZERO_VALUE;
 		RoomDto obj = request.getData().getRoom();
 		if (ObjectUtils.isEmpty(obj) || StringUtils.isBlank(obj.getRoomName())) {
@@ -312,14 +312,14 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("insert.row", String.valueOf(insertRows)), null,
 				null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate updateRoom(RoomRequest request, HttpServletRequest servletRequest) {
+	public ResponseData updateRoom(RoomRequest request, HttpServletRequest servletRequest) {
 		int updateRows = CommonConstant.ZERO_VALUE;
 		RoomDto obj = request.getData().getRoom();
 		obj.setUpdatedAt(DateUtil.getCurrentDayHourSecond());
@@ -335,60 +335,60 @@ public class MasterServiceImpl implements IMasterService {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					e.getCause().getMessage());
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("update.row", String.valueOf(updateRows)), null,
 				null);
 	}
 
-	public ResponseTemplate findRoles() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findRoles() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, roleMapperImpl.findRoles());
 	}
 
-	public ResponseTemplate findAllRoles() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAllRoles() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				roleMapperImpl.findAllRoles());
 	}
 
-	public ResponseTemplate findAllAccounts() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAllAccounts() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				systemAccountMapperImpl.findAllAccount());
 	}
 
-	public ResponseTemplate findAllRooms() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAllRooms() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				roomMapperImpl.findAllRooms());
 	}
 
-	public ResponseTemplate findAllDocuments() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAllDocuments() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				documentMapperImpl.findAllDocuments());
 	}
 
-	public ResponseTemplate findAvailbleAccounts() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAvailbleAccounts() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				systemAccountMapperImpl.findAvailbleAccounts());
 	}
 
-	public ResponseTemplate findAllRequestType() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAllRequestType() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				requestTypeMapperImpl.findAllRequestType());
 	}
 
-	public ResponseTemplate findAllPositions() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAllPositions() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				positionMapperImpl.findAllPositions());
 	}
 
-	public ResponseTemplate findAllReason() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAllReason() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				reasonMapperImpl.findAllReason());
 	}

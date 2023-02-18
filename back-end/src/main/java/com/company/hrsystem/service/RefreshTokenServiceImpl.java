@@ -22,7 +22,7 @@ import com.company.hrsystem.dto.JwtDto;
 import com.company.hrsystem.dto.RefreshTokenDto;
 import com.company.hrsystem.mapper.Impl.RefreshTokkenMapperImpl;
 import com.company.hrsystem.request.ResfreshTokenRequest;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 import com.company.hrsystem.service.interfaces.IRefreshTokenService;
 
 import io.jsonwebtoken.impl.DefaultClaims;
@@ -61,7 +61,7 @@ public class RefreshTokenServiceImpl implements IRefreshTokenService {
 		return obj;
 	}
 
-	public ResponseTemplate handleRefreshToken(ResfreshTokenRequest resfreshTokenRequest,
+	public ResponseData handleRefreshToken(ResfreshTokenRequest resfreshTokenRequest,
 			HttpServletRequest httpServletRequest) {
 		RefreshTokenDto model = findRefreshTokenByToken(resfreshTokenRequest.getData().getRefreshTokenName());
 		if (ObjectUtils.isEmpty(model)) {
@@ -71,7 +71,7 @@ public class RefreshTokenServiceImpl implements IRefreshTokenService {
 			DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) httpServletRequest
 					.getAttribute(SystemProperties.JWT_ATTRIBUTE);
 			if (ObjectUtils.isEmpty(claims)) {
-				return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 						HttpStatus.OK.value(), MessageUtil.getMessagelangUS("valid.tokens"), null, null);
 			} else {
 				Instant expiredRefreshToken = Instant.parse(model.getExpiryDate());
@@ -82,7 +82,7 @@ public class RefreshTokenServiceImpl implements IRefreshTokenService {
 				} else {
 					Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
 					String newAccessToken = jwtService.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
-					return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+					return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 							HttpStatus.OK.value(), MessageUtil.getMessagelangUS("refresh.success"), null,
 							new JwtDto(newAccessToken, model.getRefreshTokenName()));
 				}

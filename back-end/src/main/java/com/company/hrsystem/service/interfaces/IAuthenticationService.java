@@ -7,23 +7,23 @@ import com.company.hrsystem.request.ChangePasswordRequest;
 import com.company.hrsystem.request.IsEmailInDbRequest;
 import com.company.hrsystem.request.SignUpRequest;
 import com.company.hrsystem.request.UpdateAccountRequest;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 
 public interface IAuthenticationService {
 
-	public ResponseTemplate handleLogin(AuthenRequest req, HttpServletRequest servletRequest);
+	public ResponseData handleLogin(AuthenRequest req, HttpServletRequest servletRequest);
 
-	public ResponseTemplate handleLogOut(HttpServletRequest request);
+	public ResponseData handleLogOut(HttpServletRequest request);
 
-	public ResponseTemplate handleSignUp(SignUpRequest request, HttpServletRequest servletRequest);
+	public ResponseData handleSignUp(SignUpRequest request, HttpServletRequest servletRequest);
 
-	public ResponseTemplate handleChangePassword(ChangePasswordRequest changePwRequest,
+	public ResponseData handleChangePassword(ChangePasswordRequest changePwRequest,
 			HttpServletRequest servletRequest);
 
-	public ResponseTemplate updateAccount(UpdateAccountRequest accountRequest, HttpServletRequest servletRequest);
+	public ResponseData updateAccount(UpdateAccountRequest accountRequest, HttpServletRequest servletRequest);
 
-	public ResponseTemplate findAccounts(HttpServletRequest servletRequest);
+	public ResponseData findAccounts(HttpServletRequest servletRequest);
 
-	public ResponseTemplate isEmailInDb(IsEmailInDbRequest request);
+	public ResponseData isEmailInDb(IsEmailInDbRequest request);
 
 }

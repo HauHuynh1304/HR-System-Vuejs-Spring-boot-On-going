@@ -42,7 +42,7 @@ import com.company.hrsystem.request.FindListTicketRequest;
 import com.company.hrsystem.response.FindEmployeeResponse;
 import com.company.hrsystem.response.FindListEmployeesResponse;
 import com.company.hrsystem.response.FindReportCaseSelectedResponse;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 import com.company.hrsystem.service.interfaces.IHumanResourceService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -77,7 +77,7 @@ public class HumanResourceServiceImpl implements IHumanResourceService {
 	// TODO: add annotation sendEmail
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate insertEmployee(String jsonString, MultipartFile multipartFile,
+	public ResponseData insertEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
 		Gson gson = new GsonBuilder().setDateFormat(DateUtil.DAY).create();
 		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
@@ -112,7 +112,7 @@ public class HumanResourceServiceImpl implements IHumanResourceService {
 							MessageUtil.getMessagelangUS("value.not.correct"));
 				}
 			}
-			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+			return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("insert.employee.success"), null, null);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
@@ -123,7 +123,7 @@ public class HumanResourceServiceImpl implements IHumanResourceService {
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate updateEmployee(String jsonString, MultipartFile multipartFile,
+	public ResponseData updateEmployee(String jsonString, MultipartFile multipartFile,
 			HttpServletRequest servletRequest) {
 		Gson gson = new GsonBuilder().setDateFormat(DateUtil.DAY).create();
 		EmployeeRequest request = gson.fromJson(jsonString, EmployeeRequest.class);
@@ -218,7 +218,7 @@ public class HumanResourceServiceImpl implements IHumanResourceService {
 				}
 			}
 
-			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+			return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("udpate.employee.success"), null, null);
 		} catch (Exception e) {
 			LogUtil.error(ExceptionUtils.getStackTrace(e));
@@ -227,49 +227,49 @@ public class HumanResourceServiceImpl implements IHumanResourceService {
 		}
 	}
 
-	public ResponseTemplate findListEmployees(FindListEmployeesRequest request) {
+	public ResponseData findListEmployees(FindListEmployeesRequest request) {
 		List<FindListEmployeesResponse> listEmployees = employeeMapperImpl.findListEmployees(request.getData());
 		if (ObjectUtils.isEmpty(listEmployees)) {
-			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+			return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(),
 					MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listEmployees.size())), null, null);
 		}
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(),
 				MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listEmployees.size())), null,
 				listEmployees);
 	}
 
-	public ResponseTemplate findEmployeeById(Integer id) {
+	public ResponseData findEmployeeById(Integer id) {
 		FindEmployeeResponse info = employeeMapperImpl.findEmployeeById(id);
 		info.getPersonalInfo().setPersonalImage(FileUtil.getUrlImg(SystemProperties.PATH_SAVE_EMPLOYEE_IMAGE,
 				info.getPersonalInfo().getPersonalInfoId(), info.getPersonalInfo().getPersonalImage()));
 		info.setDocuments(employeeDocumentMapperImpl.findEmployeeDocumentsByEmployeeId(id));
 		info.setPositions(employeePositionMapperImpl.findEmployeePositionsByEmployeeId(id));
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, info);
 	}
 
-	public ResponseTemplate findPositions() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findPositions() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				positionMapperImpl.findPositions());
 	}
 
-	public ResponseTemplate findDocuments() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findDocuments() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				documentMapperImpl.findDocuments());
 	}
 
-	public ResponseTemplate findRooms() {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findRooms() {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null, roomMapperImpl.findRooms());
 	}
 
-	public ResponseTemplate findReportCaseSelected(FindListTicketRequest request) {
+	public ResponseData findReportCaseSelected(FindListTicketRequest request) {
 		List<FindReportCaseSelectedResponse> listObj = requestEmployeeMapperImpl.findReportCaseSelected(request.getData());
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getFlexMessageLangUS("get.data", String.valueOf(listObj.size())),
 				null, listObj);
 	}

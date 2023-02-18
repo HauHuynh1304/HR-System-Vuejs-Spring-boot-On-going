@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.company.hrsystem.dto.RefreshTokenDto;
 import com.company.hrsystem.request.ResfreshTokenRequest;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 
 import io.jsonwebtoken.impl.DefaultClaims;
 
@@ -18,7 +18,7 @@ public interface IRefreshTokenService {
 
 	public RefreshTokenDto generateRefreshTokenByEmail(String email);
 
-	public ResponseTemplate handleRefreshToken(ResfreshTokenRequest resfreshTokenRequest,
+	public ResponseData handleRefreshToken(ResfreshTokenRequest resfreshTokenRequest,
 			HttpServletRequest httpServletRequest);
 
 	public Map<String, Object> getMapFromIoJsonwebtokenClaims(DefaultClaims claims);
