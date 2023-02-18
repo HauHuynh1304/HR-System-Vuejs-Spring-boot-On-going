@@ -10,47 +10,47 @@ import com.company.hrsystem.request.MutipleUpdateRequestTicketStatusRequest;
 import com.company.hrsystem.request.NotificationRequest;
 import com.company.hrsystem.request.RequesterActionRequest;
 import com.company.hrsystem.request.SupervisorActionRequest;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 
 public interface IBusinessRequestService {
 
-	public ResponseTemplate insertBusinessRequest(BusinessRequest request, HttpServletRequest httpServletRequest);
+	public ResponseData insertBusinessRequest(BusinessRequest request, HttpServletRequest httpServletRequest);
 
-	public ResponseTemplate updateRequesterAction(RequesterActionRequest request,
+	public ResponseData updateRequesterAction(RequesterActionRequest request,
 			HttpServletRequest httpServletRequest);
 
-	public ResponseTemplate updateSupervisorAction(SupervisorActionRequest request,
+	public ResponseData updateSupervisorAction(SupervisorActionRequest request,
 			HttpServletRequest httpServletRequest);
 
-	public ResponseTemplate updateApproverAction(ApproverActionRequest request, HttpServletRequest httpServletRequest);
+	public ResponseData updateApproverAction(ApproverActionRequest request, HttpServletRequest httpServletRequest);
 
-	public ResponseTemplate insertComment(CommentRequest request, HttpServletRequest httpServletRequest);
+	public ResponseData insertComment(CommentRequest request, HttpServletRequest httpServletRequest);
 
-	public ResponseTemplate findListCreatedRequestTicket(FindListTicketRequest request);
+	public ResponseData findListCreatedRequestTicket(FindListTicketRequest request);
 
-	public ResponseTemplate findRequestTicketById(Integer id);
+	public ResponseData findRequestTicketById(Integer id);
 
-	public ResponseTemplate findListReceivedRequestTicket(FindListTicketRequest request);
+	public ResponseData findListReceivedRequestTicket(FindListTicketRequest request);
 
-	public ResponseTemplate findCurrentUser();
+	public ResponseData findCurrentUser();
 
-	public ResponseTemplate findAccountByRole(String role);
+	public ResponseData findAccountByRole(String role);
 
-	public ResponseTemplate findReason();
+	public ResponseData findReason();
 
-	public ResponseTemplate findRequestType();
+	public ResponseData findRequestType();
 
-	public ResponseTemplate findEmployeeId();
+	public ResponseData findEmployeeId();
 
-	public ResponseTemplate findListComment(Integer id);
+	public ResponseData findListComment(Integer id);
 
-	public ResponseTemplate mutipleUpdateRequestTicketStatus(MutipleUpdateRequestTicketStatusRequest request,
+	public ResponseData mutipleUpdateRequestTicketStatus(MutipleUpdateRequestTicketStatusRequest request,
 			HttpServletRequest httpServletRequest);
 
-	public ResponseTemplate findNotificationByReceiverId();
+	public ResponseData findNotificationByReceiverId();
 
-	public ResponseTemplate markNotificationAsRead(NotificationRequest request);
+	public ResponseData markNotificationAsRead(NotificationRequest request);
 
-	public ResponseTemplate deleteNotificationByReceiver(NotificationRequest request);
+	public ResponseData deleteNotificationByReceiver(NotificationRequest request);
 
 }

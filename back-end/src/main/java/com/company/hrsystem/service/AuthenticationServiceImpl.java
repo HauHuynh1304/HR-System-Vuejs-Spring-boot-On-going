@@ -37,7 +37,7 @@ import com.company.hrsystem.request.ChangePasswordRequest;
 import com.company.hrsystem.request.IsEmailInDbRequest;
 import com.company.hrsystem.request.SignUpRequest;
 import com.company.hrsystem.request.UpdateAccountRequest;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 import com.company.hrsystem.service.interfaces.IAuthenticationService;
 
 @Service
@@ -65,7 +65,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 	private JWTServiceImpl jwtService;
 
 	@WriteLogToDB
-	public ResponseTemplate handleLogin(AuthenRequest request, HttpServletRequest servletRequest) {
+	public ResponseData handleLogin(AuthenRequest request, HttpServletRequest servletRequest) {
 		String email = request.getData().getUsername();
 		String password = request.getData().getPassword();
 		Authentication authentication = authenticationManager
@@ -75,23 +75,23 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 		String accessToken = jwtService.generateJWT(userDetailsImpl);
 		String refreshToken = jwtRefreshService.generateRefreshTokenByEmail(email).getRefreshTokenName();
 		
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("user.login.successful"), null,
 				new JwtDto(accessToken, refreshToken));
 	}
 
 	@WriteLogToDB
-	public ResponseTemplate handleLogOut(HttpServletRequest servletRequest) {
+	public ResponseData handleLogOut(HttpServletRequest servletRequest) {
 		cacheService.deleteCache(SystemProperties.TOKEN_STORE,
 				jwtService.getUsernameFromToken(jwtService.getTokenFromHeader(servletRequest)));
 		
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("user.logout.successful"), null, null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate handleSignUp(SignUpRequest request, HttpServletRequest servletRequest) {
+	public ResponseData handleSignUp(SignUpRequest request, HttpServletRequest servletRequest) {
 		SystemAccountDto systemAccount = request.getData().getAccount();
 		Integer[] roleIds = request.getData().getRoleIds();
 		// Remove duplicate
@@ -110,13 +110,13 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
 		systemAccountRoleMapperImpl.insertAccountRole(systemAccount, roleIds);
 
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("user.signup.successful"), null, null);
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate handleChangePassword(ChangePasswordRequest changePwRequest,
+	public ResponseData handleChangePassword(ChangePasswordRequest changePwRequest,
 			HttpServletRequest servletRequest) {
 		SystemAccountDto systemAccountDto = changePwRequest.getData().getAccount();
 		String emailFromToken = jwtService.getUsernameFromToken(jwtService.getTokenFromHeader(servletRequest));
@@ -127,7 +127,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
 			systemAccountMapperImpl.updateByEmailSelective(systemAccountDto);
 
-			return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+			return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("change.password.success"), null, null);
 		} else {
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -135,15 +135,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 		}
 	}
 
-	public ResponseTemplate findAccounts(HttpServletRequest servletRequest) {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData findAccounts(HttpServletRequest servletRequest) {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("change.password.success"), null,
 				systemAccountMapperImpl.findAccounts());
 	}
 
 	@Transactional
 	@WriteLogToDB
-	public ResponseTemplate updateAccount(UpdateAccountRequest accountRequest, HttpServletRequest servletRequest) {
+	public ResponseData updateAccount(UpdateAccountRequest accountRequest, HttpServletRequest servletRequest) {
 		Timestamp updatedAt = DateUtil.getCurrentDayHourSecond();
 		SystemAccountDto account = accountRequest.getData().getAccount();
 		AuthenAccountDto targetAccount = systemAccountMapperImpl.findAuthenAccountById(account.getSystemAccountId());
@@ -191,12 +191,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 		}
 		// update roles end
 		
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("update.success"), null, null);
 	}
 
-	public ResponseTemplate isEmailInDb(IsEmailInDbRequest request) {
-		return new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+	public ResponseData isEmailInDb(IsEmailInDbRequest request) {
+		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("get.data.success"), null,
 				systemAccountMapperImpl.isEmailInDb(request.getData().getEmail()));
 	}

@@ -22,7 +22,7 @@ import com.company.hrsystem.commons.utils.HttpServletResponseUtil;
 import com.company.hrsystem.commons.utils.LogUtil;
 import com.company.hrsystem.commons.utils.MessageUtil;
 import com.company.hrsystem.commons.utils.StringUtil;
-import com.company.hrsystem.response.ResponseTemplate;
+import com.company.hrsystem.response.ResponseData;
 import com.company.hrsystem.service.CacheServiceImpl;
 import com.company.hrsystem.service.JWTServiceImpl;
 import com.company.hrsystem.service.UserDetailsServiceImp;
@@ -105,7 +105,7 @@ public class RequestFilter extends OncePerRequestFilter {
 		LogUtil.warn(MessageUtil.getMessagelangUS("not.valid.access.token"));
 		LogUtil.error(ExceptionUtils.getStackTrace(e));
 		HttpServletResponseUtil.ServletResponse(response,
-				new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 						HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value(), null,
 						MessageUtil.getMessagelangUS("not.valid.access.token"), null));
 	}
@@ -113,7 +113,7 @@ public class RequestFilter extends OncePerRequestFilter {
 	public void responseErrAccessToken(HttpServletResponse response) throws IOException {
 		LogUtil.warn(MessageUtil.getMessagelangUS("not.in.cache.access.token"));
 		HttpServletResponseUtil.ServletResponse(response,
-				new ResponseTemplate(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
+				new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 						com.company.hrsystem.commons.constants.HttpStatus.ACCESS_TOKEN_NOT_IN_CACHE, null,
 						MessageUtil.getMessagelangUS("not.in.cache.access.token"), null));
 	}
