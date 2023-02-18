@@ -23,7 +23,10 @@ import com.company.hrsystem.annotations.WriteLogToDB;
 import com.company.hrsystem.commons.configs.SystemProperties;
 import com.company.hrsystem.commons.exceptions.GlobalException;
 import com.company.hrsystem.commons.utils.AuthenUtil;
+import com.company.hrsystem.commons.utils.CacheUtils;
 import com.company.hrsystem.commons.utils.DateUtil;
+import com.company.hrsystem.commons.utils.JwtUtils;
+import com.company.hrsystem.commons.utils.LogUtil;
 import com.company.hrsystem.commons.utils.MessageUtil;
 import com.company.hrsystem.commons.utils.ObjectUtil;
 import com.company.hrsystem.dto.AuthenAccountDto;
@@ -53,16 +56,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 	private RefreshTokenServiceImpl jwtRefreshService;
 
 	@Autowired
-	private CacheServiceImpl cacheService;
-
-	@Autowired
 	private SystemAccountMapperImpl systemAccountMapperImpl;
 
 	@Autowired
 	private SystemAccountRoleMapperImpl systemAccountRoleMapperImpl;
-
-	@Autowired
-	private JWTServiceImpl jwtService;
 
 	@WriteLogToDB
 	public ResponseData handleLogin(AuthenRequest request, HttpServletRequest servletRequest) {
@@ -72,7 +69,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 				.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
-		String accessToken = jwtService.generateJWT(userDetailsImpl);
+		String accessToken = JwtUtils.setTokenBody(userDetailsImpl);
 		String refreshToken = jwtRefreshService.generateRefreshTokenByEmail(email).getRefreshTokenName();
 		
 		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
@@ -82,8 +79,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
 	@WriteLogToDB
 	public ResponseData handleLogOut(HttpServletRequest servletRequest) {
-		cacheService.deleteCache(SystemProperties.TOKEN_STORE,
-				jwtService.getUsernameFromToken(jwtService.getTokenFromHeader(servletRequest)));
+		CacheUtils.deleteCache(SystemProperties.TOKEN_STORE,
+				JwtUtils.getUsername(JwtUtils.getTokenInBearerForm(servletRequest)));
 		
 		return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 				HttpStatus.OK.value(), MessageUtil.getMessagelangUS("user.logout.successful"), null, null);
@@ -119,7 +116,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 	public ResponseData handleChangePassword(ChangePasswordRequest changePwRequest,
 			HttpServletRequest servletRequest) {
 		SystemAccountDto systemAccountDto = changePwRequest.getData().getAccount();
-		String emailFromToken = jwtService.getUsernameFromToken(jwtService.getTokenFromHeader(servletRequest));
+		String emailFromToken = JwtUtils.getUsername(JwtUtils.getTokenInBearerForm(servletRequest));
 		String emailFromRequest = systemAccountDto.getSystemEmail();
 		if (emailFromToken.equals(emailFromRequest) || AuthenUtil.isAuthen(SystemProperties.SYSTEM_ROLE_ADMIN)
 				|| AuthenUtil.isAuthen(SystemProperties.SYSTEM_ROLE_ROOT_ADMIN)) {
@@ -130,6 +127,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 			return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					HttpStatus.OK.value(), MessageUtil.getMessagelangUS("change.password.success"), null, null);
 		} else {
+			LogUtil.warn(MessageUtil.getMessagelangUS("not.correct.email"));
 			throw new GlobalException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 					MessageUtil.getMessagelangUS("not.correct.email"));
 		}

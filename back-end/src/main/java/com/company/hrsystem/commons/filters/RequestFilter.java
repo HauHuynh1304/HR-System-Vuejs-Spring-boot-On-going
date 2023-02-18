@@ -1,4 +1,4 @@
-package com.company.hrsystem.commons.configs;
+package com.company.hrsystem.commons.filters;
 
 import java.io.IOException;
 
@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,91 +15,74 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.company.hrsystem.commons.configs.SystemProperties;
 import com.company.hrsystem.commons.constants.ApiUrlConstant;
+import com.company.hrsystem.commons.enums.BooleanEnum;
+import com.company.hrsystem.commons.utils.CacheUtils;
 import com.company.hrsystem.commons.utils.HttpServletResponseUtil;
+import com.company.hrsystem.commons.utils.JwtUtils;
 import com.company.hrsystem.commons.utils.LogUtil;
 import com.company.hrsystem.commons.utils.MessageUtil;
 import com.company.hrsystem.commons.utils.StringUtil;
 import com.company.hrsystem.response.ResponseData;
-import com.company.hrsystem.service.CacheServiceImpl;
-import com.company.hrsystem.service.JWTServiceImpl;
 import com.company.hrsystem.service.UserDetailsServiceImp;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
 
-@Component
 public class RequestFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private UserDetailsServiceImp userDetailsService;
 
-	@Autowired
-	private CacheServiceImpl cacheService;
-
-	@Autowired
-	private JWTServiceImpl jwtService;
-
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-
-		final String requestTokenHeader = jwtService.getHeaderFromRequest(request);
-
-		String username = null;
-		String jwtToken = null;
-		// JWT Token is in the form "Bearer token". Remove Bearer word and get
-		// only the Token
-		if (requestTokenHeader != null && requestTokenHeader.startsWith(SystemProperties.JWT_START)) {
-			jwtToken = requestTokenHeader.substring(7);
+		final String uri = request.getRequestURI().toString();
+		final String token = StringUtils.isEmpty(JwtUtils.getToken(request)) ? null
+				: JwtUtils.getTokenInBearerForm(request);
+		final Boolean isLoginURI = uri
+				.equals(StringUtil.apiBuilder(ApiUrlConstant.ROOT_API, ApiUrlConstant.AUTHEN_LOG_IN));
+		if (StringUtils.isNotEmpty(token) && !isLoginURI) {
 			try {
-				username = jwtService.getUsernameFromToken(jwtToken);
-				if (!cacheService.isExistsStringInCache(SystemProperties.TOKEN_STORE, username, jwtToken)) {
+				final String username = JwtUtils.getUsername(token);
+				BooleanEnum isInCache = CacheUtils.isExistsStringInCache(SystemProperties.TOKEN_STORE,
+						JwtUtils.getUsername(token), token) ? BooleanEnum.getValue(1) : BooleanEnum.getValue(0);
+				switch (isInCache) {
+				case TRUE:
+					UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+							userDetails, null, userDetails.getAuthorities());
+					usernamePasswordAuthenticationToken
+							.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+					filterChain.doFilter(request, response);
+					break;
+				default:
 					responseErrAccessToken(response);
-					return;
+					break;
 				}
-			} catch (MalformedJwtException | SignatureException e) {
-				responseErrAccessToken(response, e);
-				return;
 			} catch (ExpiredJwtException e) {
-				String requestURL = request.getRequestURI().toString();
-				if (requestURL
-						.equals(StringUtil.apiBuilder(ApiUrlConstant.ROOT_API, ApiUrlConstant.AUTHEN_REFRESH_TOKEN))) {
-					if (cacheService.isExistsStringInCache(SystemProperties.TOKEN_STORE, e.getClaims().getSubject(),
-							jwtToken)) {
-						request.setAttribute(SystemProperties.JWT_ATTRIBUTE, e.getClaims());
-					}
-				} else {
+				BooleanEnum isRefreshURI = uri
+						.equals(StringUtil.apiBuilder(ApiUrlConstant.ROOT_API, ApiUrlConstant.AUTHEN_REFRESH_TOKEN))
+								? BooleanEnum.getValue(1)
+								: BooleanEnum.getValue(0);
+				switch (isRefreshURI) {
+				case TRUE:
+					request.setAttribute(SystemProperties.JWT_ATTRIBUTE, e.getClaims());
+					break;
+				default:
 					responseErrAccessToken(response, e);
-					return;
+					break;
 				}
+			} catch (Exception e) {
+				responseErrAccessToken(response, e);
 			}
+		} else if (isLoginURI) {
+			filterChain.doFilter(request, response);
+		} else {
 		}
-
-		// Once we get the token validate it.
-		if (username != null) {
-
-			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-			// if token is valid configure Spring Security to manually set
-			// authentication
-			if (jwtService.validateToken(jwtToken, userDetails)) {
-
-				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-						userDetails, null, userDetails.getAuthorities());
-				usernamePasswordAuthenticationToken
-						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				// After setting the Authentication in the context, we specify
-				// that the current user is authenticated. So it passes the
-				// Spring Security Configurations successfully.
-				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-			}
-		}
-		filterChain.doFilter(request, response);
 	}
 
 	public void responseErrAccessToken(HttpServletResponse response, Exception e) throws IOException {

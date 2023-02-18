@@ -1,4 +1,4 @@
-package com.company.hrsystem.commons.configs;
+package com.company.hrsystem.commons.filters;
 
 import java.io.IOException;
 

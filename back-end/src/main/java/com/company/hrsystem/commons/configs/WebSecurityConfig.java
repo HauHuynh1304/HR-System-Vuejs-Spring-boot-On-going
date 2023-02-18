@@ -14,7 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.company.hrsystem.commons.utils.JwtAuthenticationEntryPoint;
+import com.company.hrsystem.commons.filters.JwtAuthenticationEntryPoint;
+import com.company.hrsystem.commons.filters.RequestFilter;
 import com.company.hrsystem.service.UserDetailsServiceImp;
 
 @Configuration
@@ -23,13 +24,17 @@ import com.company.hrsystem.service.UserDetailsServiceImp;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-	@Autowired
-	private UserDetailsServiceImp jwtUserDetailsService;
-
-	@Autowired
-	private RequestFilter jwtRequestFilter;
+	private UserDetailsServiceImp userDetailsServiceImp;
+	
+	@Bean
+	public RequestFilter requestFilter() {
+		return new RequestFilter();
+	}
+	
+	@Bean
+	public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+		return new JwtAuthenticationEntryPoint();
+	}
 
 	@Bean
 	public static PasswordEncoder passwordEncoder() {
@@ -47,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// configure AuthenticationManager so that it knows from where to load
 		// user for matching credentials
 		// Use BCryptPasswordEncoder
-		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsServiceImp).passwordEncoder(passwordEncoder());
 	}
 
 	@Override
@@ -55,11 +60,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.csrf().disable()
 				// make sure we use state less session; session won't be used to
 				// store user's state.
-				.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+				.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint()).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		// Add a filter to validate the tokens with every request
-		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+		httpSecurity.addFilterBefore(requestFilter(), UsernamePasswordAuthenticationFilter.class);
 
 	}
 }

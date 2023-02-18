@@ -16,6 +16,7 @@ import org.springframework.util.ObjectUtils;
 import com.company.hrsystem.commons.configs.SystemProperties;
 import com.company.hrsystem.commons.exceptions.TokenException;
 import com.company.hrsystem.commons.utils.AuthenUtil;
+import com.company.hrsystem.commons.utils.JwtUtils;
 import com.company.hrsystem.commons.utils.MathUtil;
 import com.company.hrsystem.commons.utils.MessageUtil;
 import com.company.hrsystem.dto.JwtDto;
@@ -32,9 +33,6 @@ public class RefreshTokenServiceImpl implements IRefreshTokenService {
 
 	@Autowired
 	private RefreshTokkenMapperImpl refreshTokenMapperImpl;
-
-	@Autowired
-	JWTServiceImpl jwtService;
 
 	public RefreshTokenDto findRefreshTokenByEmail(String email) {
 		return refreshTokenMapperImpl.findRefreshTokenByEmail(email);
@@ -81,7 +79,7 @@ public class RefreshTokenServiceImpl implements IRefreshTokenService {
 							MessageUtil.getMessagelangUS("expired.refresh.token"));
 				} else {
 					Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
-					String newAccessToken = jwtService.doGenerateJWT(expectedMap, expectedMap.get("sub").toString());
+					String newAccessToken = JwtUtils.generateToken(expectedMap, expectedMap.get("sub").toString());
 					return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 							HttpStatus.OK.value(), MessageUtil.getMessagelangUS("refresh.success"), null,
 							new JwtDto(newAccessToken, model.getRefreshTokenName()));
