@@ -1,4 +1,4 @@
-back-end/hr-system/Logs/
-back-end/hr-system/employee-photos/
-back-end/hr-system/application.env
+back-end/logs
+back-end/employee-photos/
+back-end/application.env
 front-end/.firebase/
