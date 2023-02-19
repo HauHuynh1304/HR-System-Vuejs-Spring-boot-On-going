@@ -62,7 +62,8 @@ public class RequestFilter extends OncePerRequestFilter {
 					break;
 				default:
 					LogUtil.warn("Access Token not in cache.");
-					errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT005));
+					errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT005),
+							com.company.hrsystem.commons.constants.HttpStatus.ACCESS_TOKEN_NOT_IN_CACHE);
 					break;
 				}
 			} catch (ExpiredJwtException e) {
@@ -77,34 +78,28 @@ public class RequestFilter extends OncePerRequestFilter {
 					break;
 				default:
 					LogUtil.warn("Access token was expired.");
-					errAccessToken(response, e, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT004));
+					errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT004),
+							HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value());
 					break;
 				}
 			} catch (Exception e) {
-				LogUtil.error("Coundn't decode Token");
+				LogUtil.error("Couldn't decode Token");
 				LogUtil.error(ExceptionUtils.getStackTrace(e));
-				errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT003));
+				errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT003),
+						HttpStatus.UNAUTHORIZED.value());
 			}
 		} else if (isLoginURI) {
 			filterChain.doFilter(request, response);
 		} else {
 			LogUtil.warn("Access Token is required.");
-			errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT001));
+			errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT001),
+					HttpStatus.UNAUTHORIZED.value());
 		}
 	}
 
-	public void errAccessToken(HttpServletResponse response, Exception e, String message) throws IOException {
-		HttpServletResponseUtil.ServletResponse(response,
-				new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-						HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value(), null,
-						message, null));
-	}
-
-	public void errAccessToken(HttpServletResponse response, String message) throws IOException {
-		HttpServletResponseUtil.ServletResponse(response,
-				new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-						com.company.hrsystem.commons.constants.HttpStatus.ACCESS_TOKEN_NOT_IN_CACHE, null,
-						message, null));
+	public void errAccessToken(HttpServletResponse response, String message, int statusCode) throws IOException {
+		HttpServletResponseUtil.ServletResponse(response, new ResponseData(SystemProperties.SYSTEM_NAME,
+				SystemProperties.SYSTEM_VERSION, statusCode, null, message, null));
 	}
 
 }
