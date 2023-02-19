@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import com.company.hrsystem.commons.configs.SystemProperties;
+import com.company.hrsystem.commons.constants.MessageCodeConstant;
 import com.company.hrsystem.commons.exceptions.TokenException;
 import com.company.hrsystem.commons.utils.AuthenUtil;
 import com.company.hrsystem.commons.utils.JwtUtils;
+import com.company.hrsystem.commons.utils.LogUtil;
 import com.company.hrsystem.commons.utils.MathUtil;
 import com.company.hrsystem.commons.utils.MessageUtil;
 import com.company.hrsystem.dto.JwtDto;
@@ -63,25 +65,27 @@ public class RefreshTokenServiceImpl implements IRefreshTokenService {
 			HttpServletRequest httpServletRequest) {
 		RefreshTokenDto model = findRefreshTokenByToken(resfreshTokenRequest.getData().getRefreshTokenName());
 		if (ObjectUtils.isEmpty(model)) {
+			LogUtil.warn("Refresh Token is not correctly.");
 			throw new TokenException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-					MessageUtil.getMessagelangUS("not.valid.refresh.token"));
+					MessageUtil.getMessagelangUS(MessageCodeConstant.JWT006));
 		} else {
 			DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) httpServletRequest
 					.getAttribute(SystemProperties.JWT_ATTRIBUTE);
 			if (ObjectUtils.isEmpty(claims)) {
 				return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-						HttpStatus.OK.value(), MessageUtil.getMessagelangUS("valid.tokens"), null, null);
+						HttpStatus.OK.value(), MessageUtil.getMessagelangUS(MessageCodeConstant.JWT008), null, null);
 			} else {
 				Instant expiredRefreshToken = Instant.parse(model.getExpiryDate());
 				Boolean isExpiredRefreshToken = expiredRefreshToken.compareTo(Instant.now()) < 0;
 				if (isExpiredRefreshToken) {
+					LogUtil.warn("Refresh Token was expired.");
 					throw new TokenException(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-							MessageUtil.getMessagelangUS("expired.refresh.token"));
+							MessageUtil.getMessagelangUS(MessageCodeConstant.JWT007));
 				} else {
 					Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
 					String newAccessToken = JwtUtils.generateToken(expectedMap, expectedMap.get("sub").toString());
 					return new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
-							HttpStatus.OK.value(), MessageUtil.getMessagelangUS("refresh.success"), null,
+							HttpStatus.OK.value(), MessageUtil.getMessagelangUS(MessageCodeConstant.JWT002), null,
 							new JwtDto(newAccessToken, model.getRefreshTokenName()));
 				}
 			}
