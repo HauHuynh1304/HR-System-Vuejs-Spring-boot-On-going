@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.company.hrsystem.commons.configs.SystemProperties;
 import com.company.hrsystem.commons.constants.ApiUrlConstant;
+import com.company.hrsystem.commons.constants.MessageCodeConstant;
 import com.company.hrsystem.commons.enums.BooleanEnum;
 import com.company.hrsystem.commons.utils.CacheUtils;
 import com.company.hrsystem.commons.utils.HttpServletResponseUtil;
@@ -60,7 +61,8 @@ public class RequestFilter extends OncePerRequestFilter {
 					filterChain.doFilter(request, response);
 					break;
 				default:
-					responseErrAccessToken(response);
+					LogUtil.warn("Access Token not in cache.");
+					errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT005));
 					break;
 				}
 			} catch (ExpiredJwtException e) {
@@ -71,35 +73,38 @@ public class RequestFilter extends OncePerRequestFilter {
 				switch (isRefreshURI) {
 				case TRUE:
 					request.setAttribute(SystemProperties.JWT_ATTRIBUTE, e.getClaims());
+					filterChain.doFilter(request, response);
 					break;
 				default:
-					responseErrAccessToken(response, e);
+					LogUtil.warn("Access token was expired.");
+					errAccessToken(response, e, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT004));
 					break;
 				}
 			} catch (Exception e) {
-				responseErrAccessToken(response, e);
+				LogUtil.error("Coundn't decode Token");
+				LogUtil.error(ExceptionUtils.getStackTrace(e));
+				errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT003));
 			}
 		} else if (isLoginURI) {
 			filterChain.doFilter(request, response);
 		} else {
+			LogUtil.warn("Access Token is required.");
+			errAccessToken(response, MessageUtil.getMessagelangUS(MessageCodeConstant.JWT001));
 		}
 	}
 
-	public void responseErrAccessToken(HttpServletResponse response, Exception e) throws IOException {
-		LogUtil.warn(MessageUtil.getMessagelangUS("not.valid.access.token"));
-		LogUtil.error(ExceptionUtils.getStackTrace(e));
+	public void errAccessToken(HttpServletResponse response, Exception e, String message) throws IOException {
 		HttpServletResponseUtil.ServletResponse(response,
 				new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 						HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value(), null,
-						MessageUtil.getMessagelangUS("not.valid.access.token"), null));
+						message, null));
 	}
 
-	public void responseErrAccessToken(HttpServletResponse response) throws IOException {
-		LogUtil.warn(MessageUtil.getMessagelangUS("not.in.cache.access.token"));
+	public void errAccessToken(HttpServletResponse response, String message) throws IOException {
 		HttpServletResponseUtil.ServletResponse(response,
 				new ResponseData(SystemProperties.SYSTEM_NAME, SystemProperties.SYSTEM_VERSION,
 						com.company.hrsystem.commons.constants.HttpStatus.ACCESS_TOKEN_NOT_IN_CACHE, null,
-						MessageUtil.getMessagelangUS("not.in.cache.access.token"), null));
+						message, null));
 	}
 
 }
